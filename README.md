@@ -25,9 +25,10 @@
 **Практикум** по работе программой [здесь](https://docs.google.com/document/d/1IY7TRUeoMYD3fC0YgWdSTyHPJSrGO7LM/edit?usp=sharing&ouid=112553411084970929730&rtpof=true&sd=true)
 
 Несколько рекомендаций по формированию DFD-модели [здесь](https://docs.google.com/document/d/1qE-Dbf-1pub9TeAnGHLnhSrpdSB-ZXfH/edit?usp=sharing&ouid=112553411084970929730&rtpof=true&sd=true)
+
 Старая версия Erwin Process Modeler [здесь](https://clck.ru/33eFDA).
 
-Пример и объяснение того, как сделать функциональную модель, можно посмотреть [здесь]([https://www.youtube.com/watch?v=flGjJMsjnG0](https://drive.google.com/drive/folders/1Tfs21TdPHPBvRgC69NQFrKBNda1F8_hi).
+Пример и объяснение того, как сделать функциональную модель, можно посмотреть [здесь](https://www.youtube.com/watch?v=flGjJMsjnG0](https://drive.google.com/drive/folders/1Tfs21TdPHPBvRgC69NQFrKBNda1F8_hi).
 
 #### Защита лабораторной работы №1
 
