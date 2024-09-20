@@ -28,7 +28,7 @@
 
 Старая версия Erwin Process Modeler [здесь](https://clck.ru/33eFDA).
 
-Пример и объяснение того, как сделать функциональную модель, можно посмотреть [здесь](https://www.youtube.com/watch?v=flGjJMsjnG0](https://drive.google.com/drive/folders/1Tfs21TdPHPBvRgC69NQFrKBNda1F8_hi).
+Пример и объяснение того, как сделать функциональную модель, можно посмотреть [здесь](https://drive.google.com/drive/folders/1Tfs21TdPHPBvRgC69NQFrKBNda1F8_hi).
 
 #### Защита лабораторной работы №1
 
