@@ -26,7 +26,7 @@
 
 Несколько рекомендаций по формированию DFD-модели [здесь](https://docs.google.com/document/d/1qE-Dbf-1pub9TeAnGHLnhSrpdSB-ZXfH/edit?usp=sharing&ouid=112553411084970929730&rtpof=true&sd=true)
 
-Erwin Process Modeler [здесь](https://drive.google.com/file/d/11daH720Q3wD06ger3EDI8kxfUZt7ztm4/view?usp=sharing).
+Erwin Process Modeler [здесь](https://drive.google.com/file/d/11daH720Q3wD06ger3EDI8kxfUZt7ztm4/view?usp=sharing)
 
 RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIVLqNANlkTdCG?usp=drive_link) Сначала нужно установить jre.
 
