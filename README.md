@@ -28,8 +28,7 @@
 
 Erwin Process Modeler [здесь](https://drive.google.com/file/d/11daH720Q3wD06ger3EDI8kxfUZt7ztm4/view?usp=sharing).
 
-RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIVLqNANlkTdCG?usp=drive_link)
-сначала нужно установить jre, потом ). Сначала нужно установить jre.
+RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIVLqNANlkTdCG?usp=drive_link) Сначала нужно установить jre.
 
 Пример и объяснение того, как сделать функциональную модель, можно посмотреть [здесь](https://drive.google.com/drive/folders/1Tfs21TdPHPBvRgC69NQFrKBNda1F8_hi).
 
