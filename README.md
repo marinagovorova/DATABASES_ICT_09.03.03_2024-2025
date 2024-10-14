@@ -37,8 +37,8 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 ## Лекция 1.3 [Классификация БД и СУБД. Состав и функции СУБД. Трехуровневая архитектура БД и СУБД](https://docs.google.com/presentation/d/1LNbZEjbR_6uI4JKtC2inaO2LrCMfb3HD/edit#slide=id.p1) (презентация и текстовые материалы)
 **По итогам изучения раздела 1 проводится контрольный тест (Тест 1 - ключевая контрольная точка).**
 ## Раздел 2 МЕТОДОЛОГИИ ПРОЕКТИРОВАНИЯ БАЗ ДАННЫХ
-##  Лекция 2.1  [Концепции проектирования БД. Инфологическая, логическая и физическая модели данных. Структурная, целостная, манипуляционная части модели данных](https://docs.google.com/presentation/d/1qeIi58nL4imK72Kzm-6FYaNxpJ6mDMsT/edit?usp=sharing&ouid=112553411084970929730&rtpof=true&sd=true)
-##  Лекция 2.2 [Метод «сущность-связь». Нотации проектирования. Case-средства автоматизированного проектирования БД](https://docs.google.com/presentation/d/1HXTput0WLz-JcZrW0hzV_7DNtCsAe6da/edit?usp=sharing&ouid=112553411084970929730&rtpof=true&sd=true)
+##  Лекция 2.1  [Концепции проектирования БД. Инфологическая, логическая и физическая модели данных. Структурная, целостная, манипуляционная части модели данных](https://drive.google.com/drive/folders/1_Ce0Bq7W3jlki1rzMU2CfiRLPQShWXWZ?usp=sharing)
+##  Лекция 2.2 [Метод «сущность-связь». Нотации проектирования. Case-средства автоматизированного проектирования БД](https://drive.google.com/drive/folders/1_Ce0Bq7W3jlki1rzMU2CfiRLPQShWXWZ?usp=sharing)
 Практическое задание 1 [ИЛМ БД CarWash](https://docs.google.com/document/d/1G9yjhySZeYaHIRl6Zbjnse-ee7AqsslT/edit?usp=sharing&ouid=112553411084970929730&rtpof=true&sd=true) 
 ([ERwin Data Modeler](https://clck.ru/33kz5d))
 ## Сдача работ
