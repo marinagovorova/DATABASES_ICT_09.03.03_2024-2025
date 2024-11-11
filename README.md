@@ -41,6 +41,9 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 ###  Лекция 2.2 [Метод «сущность-связь». Нотации проектирования. Case-средства автоматизированного проектирования БД](https://drive.google.com/drive/folders/1_Ce0Bq7W3jlki1rzMU2CfiRLPQShWXWZ?usp=sharing) (презентация и текстовые материалы)
 Практическое задание 1 [ИЛМ БД CarWash](https://docs.google.com/document/d/1G9yjhySZeYaHIRl6Zbjnse-ee7AqsslT/edit?usp=sharing&ouid=112553411084970929730&rtpof=true&sd=true) 
 ([ERwin Data Modeler](https://clck.ru/33kz5d))
+
+**По итогам изучения тем 2., 2.2 проводится контрольный тест (ключевая контрольная точка).**
+## Лекция 2.3 [Классификация моделей данных. Структурная часть реляционной модели данных](https://drive.google.com/drive/folders/1_Ce0Bq7W3jlki1rzMU2CfiRLPQShWXWZ?usp=sharing) (презентации и текстовые материалы)
 ## Сдача работ
 Работы защищаются на занятиях или консультациях. 
 Все отчеты сохраняются в **pdf** (документы и презентации, если иное не оговорено в задании работы). Отчеты предоставленные в других форматах приниматься не будут.
