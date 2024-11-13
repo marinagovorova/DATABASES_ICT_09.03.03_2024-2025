@@ -64,7 +64,7 @@ class Payment(BaseModel):
     amount: int
     is_cash: bool
 
-    order_id: uuid.UUID  # ForeignKey["Order"], One to one
+    order_id: uuid.UUID  # ForeignKey["Order"], Many to one
     card_id: Optional[uuid.UUID]  # ForeignKey["Card"], Many to one
 
 
