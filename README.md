@@ -67,7 +67,7 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 #### [12 правил Кодда](https://docs.google.com/document/d/1lXeQonxzi5XdDTlVSG3KOHBlq5TR3-n7/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (текстовые материалы)
 #### [Преобразование ИЛМ в РМ](https://docs.google.com/presentation/d/1MOxQjwUk3YbQs42iG_W46Z_oPMfb47p8/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 ## Раздел 3 ВВЕДЕНИЕ В SQL
-### Лекция 3.1  [РЕЛЯЦИОННАЯ АЛГЕБРА](https://docs.google.com/presentation/d/1EH7C_a0Go7IIvaff2PenZXP-NkzZJHCf/edit?usp=sharing&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
+### Лекция 3.1  [Реляционная алгебра](https://docs.google.com/presentation/d/1EH7C_a0Go7IIvaff2PenZXP-NkzZJHCf/edit?usp=sharing&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 #### [Дополнительно: Операции РА](https://docs.google.com/presentation/d/1lOWx-DNM2_nf4eW9GSw1hwpvZZDEagvG/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 #### [Дополнительно: Реляционная алгебра](https://docs.google.com/document/d/17iSQEmmFThHUUm06myqVnxpjPIKCwOdg/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (текстовые материалы)
 ## Лекция 3.2 Состав SQL. Описание данных и манипулирование данными в SQL. DDL, DML
