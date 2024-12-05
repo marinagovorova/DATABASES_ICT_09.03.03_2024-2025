@@ -71,9 +71,9 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 #### [Дополнительно: Операции РА](https://docs.google.com/presentation/d/1lOWx-DNM2_nf4eW9GSw1hwpvZZDEagvG/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 #### [Дополнительно: Реляционная алгебра](https://docs.google.com/document/d/17iSQEmmFThHUUm06myqVnxpjPIKCwOdg/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (текстовые материалы)
 ## Лекция 3.2 Состав SQL. Описание данных и манипулирование данными в SQL. DDL, DML
-[3.2.1 Введение в SQL](https://docs.google.com/presentation/d/16IJYCr0Bm5aOSnvl12LUWhiPpwker3PD/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+#### [3.2.1 Введение в SQL](https://docs.google.com/presentation/d/16IJYCr0Bm5aOSnvl12LUWhiPpwker3PD/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 
-[3.2.2 Команды DDL и DML SQL](https://docs.google.com/presentation/d/1uFXnd4Sket5-399Df__imnY2d65NfQsE/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+#### [3.2.2 Команды DDL и DML SQL](https://docs.google.com/presentation/d/1uFXnd4Sket5-399Df__imnY2d65NfQsE/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 
 [Практическое задание к Лекции 3.2](https://docs.google.com/document/d/1xDWXO6fg4LdiSCvYWk9hxTNdUDmTfsqj/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 ## Сдача работ
