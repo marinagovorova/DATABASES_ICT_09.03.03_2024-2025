@@ -78,20 +78,14 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 ## Лекция 3.4 Построение запросов к БД. Select SQL. Индексы
 ### 3.4.1 [SELECT SQL. Базовая конструкция](https://docs.google.com/presentation/d/1bpqgUhqUtPp8zwaIsCsKCAdA0XpeZkFG/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 ### 3.4.2 [SELECT SQL. Переменные таблицы. Множественные операторы](https://docs.google.com/presentation/d/1uuuVunLUoYIQFd7FPcJB522_Lq6oWB_T/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
-### 3.4.3 SELECT SQL. Подзапросы
-Материалы доступны [здесь]()
-### 3.4.4 SELECT SQL. Соединения
-Материалы доступны [здесь]()
-### 3.4.5 SELECT SQL. Агрегатные функции. Группирующие запросы
-Материалы доступны [здесь]()
-### 3.4.6 SELECT SQL. NULL-значения
-Материалы доступны [здесь]()
+### 3.4.3 [SELECT SQL. Подзапросы](https://docs.google.com/presentation/d/1GgEkOW6rgCNxQHqNL6HR1Chgnyxs8LPz/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+### 3.4.4 [SELECT SQL. Соединения](https://docs.google.com/presentation/d/1qd1nzSX7QMKYvx65OLuJjz5EtVmtnj-H/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+### 3.4.5 [SELECT SQL. Агрегатные функции. Группирующие запросы](https://docs.google.com/presentation/d/1OXXH1dj4exjoR8nke3sCLGQ_20OuX83s/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+### 3.4.6 [SELECT SQL. NULL-значения](https://docs.google.com/presentation/d/1BSdIlGHb4vbjRFn3GUS2GTqjtSJGiOqh/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 ### 3.4.7 SELECT SQL. Представления. Модификация данных
-Материалы доступны [здесь]()
-### Операторы языка SQL Select
-Материалы доступны [здесь](t)
+### [Операторы языка SQL Select](https://docs.google.com/document/d/15PbK32s7Q5ChKl5yqS1H5aOSr1PFv4J3/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 #### Тестовая база данных: 
-Скрипты запросов БД Колледж 3.2.3-3.2.8 [здесь]()
+[Скрипты запросов БД Колледж 3.2.3-3.2.8](https://docs.google.com/document/d/1FNO7THVbLA2ttBk6_chz4xYdAgy5IWXf/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 ## Сдача работ
 Работы защищаются на занятиях или консультациях. 
 Все отчеты сохраняются в **pdf** (документы и презентации, если иное не оговорено в задании работы). Отчеты предоставленные в других форматах приниматься не будут.
