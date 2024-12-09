@@ -76,10 +76,8 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 #### [3.2.2 Команды DDL и DML SQL](https://docs.google.com/presentation/d/1uFXnd4Sket5-399Df__imnY2d65NfQsE/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 [Практическое задание к Лекции 3.2](https://docs.google.com/document/d/1xDWXO6fg4LdiSCvYWk9hxTNdUDmTfsqj/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 ## Лекция 3.4 Построение запросов к БД. Select SQL. Индексы
-### 3.4.1 SELECT SQL. Базовая конструкция
-Материалы доступны [здесь](https://docs.google.com/presentation/d/1bpqgUhqUtPp8zwaIsCsKCAdA0XpeZkFG/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
-### 3.4.2 SELECT SQL. Переменные таблицы. Множественные операторы
-Материалы доступны [здесь](https://docs.google.com/presentation/d/1uuuVunLUoYIQFd7FPcJB522_Lq6oWB_T/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+### 3.4.1 [SELECT SQL. Базовая конструкция](https://docs.google.com/presentation/d/1bpqgUhqUtPp8zwaIsCsKCAdA0XpeZkFG/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+### 3.4.2 [SELECT SQL. Переменные таблицы. Множественные операторы](https://docs.google.com/presentation/d/1uuuVunLUoYIQFd7FPcJB522_Lq6oWB_T/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 ### 3.4.3 SELECT SQL. Подзапросы
 Материалы доступны [здесь]()
 ### 3.4.4 SELECT SQL. Соединения
