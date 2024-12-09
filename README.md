@@ -70,12 +70,30 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 ### Лекция 3.1  [Реляционная алгебра](https://docs.google.com/presentation/d/1EH7C_a0Go7IIvaff2PenZXP-NkzZJHCf/edit?usp=sharing&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 #### [Дополнительно: Операции РА](https://docs.google.com/presentation/d/1lOWx-DNM2_nf4eW9GSw1hwpvZZDEagvG/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 #### [Дополнительно: Реляционная алгебра](https://docs.google.com/document/d/17iSQEmmFThHUUm06myqVnxpjPIKCwOdg/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (текстовые материалы)
+**По итогам изучения тем 2.3, 3.1 проводится контрольный тест (ключевая контрольная точка).**
 ## Лекция 3.2 Состав SQL. Описание данных и манипулирование данными в SQL. DDL, DML
 #### [3.2.1 Введение в SQL](https://docs.google.com/presentation/d/16IJYCr0Bm5aOSnvl12LUWhiPpwker3PD/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
-
 #### [3.2.2 Команды DDL и DML SQL](https://docs.google.com/presentation/d/1uFXnd4Sket5-399Df__imnY2d65NfQsE/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
-
 [Практическое задание к Лекции 3.2](https://docs.google.com/document/d/1xDWXO6fg4LdiSCvYWk9hxTNdUDmTfsqj/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+## Лекция 3.4 Построение запросов к БД. Select SQL. Индексы
+### 3.4.1 SELECT SQL. Базовая конструкция
+Материалы доступны [здесь]()
+### 3.4.2 SELECT SQL. Переменные таблицы Множественные операторы
+Материалы доступны [здесь]()
+### 3.4.3 SELECT SQL. Подзапросы
+Материалы доступны [здесь]()
+### 3.4.4 SELECT SQL. Соединения
+Материалы доступны [здесь]()
+### 3.4.5 SELECT SQL. Агрегатные функции. Группирующие запросы
+Материалы доступны [здесь]()
+### 3.4.6 SELECT SQL. NULL-значения
+Материалы доступны [здесь]()
+### 3.4.7 SELECT SQL. Представления. Модификация данных
+Материалы доступны [здесь]()
+### Операторы языка SQL Select
+Материалы доступны [здесь](t)
+#### Тестовая база данных: 
+Скрипты запросов БД Колледж 3.2.3-3.2.8 [здесь]()
 ## Сдача работ
 Работы защищаются на занятиях или консультациях. 
 Все отчеты сохраняются в **pdf** (документы и презентации, если иное не оговорено в задании работы). Отчеты предоставленные в других форматах приниматься не будут.
