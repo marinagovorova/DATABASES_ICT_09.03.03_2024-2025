@@ -11,7 +11,7 @@
 ### [**4 семестр - экзамен**]()
 # 3 семестр 2024-2025
 ## Раздел 1 ВВЕДЕНИЕ
-### Лекция 1.1 [Актуальность проблематики АИС и лежащих в их основе БД](https://clck.ru/3DLW6A) (презентация)
+### Лекция 1.1 [Актуальность проблематики АИС и лежащих в их основе БД](https://clck.ru/3DLW6A) c
 ### Лекция 1.2 [Структурный подход к проектированию АИС. Анализ поведения системы с использованием контектсных диаграм (DFD)](https://clck.ru/3DMfHC) (презентация и текстовые материалы)
 ### Лабораторная работа №1 АНАЛИЗ ПОВЕДЕНИЯ СИСТЕМЫ С ИСПОЛЬЗОВАНИЕМ КОНТЕКСТНЫХ ДИАГРАММ (DFD)
 **Целью работы** является овладение практическими навыками и умениями исследования предметной области на уровне анализа поведения системы с использованием DFD-диаграмм (DFD). 
@@ -72,18 +72,18 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 #### [Дополнительно: Реляционная алгебра](https://docs.google.com/document/d/17iSQEmmFThHUUm06myqVnxpjPIKCwOdg/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (текстовые материалы)
 **По итогам изучения тем 2.3, 3.1 проводится контрольный тест (ключевая контрольная точка).**
 ## Лекция 3.2 Состав SQL. Описание данных и манипулирование данными в SQL. DDL, DML
-#### [3.2.1 Введение в SQL](https://docs.google.com/presentation/d/16IJYCr0Bm5aOSnvl12LUWhiPpwker3PD/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
-#### [3.2.2 Команды DDL и DML SQL](https://docs.google.com/presentation/d/1uFXnd4Sket5-399Df__imnY2d65NfQsE/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+#### [3.2.1 Введение в SQL](https://docs.google.com/presentation/d/16IJYCr0Bm5aOSnvl12LUWhiPpwker3PD/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
+#### [3.2.2 Команды DDL и DML SQL](https://docs.google.com/presentation/d/1uFXnd4Sket5-399Df__imnY2d65NfQsE/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 [Практическое задание к Лекции 3.2](https://docs.google.com/document/d/1xDWXO6fg4LdiSCvYWk9hxTNdUDmTfsqj/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 ## Лекция 3.4 Построение запросов к БД. Select SQL. Индексы
-### 3.4.1 [SELECT SQL. Базовая конструкция](https://docs.google.com/presentation/d/1bpqgUhqUtPp8zwaIsCsKCAdA0XpeZkFG/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
-### 3.4.2 [SELECT SQL. Переменные таблицы. Множественные операторы](https://docs.google.com/presentation/d/1uuuVunLUoYIQFd7FPcJB522_Lq6oWB_T/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
-### 3.4.3 [SELECT SQL. Подзапросы](https://docs.google.com/presentation/d/1GgEkOW6rgCNxQHqNL6HR1Chgnyxs8LPz/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
-### 3.4.4 [SELECT SQL. Соединения](https://docs.google.com/presentation/d/1qd1nzSX7QMKYvx65OLuJjz5EtVmtnj-H/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
-### 3.4.5 [SELECT SQL. Агрегатные функции. Группирующие запросы](https://docs.google.com/presentation/d/1OXXH1dj4exjoR8nke3sCLGQ_20OuX83s/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
-### 3.4.6 [SELECT SQL. NULL-значения](https://docs.google.com/presentation/d/1BSdIlGHb4vbjRFn3GUS2GTqjtSJGiOqh/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+### 3.4.1 [SELECT SQL. Базовая конструкция](https://docs.google.com/presentation/d/1bpqgUhqUtPp8zwaIsCsKCAdA0XpeZkFG/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
+### 3.4.2 [SELECT SQL. Переменные таблицы. Множественные операторы](https://docs.google.com/presentation/d/1uuuVunLUoYIQFd7FPcJB522_Lq6oWB_T/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
+### 3.4.3 [SELECT SQL. Подзапросы](https://docs.google.com/presentation/d/1GgEkOW6rgCNxQHqNL6HR1Chgnyxs8LPz/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
+### 3.4.4 [SELECT SQL. Соединения](https://docs.google.com/presentation/d/1qd1nzSX7QMKYvx65OLuJjz5EtVmtnj-H/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
+### 3.4.5 [SELECT SQL. Агрегатные функции. Группирующие запросы](https://docs.google.com/presentation/d/1OXXH1dj4exjoR8nke3sCLGQ_20OuX83s/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
+### 3.4.6 [SELECT SQL. NULL-значения](https://docs.google.com/presentation/d/1BSdIlGHb4vbjRFn3GUS2GTqjtSJGiOqh/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 ### 3.4.7 SELECT SQL. Представления. Модификация данных
-### [Операторы языка SQL Select](https://docs.google.com/document/d/15PbK32s7Q5ChKl5yqS1H5aOSr1PFv4J3/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+### [Операторы языка SQL Select](https://docs.google.com/document/d/15PbK32s7Q5ChKl5yqS1H5aOSr1PFv4J3/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (текстовые материалы)
 #### Тестовая база данных: 
 [Скрипты запросов БД Колледж 3.2.3-3.2.8](https://docs.google.com/document/d/1FNO7THVbLA2ttBk6_chz4xYdAgy5IWXf/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 ## Сдача работ
