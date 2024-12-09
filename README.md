@@ -72,8 +72,8 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 #### [Дополнительно: Реляционная алгебра](https://docs.google.com/document/d/17iSQEmmFThHUUm06myqVnxpjPIKCwOdg/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (текстовые материалы)
 **По итогам изучения тем 2.3, 3.1 проводится контрольный тест (ключевая контрольная точка).**
 ## Лекция 3.2 Состав SQL. Описание данных и манипулирование данными в SQL. DDL, DML
-#### [3.2.1 Введение в SQL](https://docs.google.com/presentation/d/16IJYCr0Bm5aOSnvl12LUWhiPpwker3PD/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
-#### [3.2.2 Команды DDL и DML SQL](https://docs.google.com/presentation/d/1uFXnd4Sket5-399Df__imnY2d65NfQsE/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
+### 3.2.1 [Введение в SQL](https://docs.google.com/presentation/d/16IJYCr0Bm5aOSnvl12LUWhiPpwker3PD/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
+### 3.2.2 [Команды DDL и DML SQL](https://docs.google.com/presentation/d/1uFXnd4Sket5-399Df__imnY2d65NfQsE/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 [Практическое задание к Лекции 3.2](https://docs.google.com/document/d/1xDWXO6fg4LdiSCvYWk9hxTNdUDmTfsqj/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 ## Лекция 3.4 Построение запросов к БД. Select SQL. Индексы
 ### 3.4.1 [SELECT SQL. Базовая конструкция](https://docs.google.com/presentation/d/1bpqgUhqUtPp8zwaIsCsKCAdA0XpeZkFG/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
@@ -83,6 +83,7 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 ### 3.4.5 [SELECT SQL. Агрегатные функции. Группирующие запросы](https://docs.google.com/presentation/d/1OXXH1dj4exjoR8nke3sCLGQ_20OuX83s/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 ### 3.4.6 [SELECT SQL. NULL-значения](https://docs.google.com/presentation/d/1BSdIlGHb4vbjRFn3GUS2GTqjtSJGiOqh/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 ### 3.4.7 SELECT SQL. Представления. Модификация данных
+### 3.4.8 Индексы в реляционной БД
 ### [Операторы языка SQL Select](https://docs.google.com/document/d/15PbK32s7Q5ChKl5yqS1H5aOSr1PFv4J3/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (текстовые материалы)
 #### Тестовая база данных: 
 [Скрипты запросов БД Колледж 3.2.3-3.2.8](https://docs.google.com/document/d/1FNO7THVbLA2ttBk6_chz4xYdAgy5IWXf/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
