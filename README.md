@@ -9,6 +9,20 @@
 ### **Содержание зачета/экзамена - перечень тем для подготовки к зачету/экзамену:**
 ### [**3 семестр - зачет**]() 
 ### [**4 семестр - экзамен**]()
+
+## Лекция 2.4 Функциональные зависимости. Метод нормальных форм
+Материалы лекции доступны [здесь](https://drive.google.com/drive/folders/1XvfSatTdZ0BJNJA-Kl1H49HSf_ovfJPD?usp=drive_link)
+
+[Целостность базы данных](https://docs.google.com/presentation/d/1sL6SvB1rmSw6N7QUf_JwleA0rQ58Ne27/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+
+[Функциональные зависимости. Метод нормальных форм](https://docs.google.com/presentation/d/1kY48Q0CCLPiosmhH1hkthu-jt2rZxLee/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+
+[Пример нормализации БД](https://drive.google.com/file/d/1eOgEIIz3D1XsVdot1b5e9xZi81tDQjFb/view?usp=drive_link) 
+
+[Программа DBprom](https://drive.google.com/file/d/1kgQVsyXB_knonyjxa9acy-jkuJbcVoT8/view?usp=drive_link) 
+
+[Статья "Программа нормализации реляционных баз данных как основа предметно-ориентированной интеллектуальной обучающей системы"](https://drive.google.com/file/d/10qT5TFJljP-xPx_8cwmL5lXgnGlQjJ22/view?usp=drive_link)
+
 # 3 семестр 2024-2025
 ## Раздел 1 ВВЕДЕНИЕ
 ### Лекция 1.1 [Актуальность проблематики АИС и лежащих в их основе БД](https://clck.ru/3DLW6A) c
