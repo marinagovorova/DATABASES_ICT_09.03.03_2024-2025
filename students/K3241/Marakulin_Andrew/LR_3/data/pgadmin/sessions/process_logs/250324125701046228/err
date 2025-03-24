@@ -1,0 +1,486 @@
+250324125701370599,pg_dump: last built-in OID is 16383
+
+250324125701371551,pg_dump: reading extensions
+
+250324125701373007,pg_dump: identifying extension members
+
+250324125701374759,pg_dump: reading schemas
+
+250324125701386494,pg_dump: reading user-defined tables
+
+250324125701427680,pg_dump: reading user-defined functions
+
+250324125701438234,pg_dump: reading user-defined types
+
+250324125701445550,pg_dump: reading procedural languages
+
+250324125701447115,pg_dump: reading user-defined aggregate functions
+
+250324125701447792,pg_dump: reading user-defined operators
+
+250324125701450225,pg_dump: reading user-defined access methods
+
+250324125701451301,pg_dump: reading user-defined operator classes
+
+250324125701452197,pg_dump: reading user-defined operator families
+
+250324125701458105,pg_dump: reading user-defined text search parsers
+
+250324125701463370,pg_dump: reading user-defined text search templates
+
+250324125701468000,pg_dump: reading user-defined text search dictionaries
+
+250324125701472786,pg_dump: reading user-defined text search configurations
+
+250324125701478290,pg_dump: reading user-defined foreign-data wrappers
+
+250324125701482735,pg_dump: reading user-defined foreign servers
+
+250324125701487568,pg_dump: reading default privileges
+
+250324125701489280,pg_dump: reading user-defined collations
+
+250324125701498131,pg_dump: reading user-defined conversions
+
+250324125701504955,pg_dump: reading type casts
+
+250324125701509419,pg_dump: reading transforms
+
+250324125701510662,pg_dump: reading table inheritance information
+
+250324125701511432,pg_dump: reading event triggers
+
+250324125701512336,pg_dump: finding extension tables
+
+250324125701513916,pg_dump: finding inheritance relationships
+
+250324125701514316,pg_dump: reading column info for interesting tables
+
+250324125701514714,pg_dump: finding the columns and types of table "public.client"
+
+250324125701515108,pg_dump: finding default expressions of table "public.client"
+
+250324125701515595,pg_dump: finding check constraints for table "public.client"
+
+250324125701515925,pg_dump: finding the columns and types of table "public.passport"
+
+250324125701516402,pg_dump: finding default expressions of table "public.passport"
+
+250324125701516883,pg_dump: finding check constraints for table "public.passport"
+
+250324125701517298,pg_dump: finding the columns and types of table "public.deposit_type"
+
+250324125701517682,pg_dump: finding default expressions of table "public.deposit_type"
+
+250324125701518109,pg_dump: finding check constraints for table "public.deposit_type"
+
+250324125701518573,pg_dump: finding the columns and types of table "public.currency"
+
+250324125701518953,pg_dump: finding default expressions of table "public.currency"
+
+250324125701519526,pg_dump: finding check constraints for table "public.currency"
+
+250324125701519905,pg_dump: finding the columns and types of table "public.currency_rate"
+
+250324125701520430,pg_dump: finding default expressions of table "public.currency_rate"
+
+250324125701520906,pg_dump: finding check constraints for table "public.currency_rate"
+
+250324125701521375,pg_dump: finding the columns and types of table "public.deposit"
+
+250324125701521833,pg_dump: finding default expressions of table "public.deposit"
+
+250324125701522216,pg_dump: finding check constraints for table "public.deposit"
+
+250324125701522608,pg_dump: finding the columns and types of table "public.deposit_schedule"
+
+250324125701522989,pg_dump: finding default expressions of table "public.deposit_schedule"
+
+250324125701523538,pg_dump: finding check constraints for table "public.deposit_schedule"
+
+250324125701524051,pg_dump: finding the columns and types of table "public.loan_type"
+
+250324125701524460,pg_dump: finding default expressions of table "public.loan_type"
+
+250324125701524848,pg_dump: finding check constraints for table "public.loan_type"
+
+250324125701525253,pg_dump: finding the columns and types of table "public.loan"
+
+250324125701525615,pg_dump: finding default expressions of table "public.loan"
+
+250324125701526022,pg_dump: finding check constraints for table "public.loan"
+
+250324125701526387,pg_dump: finding the columns and types of table "public.loan_schedule"
+
+250324125701526810,pg_dump: finding default expressions of table "public.loan_schedule"
+
+250324125701527225,pg_dump: finding check constraints for table "public.loan_schedule"
+
+250324125701527614,pg_dump: finding the columns and types of table "public.employee"
+
+250324125701527967,pg_dump: finding default expressions of table "public.employee"
+
+250324125701528290,pg_dump: finding check constraints for table "public.employee"
+
+250324125701528687,pg_dump: finding the columns and types of table "public.position"
+
+250324125701529116,pg_dump: finding default expressions of table "public.position"
+
+250324125701529497,pg_dump: finding check constraints for table "public.position"
+
+250324125701529890,pg_dump: finding the columns and types of table "public.employee_position"
+
+250324125701530377,pg_dump: finding default expressions of table "public.employee_position"
+
+250324125701530744,pg_dump: finding check constraints for table "public.employee_position"
+
+250324125701531146,pg_dump: flagging inherited columns in subtables
+
+250324125701531500,pg_dump: reading partitioning data
+
+250324125701531931,pg_dump: reading indexes
+
+250324125701532270,pg_dump: reading indexes for table "public.client"
+
+250324125701532691,pg_dump: reading indexes for table "public.passport"
+
+250324125701533142,pg_dump: reading indexes for table "public.deposit_type"
+
+250324125701533473,pg_dump: reading indexes for table "public.currency"
+
+250324125701533851,pg_dump: reading indexes for table "public.currency_rate"
+
+250324125701534237,pg_dump: reading indexes for table "public.deposit"
+
+250324125701534612,pg_dump: reading indexes for table "public.deposit_schedule"
+
+250324125701535021,pg_dump: reading indexes for table "public.loan_type"
+
+250324125701535542,pg_dump: reading indexes for table "public.loan"
+
+250324125701536163,pg_dump: reading indexes for table "public.loan_schedule"
+
+250324125701536746,pg_dump: reading indexes for table "public.employee"
+
+250324125701537386,pg_dump: reading indexes for table "public.position"
+
+250324125701537998,pg_dump: reading indexes for table "public.employee_position"
+
+250324125701538576,pg_dump: flagging indexes in partitioned tables
+
+250324125701538994,pg_dump: reading extended statistics
+
+250324125701542916,pg_dump: reading constraints
+
+250324125701543328,pg_dump: reading foreign key constraints for table "public.client"
+
+250324125701543706,pg_dump: reading foreign key constraints for table "public.passport"
+
+250324125701544253,pg_dump: reading foreign key constraints for table "public.deposit_type"
+
+250324125701544875,pg_dump: reading foreign key constraints for table "public.currency"
+
+250324125701545258,pg_dump: reading foreign key constraints for table "public.currency_rate"
+
+250324125701545652,pg_dump: reading foreign key constraints for table "public.deposit"
+
+250324125701546024,pg_dump: reading foreign key constraints for table "public.deposit_schedule"
+
+250324125701546365,pg_dump: reading foreign key constraints for table "public.loan_type"
+
+250324125701546691,pg_dump: reading foreign key constraints for table "public.loan"
+
+250324125701547067,pg_dump: reading foreign key constraints for table "public.loan_schedule"
+
+250324125701547415,pg_dump: reading foreign key constraints for table "public.employee"
+
+250324125701547775,pg_dump: reading foreign key constraints for table "public.position"
+
+250324125701548083,pg_dump: reading foreign key constraints for table "public.employee_position"
+
+250324125701548415,pg_dump: reading triggers
+
+250324125701548734,pg_dump: reading triggers for table "public.client"
+
+250324125701549080,pg_dump: reading triggers for table "public.passport"
+
+250324125701549457,pg_dump: reading triggers for table "public.deposit_type"
+
+250324125701549764,pg_dump: reading triggers for table "public.currency"
+
+250324125701550085,pg_dump: reading triggers for table "public.currency_rate"
+
+250324125701550393,pg_dump: reading triggers for table "public.deposit"
+
+250324125701550723,pg_dump: reading triggers for table "public.deposit_schedule"
+
+250324125701551144,pg_dump: reading triggers for table "public.loan_type"
+
+250324125701551640,pg_dump: reading triggers for table "public.loan"
+
+250324125701552061,pg_dump: reading triggers for table "public.loan_schedule"
+
+250324125701552389,pg_dump: reading triggers for table "public.employee"
+
+250324125701552736,pg_dump: reading triggers for table "public.position"
+
+250324125701553054,pg_dump: reading triggers for table "public.employee_position"
+
+250324125701553405,pg_dump: reading rewrite rules
+
+250324125701553737,pg_dump: reading policies
+
+250324125701554031,pg_dump: reading row-level security policies
+
+250324125701554314,pg_dump: reading publications
+
+250324125701554649,pg_dump: reading publication membership
+
+250324125701556541,pg_dump: reading subscriptions
+
+250324125701560574,pg_dump: reading large objects
+
+250324125701561538,pg_dump: reading dependency data
+
+250324125701576040,pg_dump: saving encoding = UTF8
+
+250324125701576545,pg_dump: saving standard_conforming_strings = on
+
+250324125701576946,pg_dump: saving search_path = 
+
+250324125701595028,pg_dump: creating FUNCTION "public.validate_deposit_min_amount()"
+
+250324125701595520,pg_dump: creating TABLE "public.client"
+
+250324125701595888,pg_dump: creating SEQUENCE "public.client_client_id_seq"
+
+250324125701596249,pg_dump: creating SEQUENCE OWNED BY "public.client_client_id_seq"
+
+250324125701596701,pg_dump: creating TABLE "public.currency"
+
+250324125701597053,pg_dump: creating SEQUENCE "public.currency_currency_code_seq"
+
+250324125701597457,pg_dump: creating SEQUENCE OWNED BY "public.currency_currency_code_seq"
+
+250324125701597779,pg_dump: creating TABLE "public.currency_rate"
+
+250324125701598153,pg_dump: creating SEQUENCE "public.currency_rate_rate_id_seq"
+
+250324125701598479,pg_dump: creating SEQUENCE OWNED BY "public.currency_rate_rate_id_seq"
+
+250324125701598831,pg_dump: creating TABLE "public.deposit"
+
+250324125701599163,pg_dump: creating SEQUENCE "public.deposit_deposit_id_seq"
+
+250324125701599704,pg_dump: creating SEQUENCE OWNED BY "public.deposit_deposit_id_seq"
+
+250324125701600123,pg_dump: creating TABLE "public.deposit_schedule"
+
+250324125701600567,pg_dump: creating SEQUENCE "public.deposit_schedule_schedule_id_seq"
+
+250324125701600919,pg_dump: creating SEQUENCE OWNED BY "public.deposit_schedule_schedule_id_seq"
+
+250324125701601236,pg_dump: creating TABLE "public.deposit_type"
+
+250324125701601666,pg_dump: creating SEQUENCE "public.deposit_type_deposit_type_id_seq"
+
+250324125701601991,pg_dump: creating SEQUENCE OWNED BY "public.deposit_type_deposit_type_id_seq"
+
+250324125701602346,pg_dump: creating TABLE "public.employee"
+
+250324125701602680,pg_dump: creating SEQUENCE "public.employee_employee_id_seq"
+
+250324125701602998,pg_dump: creating SEQUENCE OWNED BY "public.employee_employee_id_seq"
+
+250324125701603330,pg_dump: creating TABLE "public.employee_position"
+
+250324125701603655,pg_dump: creating SEQUENCE "public.employee_position_id_seq"
+
+250324125701604085,pg_dump: creating SEQUENCE OWNED BY "public.employee_position_id_seq"
+
+250324125701604489,pg_dump: creating TABLE "public.loan"
+
+250324125701604895,pg_dump: creating SEQUENCE "public.loan_loan_id_seq"
+
+250324125701605199,pg_dump: creating SEQUENCE OWNED BY "public.loan_loan_id_seq"
+
+250324125701605472,pg_dump: creating TABLE "public.loan_schedule"
+
+250324125701605808,pg_dump: creating SEQUENCE "public.loan_schedule_schedule_id_seq"
+
+250324125701606225,pg_dump: creating SEQUENCE OWNED BY "public.loan_schedule_schedule_id_seq"
+
+250324125701606910,pg_dump: creating TABLE "public.loan_type"
+
+250324125701607419,pg_dump: creating SEQUENCE "public.loan_type_loan_type_id_seq"
+
+250324125701607803,pg_dump: creating SEQUENCE OWNED BY "public.loan_type_loan_type_id_seq"
+
+250324125701608098,pg_dump: creating TABLE "public.passport"
+
+250324125701608421,pg_dump: creating SEQUENCE "public.passport_passport_id_seq"
+
+250324125701608735,pg_dump: creating SEQUENCE OWNED BY "public.passport_passport_id_seq"
+
+250324125701609048,pg_dump: creating TABLE "public.position"
+
+250324125701609372,pg_dump: creating SEQUENCE "public.position_position_id_seq"
+
+250324125701609709,pg_dump: creating SEQUENCE OWNED BY "public.position_position_id_seq"
+
+250324125701610027,pg_dump: creating DEFAULT "public.client client_id"
+
+250324125701610339,pg_dump: creating DEFAULT "public.currency currency_code"
+
+250324125701610662,pg_dump: creating DEFAULT "public.currency_rate rate_id"
+
+250324125701610978,pg_dump: creating DEFAULT "public.deposit deposit_id"
+
+250324125701611285,pg_dump: creating DEFAULT "public.deposit_schedule schedule_id"
+
+250324125701611587,pg_dump: creating DEFAULT "public.deposit_type deposit_type_id"
+
+250324125701611878,pg_dump: creating DEFAULT "public.employee employee_id"
+
+250324125701612202,pg_dump: creating DEFAULT "public.employee_position id"
+
+250324125701612519,pg_dump: creating DEFAULT "public.loan loan_id"
+
+250324125701612816,pg_dump: creating DEFAULT "public.loan_schedule schedule_id"
+
+250324125701613135,pg_dump: creating DEFAULT "public.loan_type loan_type_id"
+
+250324125701613469,pg_dump: creating DEFAULT "public.passport passport_id"
+
+250324125701614111,pg_dump: creating DEFAULT "public.position position_id"
+
+250324125701614450,pg_dump: processing data for table "public.client"
+
+250324125701614759,pg_dump: dumping contents of table "public.client"
+
+250324125701615070,pg_dump: processing data for table "public.currency"
+
+250324125701615389,pg_dump: dumping contents of table "public.currency"
+
+250324125701615695,pg_dump: processing data for table "public.currency_rate"
+
+250324125701616012,pg_dump: dumping contents of table "public.currency_rate"
+
+250324125701616311,pg_dump: processing data for table "public.deposit"
+
+250324125701616615,pg_dump: dumping contents of table "public.deposit"
+
+250324125701616917,pg_dump: processing data for table "public.deposit_schedule"
+
+250324125701617247,pg_dump: dumping contents of table "public.deposit_schedule"
+
+250324125701617565,pg_dump: processing data for table "public.deposit_type"
+
+250324125701617872,pg_dump: dumping contents of table "public.deposit_type"
+
+250324125701618178,pg_dump: processing data for table "public.employee"
+
+250324125701618494,pg_dump: dumping contents of table "public.employee"
+
+250324125701618793,pg_dump: processing data for table "public.employee_position"
+
+250324125701619074,pg_dump: dumping contents of table "public.employee_position"
+
+250324125701619350,pg_dump: processing data for table "public.loan"
+
+250324125701619668,pg_dump: dumping contents of table "public.loan"
+
+250324125701620042,pg_dump: processing data for table "public.loan_schedule"
+
+250324125701620531,pg_dump: dumping contents of table "public.loan_schedule"
+
+250324125701621162,pg_dump: processing data for table "public.loan_type"
+
+250324125701621556,pg_dump: dumping contents of table "public.loan_type"
+
+250324125701621932,pg_dump: processing data for table "public.passport"
+
+250324125701622251,pg_dump: dumping contents of table "public.passport"
+
+250324125701622570,pg_dump: processing data for table "public.position"
+
+250324125701622849,pg_dump: dumping contents of table "public.position"
+
+250324125701623123,pg_dump: executing SEQUENCE SET client_client_id_seq
+
+250324125701623433,pg_dump: executing SEQUENCE SET currency_currency_code_seq
+
+250324125701623747,pg_dump: executing SEQUENCE SET currency_rate_rate_id_seq
+
+250324125701624029,pg_dump: executing SEQUENCE SET deposit_deposit_id_seq
+
+250324125701624294,pg_dump: executing SEQUENCE SET deposit_schedule_schedule_id_seq
+
+250324125701624555,pg_dump: executing SEQUENCE SET deposit_type_deposit_type_id_seq
+
+250324125701624813,pg_dump: executing SEQUENCE SET employee_employee_id_seq
+
+250324125701625072,pg_dump: executing SEQUENCE SET employee_position_id_seq
+
+250324125701625332,pg_dump: executing SEQUENCE SET loan_loan_id_seq
+
+250324125701625590,pg_dump: executing SEQUENCE SET loan_schedule_schedule_id_seq
+
+250324125701625849,pg_dump: executing SEQUENCE SET loan_type_loan_type_id_seq
+
+250324125701626108,pg_dump: executing SEQUENCE SET passport_passport_id_seq
+
+250324125701626368,pg_dump: executing SEQUENCE SET position_position_id_seq
+
+250324125701626633,pg_dump: creating CONSTRAINT "public.client client_pkey"
+
+250324125701626893,pg_dump: creating CONSTRAINT "public.currency currency_pkey"
+
+250324125701627193,pg_dump: creating CONSTRAINT "public.currency_rate currency_rate_pkey"
+
+250324125701627678,pg_dump: creating CONSTRAINT "public.deposit deposit_pkey"
+
+250324125701628064,pg_dump: creating CONSTRAINT "public.deposit_schedule deposit_schedule_pkey"
+
+250324125701628378,pg_dump: creating CONSTRAINT "public.deposit_type deposit_type_pkey"
+
+250324125701628638,pg_dump: creating CONSTRAINT "public.employee employee_pkey"
+
+250324125701628897,pg_dump: creating CONSTRAINT "public.employee_position employee_position_pkey"
+
+250324125701629155,pg_dump: creating CONSTRAINT "public.loan loan_pkey"
+
+250324125701629414,pg_dump: creating CONSTRAINT "public.loan_schedule loan_schedule_pkey"
+
+250324125701629671,pg_dump: creating CONSTRAINT "public.loan_type loan_type_pkey"
+
+250324125701629930,pg_dump: creating CONSTRAINT "public.passport passport_pkey"
+
+250324125701630187,pg_dump: creating CONSTRAINT "public.position position_pkey"
+
+250324125701630445,pg_dump: creating TRIGGER "public.deposit trg_deposit_min_amount"
+
+250324125701630703,pg_dump: creating FK CONSTRAINT "public.currency_rate currency_rate_currency_code_fkey"
+
+250324125701630961,pg_dump: creating FK CONSTRAINT "public.deposit deposit_currency_code_fkey"
+
+250324125701631218,pg_dump: creating FK CONSTRAINT "public.deposit deposit_deposit_type_id_fkey"
+
+250324125701631476,pg_dump: creating FK CONSTRAINT "public.deposit deposit_passport_id_fkey"
+
+250324125701631735,pg_dump: creating FK CONSTRAINT "public.deposit_schedule deposit_schedule_deposit_id_fkey"
+
+250324125701631992,pg_dump: creating FK CONSTRAINT "public.employee_position employee_position_employee_id_fkey"
+
+250324125701632249,pg_dump: creating FK CONSTRAINT "public.employee_position employee_position_position_id_fkey"
+
+250324125701632506,pg_dump: creating FK CONSTRAINT "public.loan loan_currency_code_fkey"
+
+250324125701632765,pg_dump: creating FK CONSTRAINT "public.loan loan_loan_type_id_fkey"
+
+250324125701633021,pg_dump: creating FK CONSTRAINT "public.loan loan_passport_id_fkey"
+
+250324125701633278,pg_dump: creating FK CONSTRAINT "public.loan_schedule loan_schedule_loan_id_fkey"
+
+250324125701633536,pg_dump: creating FK CONSTRAINT "public.passport passport_client_id_fkey"
+
