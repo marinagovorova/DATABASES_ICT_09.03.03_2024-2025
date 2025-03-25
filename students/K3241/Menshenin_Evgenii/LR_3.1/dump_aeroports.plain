@@ -1,0 +1,799 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 17.4
+-- Dumped by pg_dump version 17.4
+
+-- Started on 2025-03-19 23:30:03 MSK
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 2 (class 3079 OID 16658)
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- TOC entry 3772 (class 0 OID 0)
+-- Dependencies: 2
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 219 (class 1259 OID 16394)
+-- Name: AIRPORTS; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."AIRPORTS" (
+    airport_code text NOT NULL,
+    country text NOT NULL,
+    status text NOT NULL,
+    city text,
+    name text NOT NULL,
+    CONSTRAINT chk_airport_code_format CHECK ((airport_code ~ '^[A-Z]{3}$'::text)),
+    CONSTRAINT chk_city_not_empty CHECK ((city <> ''::text)),
+    CONSTRAINT chk_country_not_empty CHECK ((country <> ''::text)),
+    CONSTRAINT chk_name_not_empty CHECK ((name <> ''::text)),
+    CONSTRAINT chk_status CHECK ((status = ANY (ARRAY['Operational'::text, 'Closed'::text, 'UnderConstruction'::text, 'TemporarilyClosed'::text, 'LimitedOperations'::text, 'RestrictedAccess'::text, 'EmergencyMode'::text])))
+);
+
+
+ALTER TABLE public."AIRPORTS" OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 16452)
+-- Name: CASH_REGISTERS; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."CASH_REGISTERS" (
+    cash_register_id uuid NOT NULL,
+    address text NOT NULL,
+    status text NOT NULL,
+    CONSTRAINT chk_address_not_empty CHECK ((address <> ''::text)),
+    CONSTRAINT chk_status CHECK ((status = ANY (ARRAY['Open'::text, 'Closed'::text, 'InUse'::text, 'OutofService'::text, 'UnderMaintenance'::text, 'Reconciled'::text, 'AwaitingCash'::text])))
+);
+
+
+ALTER TABLE public."CASH_REGISTERS" OWNER TO postgres;
+
+--
+-- TOC entry 226 (class 1259 OID 16514)
+-- Name: COMPANY; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."COMPANY" (
+    company_id uuid NOT NULL,
+    name text NOT NULL,
+    country text NOT NULL,
+    CONSTRAINT chk_company_country_not_empty CHECK ((country <> ''::text)),
+    CONSTRAINT chk_company_name_not_empty CHECK ((name <> ''::text))
+);
+
+
+ALTER TABLE public."COMPANY" OWNER TO postgres;
+
+--
+-- TOC entry 228 (class 1259 OID 16533)
+-- Name: CREW; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."CREW" (
+    crew_id uuid NOT NULL,
+    role text NOT NULL,
+    medical_check_date date NOT NULL,
+    medical_status text NOT NULL,
+    medical_reason text,
+    flight_id uuid,
+    CONSTRAINT chk_medical_check_date CHECK ((medical_check_date <= CURRENT_DATE)),
+    CONSTRAINT chk_medical_reason_length CHECK ((length(medical_reason) <= 500)),
+    CONSTRAINT chk_medical_status CHECK ((medical_status = ANY (ARRAY['FitforDuty'::text, 'UnfitforDuty'::text, 'OnSickLeave'::text, 'InQuarantine'::text, 'Recovered'::text, 'MedicalClearancePending'::text]))),
+    CONSTRAINT chk_role_valid CHECK ((role = ANY (ARRAY['Pilot'::text, 'CoPilot'::text, 'FlightEngineer'::text, 'CabinCrew'::text])))
+);
+
+
+ALTER TABLE public."CREW" OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 16521)
+-- Name: CREW_MEMBERS; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."CREW_MEMBERS" (
+    member_id uuid NOT NULL,
+    company_id uuid NOT NULL,
+    full_name text NOT NULL,
+    email text NOT NULL,
+    phone_number text NOT NULL,
+    passport_serial numeric NOT NULL,
+    passport_number numeric NOT NULL,
+    passport_region text NOT NULL,
+    role text NOT NULL,
+    CONSTRAINT chk_email_format CHECK ((email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text)),
+    CONSTRAINT chk_full_name_not_empty CHECK ((full_name <> ''::text)),
+    CONSTRAINT chk_passport_number CHECK (((passport_number)::text ~ '^\d{6,10}$'::text)),
+    CONSTRAINT chk_passport_region_not_empty CHECK ((passport_region <> ''::text)),
+    CONSTRAINT chk_passport_serial CHECK (((passport_serial)::text ~ '^\d{4,8}$'::text)),
+    CONSTRAINT chk_role CHECK ((role = ANY (ARRAY['Pilot'::text, 'CoPilot'::text, 'FlightEngineer'::text, 'CabinCrew'::text, 'FlightAttendant'::text, 'Purser'::text, 'Navigator'::text, 'Dispatcher'::text, 'GroundSupport'::text, 'MaintenanceTechnician'::text])))
+);
+
+
+ALTER TABLE public."CREW_MEMBERS" OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 16389)
+-- Name: FLIGHT; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."FLIGHT" (
+    status text NOT NULL,
+    flight_id uuid NOT NULL,
+    plane_id uuid,
+    arrival_time time with time zone NOT NULL,
+    arrival_time_fact time with time zone,
+    departure_time time with time zone NOT NULL,
+    departure_time_fact time with time zone,
+    departure_airport text NOT NULL,
+    destination_airport text NOT NULL,
+    CONSTRAINT chk_airports_different CHECK ((departure_airport <> destination_airport)),
+    CONSTRAINT chk_arrival_after_departure CHECK ((arrival_time > departure_time)),
+    CONSTRAINT chk_status CHECK ((status = ANY (ARRAY['Scheduled'::text, 'InProgress'::text, 'Completed'::text, 'Cancelled'::text, 'Delayed'::text, 'Diverted'::text, 'OnTime'::text, 'Boarding'::text])))
+);
+
+
+ALTER TABLE public."FLIGHT" OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16459)
+-- Name: PASSENGERS; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."PASSENGERS" (
+    passenger_id uuid NOT NULL,
+    full_name text NOT NULL,
+    passport_serial integer NOT NULL,
+    passport_number integer NOT NULL,
+    passport_region text NOT NULL,
+    birth_date date NOT NULL,
+    phone_number numeric NOT NULL,
+    email text NOT NULL,
+    CONSTRAINT chk_birth_date CHECK ((birth_date <= CURRENT_DATE)),
+    CONSTRAINT chk_full_name CHECK ((full_name ~ '\S+\s+\S+'::text)),
+    CONSTRAINT chk_passenger_full_name_not_empty CHECK ((full_name <> ''::text)),
+    CONSTRAINT chk_passport_number CHECK (((passport_number)::text ~ '^\d{6,10}$'::text)),
+    CONSTRAINT chk_passport_region_not_empty CHECK ((passport_region <> ''::text)),
+    CONSTRAINT chk_passport_serial CHECK (((passport_serial)::text ~ '^\d{4,8}$'::text))
+);
+
+
+ALTER TABLE public."PASSENGERS" OWNER TO postgres;
+
+--
+-- TOC entry 229 (class 1259 OID 16550)
+-- Name: PLANES; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."PLANES" (
+    plane_id uuid NOT NULL,
+    model_id uuid NOT NULL,
+    company_id uuid NOT NULL,
+    status text NOT NULL,
+    flight_duration time without time zone NOT NULL,
+    last_technical_service timestamp with time zone NOT NULL,
+    CONSTRAINT chk_flight_duration_positive CHECK (((flight_duration)::interval > '00:00:00'::interval)),
+    CONSTRAINT chk_last_technical_service CHECK ((last_technical_service <= CURRENT_TIMESTAMP)),
+    CONSTRAINT chk_status CHECK ((status = ANY (ARRAY['InService'::text, 'OutofService'::text, 'MaintenanceRequired'::text, 'InRepair'::text, 'ScheduledforMaintenance'::text, 'Reserved'::text, 'Decommissioned'::text])))
+);
+
+
+ALTER TABLE public."PLANES" OWNER TO postgres;
+
+--
+-- TOC entry 225 (class 1259 OID 16507)
+-- Name: PLANE_MODELS; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."PLANE_MODELS" (
+    model_id uuid NOT NULL,
+    type text NOT NULL,
+    seat_count integer NOT NULL,
+    speed numeric NOT NULL,
+    fuel_consumption numeric NOT NULL,
+    cargo_capacity numeric NOT NULL,
+    range numeric NOT NULL,
+    role text NOT NULL,
+    CONSTRAINT chk_type_not_empty CHECK ((type <> ''::text))
+);
+
+
+ALTER TABLE public."PLANE_MODELS" OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 16466)
+-- Name: SEATS; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."SEATS" (
+    seat_id uuid NOT NULL,
+    flight_id uuid NOT NULL,
+    seat_number text NOT NULL,
+    seat_type text NOT NULL,
+    base_price numeric DEFAULT 0 NOT NULL,
+    is_booked boolean DEFAULT false NOT NULL,
+    CONSTRAINT chk_base_price_non_negative CHECK ((base_price >= (0)::numeric)),
+    CONSTRAINT chk_seat_number CHECK ((seat_number ~ '^\d+[A-Za-z]$'::text)),
+    CONSTRAINT chk_seat_type CHECK ((seat_type = ANY (ARRAY['Economy'::text, 'Business'::text, 'FirstClass'::text, 'PremiumEconomy'::text, 'Window'::text, 'Aisle'::text, 'Middle'::text, 'ExitRow'::text, 'Bulkhead'::text, 'Recliner'::text, 'NonRecliner'::text, 'Accessible'::text])))
+);
+
+
+ALTER TABLE public."SEATS" OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 16480)
+-- Name: TICKETS; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."TICKETS" (
+    ticket_id uuid NOT NULL,
+    flight_id uuid NOT NULL,
+    seat_id uuid NOT NULL,
+    sale_channel text NOT NULL,
+    cash_register_id uuid NOT NULL,
+    status text NOT NULL,
+    additional_fee numeric NOT NULL,
+    passanger_id uuid NOT NULL,
+    CONSTRAINT chk_additional_fee_non_negative CHECK ((additional_fee >= (0)::numeric)),
+    CONSTRAINT chk_sale_channel CHECK ((sale_channel = ANY (ARRAY['Online'::text, 'TicketOffice'::text, 'TravelAgency'::text, 'MobileApp'::text, 'Kiosk'::text, 'CorporateBooking'::text, 'ThirdPartyVendor'::text, 'AirportCounter'::text]))),
+    CONSTRAINT chk_ticket_status CHECK ((status = ANY (ARRAY['Available'::text, 'Booked'::text, 'Confirmed'::text, 'Cancelled'::text, 'CheckedIn'::text, 'NoShow'::text, 'Refunded'::text, 'PendingPayment'::text])))
+);
+
+
+ALTER TABLE public."TICKETS" OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16424)
+-- Name: TRANSIT; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."TRANSIT" (
+    transit_id "char"[] NOT NULL,
+    arrival_flight_id uuid NOT NULL,
+    departure_flight_id uuid NOT NULL,
+    CONSTRAINT chk_arrival_departure_different CHECK ((arrival_flight_id <> departure_flight_id))
+);
+
+
+ALTER TABLE public."TRANSIT" OWNER TO postgres;
+
+--
+-- TOC entry 3756 (class 0 OID 16394)
+-- Dependencies: 219
+-- Data for Name: AIRPORTS; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."AIRPORTS" (airport_code, country, status, city, name) FROM stdin;
+SVO	Russia	Operational	Moscow	Sheremetyevo International Airport
+JFK	USA	Operational	New York	John F. Kennedy International Airport
+\.
+
+
+--
+-- TOC entry 3758 (class 0 OID 16452)
+-- Dependencies: 221
+-- Data for Name: CASH_REGISTERS; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."CASH_REGISTERS" (cash_register_id, address, status) FROM stdin;
+a430db59-ca6e-4eae-acf3-7a77733cfe09	Moscow Airport Terminal B	Open
+163304b5-3f0b-48a1-9534-a7cc61e944ab	New York Terminal 4	InUse
+\.
+
+
+--
+-- TOC entry 3763 (class 0 OID 16514)
+-- Dependencies: 226
+-- Data for Name: COMPANY; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."COMPANY" (company_id, name, country) FROM stdin;
+e1169c5a-068a-4ffa-802f-bf6896c3c47c	Skyways Airlines	USA
+8c0fa9a3-6c7d-4227-983e-3c4665da3150	British Airways	UK
+aa2ff6be-e37a-455e-adc3-227dca12caaf	AeroStudent	Russia
+c01fa98e-59dc-4710-ad5f-56bac7e78e9d	CampusAir	USA
+\.
+
+
+--
+-- TOC entry 3765 (class 0 OID 16533)
+-- Dependencies: 228
+-- Data for Name: CREW; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."CREW" (crew_id, role, medical_check_date, medical_status, medical_reason, flight_id) FROM stdin;
+b104ec73-09fa-4fa0-a487-e4627b7c1e52	Pilot	2025-02-17	FitforDuty	\N	e974f44a-9c87-44ed-aefb-11b7b8d331e1
+\.
+
+
+--
+-- TOC entry 3764 (class 0 OID 16521)
+-- Dependencies: 227
+-- Data for Name: CREW_MEMBERS; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."CREW_MEMBERS" (member_id, company_id, full_name, email, phone_number, passport_serial, passport_number, passport_region, role) FROM stdin;
+b104ec73-09fa-4fa0-a487-e4627b7c1e52	e1169c5a-068a-4ffa-802f-bf6896c3c47c	Ivan Petrov	ivan.petrov@aerostudent.com	+79161234567	1234	567890	Moscow	Pilot
+\.
+
+
+--
+-- TOC entry 3755 (class 0 OID 16389)
+-- Dependencies: 218
+-- Data for Name: FLIGHT; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."FLIGHT" (status, flight_id, plane_id, arrival_time, arrival_time_fact, departure_time, departure_time_fact, departure_airport, destination_airport) FROM stdin;
+Scheduled	e974f44a-9c87-44ed-aefb-11b7b8d331e1	\N	02:02:28.760758+03	\N	00:02:28.760758+03	\N	SVO	JFK
+\.
+
+
+--
+-- TOC entry 3759 (class 0 OID 16459)
+-- Dependencies: 222
+-- Data for Name: PASSENGERS; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."PASSENGERS" (passenger_id, full_name, passport_serial, passport_number, passport_region, birth_date, phone_number, email) FROM stdin;
+858d93c1-5f17-40d8-bacd-aabd23d8f1b5	Anna Ivanova	43211	9876541	Moscow	2000-05-15	79167654321	anna.ivanova@edu.ru
+\.
+
+
+--
+-- TOC entry 3766 (class 0 OID 16550)
+-- Dependencies: 229
+-- Data for Name: PLANES; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."PLANES" (plane_id, model_id, company_id, status, flight_duration, last_technical_service) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3762 (class 0 OID 16507)
+-- Dependencies: 225
+-- Data for Name: PLANE_MODELS; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."PLANE_MODELS" (model_id, type, seat_count, speed, fuel_consumption, cargo_capacity, range, role) FROM stdin;
+e1468bc8-ca46-4b03-9e18-2f07dfe6999f	Boeing 737	160	600	2.5	20000	3000	commercial
+010c20ae-dc9d-4a83-a352-3d42e5cce41d	Airbus A320	180	610	2.6	18000	3200	commercial
+\.
+
+
+--
+-- TOC entry 3760 (class 0 OID 16466)
+-- Dependencies: 223
+-- Data for Name: SEATS; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."SEATS" (seat_id, flight_id, seat_number, seat_type, base_price, is_booked) FROM stdin;
+cd09f0d8-8dd9-499a-ab44-30038dc654c0	e974f44a-9c87-44ed-aefb-11b7b8d331e1	12A	Economy	15000	f
+6cc73f29-1815-4b9b-94b7-c0887f98701a	e974f44a-9c87-44ed-aefb-11b7b8d331e1	1B	Business	35000	f
+\.
+
+
+--
+-- TOC entry 3761 (class 0 OID 16480)
+-- Dependencies: 224
+-- Data for Name: TICKETS; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."TICKETS" (ticket_id, flight_id, seat_id, sale_channel, cash_register_id, status, additional_fee, passanger_id) FROM stdin;
+aa8b7bc8-7cdc-40ef-9e96-242bd218a91c	e974f44a-9c87-44ed-aefb-11b7b8d331e1	cd09f0d8-8dd9-499a-ab44-30038dc654c0	Online	a430db59-ca6e-4eae-acf3-7a77733cfe09	Confirmed	500	858d93c1-5f17-40d8-bacd-aabd23d8f1b5
+\.
+
+
+--
+-- TOC entry 3757 (class 0 OID 16424)
+-- Dependencies: 220
+-- Data for Name: TRANSIT; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."TRANSIT" (transit_id, arrival_flight_id, departure_flight_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3552 (class 2606 OID 16872)
+-- Name: AIRPORTS AIRPORTS_airport_code_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."AIRPORTS"
+    ADD CONSTRAINT "AIRPORTS_airport_code_key" UNIQUE (airport_code);
+
+
+--
+-- TOC entry 3554 (class 2606 OID 16573)
+-- Name: AIRPORTS AIRPORTS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."AIRPORTS"
+    ADD CONSTRAINT "AIRPORTS_pkey" PRIMARY KEY (airport_code);
+
+
+--
+-- TOC entry 3560 (class 2606 OID 16874)
+-- Name: CASH_REGISTERS CASH_REGISTERS_cash_register_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CASH_REGISTERS"
+    ADD CONSTRAINT "CASH_REGISTERS_cash_register_id_key" UNIQUE (cash_register_id);
+
+
+--
+-- TOC entry 3562 (class 2606 OID 16458)
+-- Name: CASH_REGISTERS CASH_REGISTERS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CASH_REGISTERS"
+    ADD CONSTRAINT "CASH_REGISTERS_pkey" PRIMARY KEY (cash_register_id);
+
+
+--
+-- TOC entry 3580 (class 2606 OID 16876)
+-- Name: COMPANY COMPANY_company_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."COMPANY"
+    ADD CONSTRAINT "COMPANY_company_id_key" UNIQUE (company_id);
+
+
+--
+-- TOC entry 3582 (class 2606 OID 16520)
+-- Name: COMPANY COMPANY_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."COMPANY"
+    ADD CONSTRAINT "COMPANY_pkey" PRIMARY KEY (company_id);
+
+
+--
+-- TOC entry 3584 (class 2606 OID 16880)
+-- Name: CREW_MEMBERS CREW_MEMBERS_member_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CREW_MEMBERS"
+    ADD CONSTRAINT "CREW_MEMBERS_member_id_key" UNIQUE (member_id);
+
+
+--
+-- TOC entry 3586 (class 2606 OID 16527)
+-- Name: CREW_MEMBERS CREW_MEMBERS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CREW_MEMBERS"
+    ADD CONSTRAINT "CREW_MEMBERS_pkey" PRIMARY KEY (member_id);
+
+
+--
+-- TOC entry 3588 (class 2606 OID 16878)
+-- Name: CREW CREW_crew_id_flight_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CREW"
+    ADD CONSTRAINT "CREW_crew_id_flight_id_key" UNIQUE (crew_id, flight_id);
+
+
+--
+-- TOC entry 3590 (class 2606 OID 16539)
+-- Name: CREW CREW_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CREW"
+    ADD CONSTRAINT "CREW_pkey" PRIMARY KEY (crew_id);
+
+
+--
+-- TOC entry 3548 (class 2606 OID 16882)
+-- Name: FLIGHT FLIGHT_flight_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."FLIGHT"
+    ADD CONSTRAINT "FLIGHT_flight_id_key" UNIQUE (flight_id);
+
+
+--
+-- TOC entry 3550 (class 2606 OID 16416)
+-- Name: FLIGHT FLIGHT_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."FLIGHT"
+    ADD CONSTRAINT "FLIGHT_pkey" PRIMARY KEY (flight_id);
+
+
+--
+-- TOC entry 3564 (class 2606 OID 16884)
+-- Name: PASSENGERS PASSENGERS_passenger_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PASSENGERS"
+    ADD CONSTRAINT "PASSENGERS_passenger_id_key" UNIQUE (passenger_id);
+
+
+--
+-- TOC entry 3566 (class 2606 OID 16465)
+-- Name: PASSENGERS PASSENGERS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PASSENGERS"
+    ADD CONSTRAINT "PASSENGERS_pkey" PRIMARY KEY (passenger_id);
+
+
+--
+-- TOC entry 3592 (class 2606 OID 16556)
+-- Name: PLANES PLANES_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PLANES"
+    ADD CONSTRAINT "PLANES_pkey" PRIMARY KEY (plane_id);
+
+
+--
+-- TOC entry 3594 (class 2606 OID 16886)
+-- Name: PLANES PLANES_plane_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PLANES"
+    ADD CONSTRAINT "PLANES_plane_id_key" UNIQUE (plane_id);
+
+
+--
+-- TOC entry 3576 (class 2606 OID 16888)
+-- Name: PLANE_MODELS PLANE_MODELS_model_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PLANE_MODELS"
+    ADD CONSTRAINT "PLANE_MODELS_model_id_key" UNIQUE (model_id);
+
+
+--
+-- TOC entry 3578 (class 2606 OID 16513)
+-- Name: PLANE_MODELS PLANE_MODELS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PLANE_MODELS"
+    ADD CONSTRAINT "PLANE_MODELS_pkey" PRIMARY KEY (model_id);
+
+
+--
+-- TOC entry 3568 (class 2606 OID 16474)
+-- Name: SEATS SEATS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SEATS"
+    ADD CONSTRAINT "SEATS_pkey" PRIMARY KEY (seat_id);
+
+
+--
+-- TOC entry 3570 (class 2606 OID 16890)
+-- Name: SEATS SEATS_seat_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SEATS"
+    ADD CONSTRAINT "SEATS_seat_id_key" UNIQUE (seat_id);
+
+
+--
+-- TOC entry 3572 (class 2606 OID 16486)
+-- Name: TICKETS TICKETS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."TICKETS"
+    ADD CONSTRAINT "TICKETS_pkey" PRIMARY KEY (ticket_id);
+
+
+--
+-- TOC entry 3574 (class 2606 OID 16892)
+-- Name: TICKETS TICKETS_ticket_id_seat_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."TICKETS"
+    ADD CONSTRAINT "TICKETS_ticket_id_seat_id_key" UNIQUE (ticket_id, seat_id);
+
+
+--
+-- TOC entry 3556 (class 2606 OID 16430)
+-- Name: TRANSIT TRANSIT_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."TRANSIT"
+    ADD CONSTRAINT "TRANSIT_pkey" PRIMARY KEY (transit_id);
+
+
+--
+-- TOC entry 3558 (class 2606 OID 16870)
+-- Name: TRANSIT TRANSIT_transit_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."TRANSIT"
+    ADD CONSTRAINT "TRANSIT_transit_id_key" UNIQUE (transit_id);
+
+
+--
+-- TOC entry 3538 (class 2606 OID 16893)
+-- Name: CREW_MEMBERS chk_phone_number; Type: CHECK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public."CREW_MEMBERS"
+    ADD CONSTRAINT chk_phone_number CHECK ((phone_number ~ '^\+?[0-9]{6,}$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3523 (class 2606 OID 16895)
+-- Name: PASSENGERS chk_phone_number; Type: CHECK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public."PASSENGERS"
+    ADD CONSTRAINT chk_phone_number CHECK (((phone_number)::text ~ '^[0-9]{6,}$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3605 (class 2606 OID 16528)
+-- Name: CREW_MEMBERS CREW_MEMBERS_company_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CREW_MEMBERS"
+    ADD CONSTRAINT "CREW_MEMBERS_company_id_fkey" FOREIGN KEY (company_id) REFERENCES public."COMPANY"(company_id);
+
+
+--
+-- TOC entry 3606 (class 2606 OID 16545)
+-- Name: CREW CREW_crew_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CREW"
+    ADD CONSTRAINT "CREW_crew_id_fkey" FOREIGN KEY (crew_id) REFERENCES public."CREW_MEMBERS"(member_id);
+
+
+--
+-- TOC entry 3607 (class 2606 OID 16540)
+-- Name: CREW CREW_flight_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CREW"
+    ADD CONSTRAINT "CREW_flight_id_fkey" FOREIGN KEY (flight_id) REFERENCES public."FLIGHT"(flight_id);
+
+
+--
+-- TOC entry 3595 (class 2606 OID 16575)
+-- Name: FLIGHT FLIGHT_departure_airport_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."FLIGHT"
+    ADD CONSTRAINT "FLIGHT_departure_airport_fkey" FOREIGN KEY (departure_airport) REFERENCES public."AIRPORTS"(airport_code) NOT VALID;
+
+
+--
+-- TOC entry 3596 (class 2606 OID 16580)
+-- Name: FLIGHT FLIGHT_destination_airport_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."FLIGHT"
+    ADD CONSTRAINT "FLIGHT_destination_airport_fkey" FOREIGN KEY (destination_airport) REFERENCES public."AIRPORTS"(airport_code) NOT VALID;
+
+
+--
+-- TOC entry 3597 (class 2606 OID 16567)
+-- Name: FLIGHT FLIGHT_plane_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."FLIGHT"
+    ADD CONSTRAINT "FLIGHT_plane_id_fkey" FOREIGN KEY (plane_id) REFERENCES public."PLANES"(plane_id) NOT VALID;
+
+
+--
+-- TOC entry 3608 (class 2606 OID 16557)
+-- Name: PLANES PLANES_company_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PLANES"
+    ADD CONSTRAINT "PLANES_company_id_fkey" FOREIGN KEY (company_id) REFERENCES public."COMPANY"(company_id);
+
+
+--
+-- TOC entry 3609 (class 2606 OID 16562)
+-- Name: PLANES PLANES_model_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PLANES"
+    ADD CONSTRAINT "PLANES_model_id_fkey" FOREIGN KEY (model_id) REFERENCES public."PLANE_MODELS"(model_id);
+
+
+--
+-- TOC entry 3600 (class 2606 OID 16475)
+-- Name: SEATS SEATS_flight_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SEATS"
+    ADD CONSTRAINT "SEATS_flight_id_fkey" FOREIGN KEY (flight_id) REFERENCES public."FLIGHT"(flight_id);
+
+
+--
+-- TOC entry 3601 (class 2606 OID 16497)
+-- Name: TICKETS TICKETS_cash_register_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."TICKETS"
+    ADD CONSTRAINT "TICKETS_cash_register_id_fkey" FOREIGN KEY (cash_register_id) REFERENCES public."CASH_REGISTERS"(cash_register_id);
+
+
+--
+-- TOC entry 3602 (class 2606 OID 16487)
+-- Name: TICKETS TICKETS_flight_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."TICKETS"
+    ADD CONSTRAINT "TICKETS_flight_id_fkey" FOREIGN KEY (flight_id) REFERENCES public."FLIGHT"(flight_id);
+
+
+--
+-- TOC entry 3603 (class 2606 OID 16502)
+-- Name: TICKETS TICKETS_passanger_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."TICKETS"
+    ADD CONSTRAINT "TICKETS_passanger_id_fkey" FOREIGN KEY (passanger_id) REFERENCES public."PASSENGERS"(passenger_id);
+
+
+--
+-- TOC entry 3604 (class 2606 OID 16492)
+-- Name: TICKETS TICKETS_seat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."TICKETS"
+    ADD CONSTRAINT "TICKETS_seat_id_fkey" FOREIGN KEY (seat_id) REFERENCES public."SEATS"(seat_id);
+
+
+--
+-- TOC entry 3598 (class 2606 OID 16442)
+-- Name: TRANSIT TRANSIT_arrival_flight_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."TRANSIT"
+    ADD CONSTRAINT "TRANSIT_arrival_flight_id_fkey" FOREIGN KEY (arrival_flight_id) REFERENCES public."FLIGHT"(flight_id) NOT VALID;
+
+
+--
+-- TOC entry 3599 (class 2606 OID 16447)
+-- Name: TRANSIT TRANSIT_departure_fligh_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."TRANSIT"
+    ADD CONSTRAINT "TRANSIT_departure_fligh_id_fkey" FOREIGN KEY (departure_flight_id) REFERENCES public."FLIGHT"(flight_id) NOT VALID;
+
+
+-- Completed on 2025-03-19 23:30:03 MSK
+
+--
+-- PostgreSQL database dump complete
+--
+
