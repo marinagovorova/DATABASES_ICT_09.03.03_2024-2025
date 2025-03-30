@@ -71,6 +71,7 @@ SET default_table_access_method = heap;
 --
 
 --Создание таблицы
+
 CREATE TABLE "схема_автомастерская"."автомобиль" (
     "гос_номер" character varying(9) NOT NULL,
     "марка" character varying(30) NOT NULL,
