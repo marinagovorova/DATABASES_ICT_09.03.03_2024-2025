@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2025-04-03 16:02:18
+-- Started on 2025-04-03 17:11:26
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -2754,12 +2754,12 @@ ALTER TABLE ONLY public.fine
 
 
 --
--- TOC entry 4715 (class 2606 OID 16478)
+-- TOC entry 4715 (class 2606 OID 16705)
 -- Name: passport_history passport_history_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.passport_history
-    ADD CONSTRAINT passport_history_pkey PRIMARY KEY (client_id);
+    ADD CONSTRAINT passport_history_pkey PRIMARY KEY (id);
 
 
 --
@@ -2924,7 +2924,7 @@ ALTER TABLE ONLY public.car
     ADD CONSTRAINT specs_info_id_fkey FOREIGN KEY (info_id) REFERENCES public.car_info(id) NOT VALID;
 
 
--- Completed on 2025-04-03 16:02:18
+-- Completed on 2025-04-03 17:11:26
 
 --
 -- PostgreSQL database dump complete
