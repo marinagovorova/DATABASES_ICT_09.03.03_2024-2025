@@ -5,7 +5,7 @@
 -- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.4
 
--- Started on 2025-04-03 00:41:00
+-- Started on 2025-04-03 16:03:46
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,7 +21,7 @@ SET row_security = off;
 
 DROP DATABASE IF EXISTS " GIBDD";
 --
--- TOC entry 5034 (class 1262 OID 16388)
+-- TOC entry 5023 (class 1262 OID 16388)
 -- Name:  GIBDD; Type: DATABASE; Schema: -; Owner: postgres
 --
 
@@ -46,7 +46,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 5035 (class 0 OID 0)
+-- TOC entry 5024 (class 0 OID 0)
 -- Name:  GIBDD; Type: DATABASE PROPERTIES; Schema: -; Owner: postgres
 --
 
@@ -79,7 +79,7 @@ CREATE SCHEMA "ГИБДД";
 ALTER SCHEMA "ГИБДД" OWNER TO postgres;
 
 --
--- TOC entry 871 (class 1247 OID 17218)
+-- TOC entry 869 (class 1247 OID 17218)
 -- Name: размер_оплаты; Type: TYPE; Schema: ГИБДД; Owner: postgres
 --
 
@@ -93,7 +93,7 @@ CREATE TYPE "ГИБДД"."размер_оплаты" AS ENUM (
 ALTER TYPE "ГИБДД"."размер_оплаты" OWNER TO postgres;
 
 --
--- TOC entry 868 (class 1247 OID 17210)
+-- TOC entry 866 (class 1247 OID 17210)
 -- Name: роль_участника; Type: TYPE; Schema: ГИБДД; Owner: postgres
 --
 
@@ -143,7 +143,7 @@ CREATE SEQUENCE "ГИБДД"."Владелец_id_Владельца_seq"
 ALTER SEQUENCE "ГИБДД"."Владелец_id_Владельца_seq" OWNER TO postgres;
 
 --
--- TOC entry 5036 (class 0 OID 0)
+-- TOC entry 5025 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: Владелец_id_Владельца_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
 --
@@ -185,7 +185,7 @@ CREATE SEQUENCE "ГИБДД"."Водитель_id_водителя_seq"
 ALTER SEQUENCE "ГИБДД"."Водитель_id_водителя_seq" OWNER TO postgres;
 
 --
--- TOC entry 5037 (class 0 OID 0)
+-- TOC entry 5026 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: Водитель_id_водителя_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
 --
@@ -230,7 +230,7 @@ CREATE SEQUENCE "ГИБДД"."ДТП_id_ДТП_seq"
 ALTER SEQUENCE "ГИБДД"."ДТП_id_ДТП_seq" OWNER TO postgres;
 
 --
--- TOC entry 5038 (class 0 OID 0)
+-- TOC entry 5027 (class 0 OID 0)
 -- Dependencies: 232
 -- Name: ДТП_id_ДТП_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
 --
@@ -272,7 +272,7 @@ CREATE SEQUENCE "ГИБДД"."Инспектор_id_инспектора_seq"
 ALTER SEQUENCE "ГИБДД"."Инспектор_id_инспектора_seq" OWNER TO postgres;
 
 --
--- TOC entry 5039 (class 0 OID 0)
+-- TOC entry 5028 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: Инспектор_id_инспектора_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
 --
@@ -311,7 +311,7 @@ CREATE SEQUENCE "ГИБДД"."Нарушения_ПДД_Код_нарушени�
 ALTER SEQUENCE "ГИБДД"."Нарушения_ПДД_Код_нарушения_seq" OWNER TO postgres;
 
 --
--- TOC entry 5040 (class 0 OID 0)
+-- TOC entry 5029 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: Нарушения_ПДД_Код_нарушения_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
 --
@@ -354,7 +354,7 @@ CREATE SEQUENCE "ГИБДД"."Период_владения_id_ПерВлад_se
 ALTER SEQUENCE "ГИБДД"."Период_владения_id_ПерВлад_seq" OWNER TO postgres;
 
 --
--- TOC entry 5041 (class 0 OID 0)
+-- TOC entry 5030 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: Период_владения_id_ПерВлад_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
 --
@@ -363,7 +363,7 @@ ALTER SEQUENCE "ГИБДД"."Период_владения_id_ПерВлад_seq
 
 
 --
--- TOC entry 239 (class 1259 OID 17356)
+-- TOC entry 237 (class 1259 OID 17356)
 -- Name: Регистрация_нарушения; Type: TABLE; Schema: ГИБДД; Owner: postgres
 --
 
@@ -385,7 +385,7 @@ CREATE TABLE "ГИБДД"."Регистрация_нарушения" (
 ALTER TABLE "ГИБДД"."Регистрация_нарушения" OWNER TO postgres;
 
 --
--- TOC entry 238 (class 1259 OID 17355)
+-- TOC entry 236 (class 1259 OID 17355)
 -- Name: Регистрация_нарушен_id_нарушения_seq; Type: SEQUENCE; Schema: ГИБДД; Owner: postgres
 --
 
@@ -401,51 +401,12 @@ CREATE SEQUENCE "ГИБДД"."Регистрация_нарушен_id_нару�
 ALTER SEQUENCE "ГИБДД"."Регистрация_нарушен_id_нарушения_seq" OWNER TO postgres;
 
 --
--- TOC entry 5042 (class 0 OID 0)
--- Dependencies: 238
+-- TOC entry 5031 (class 0 OID 0)
+-- Dependencies: 236
 -- Name: Регистрация_нарушен_id_нарушения_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
 --
 
 ALTER SEQUENCE "ГИБДД"."Регистрация_нарушен_id_нарушения_seq" OWNED BY "ГИБДД"."Регистрация_нарушения"."id_нарушения";
-
-
---
--- TOC entry 237 (class 1259 OID 17339)
--- Name: ТС_участвовавшие_в_ДТП; Type: TABLE; Schema: ГИБДД; Owner: postgres
---
-
-CREATE TABLE "ГИБДД"."ТС_участвовавшие_в_ДТП" (
-    "id_учТСвДТП" integer NOT NULL,
-    "id_ТС" integer NOT NULL,
-    "id_ДТП" integer NOT NULL
-);
-
-
-ALTER TABLE "ГИБДД"."ТС_участвовавшие_в_ДТП" OWNER TO postgres;
-
---
--- TOC entry 236 (class 1259 OID 17338)
--- Name: ТС_участвовавшие_в_ДТ_id_учТСвДТП_seq; Type: SEQUENCE; Schema: ГИБДД; Owner: postgres
---
-
-CREATE SEQUENCE "ГИБДД"."ТС_участвовавшие_в_ДТ_id_учТСвДТП_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE "ГИБДД"."ТС_участвовавшие_в_ДТ_id_учТСвДТП_seq" OWNER TO postgres;
-
---
--- TOC entry 5043 (class 0 OID 0)
--- Dependencies: 236
--- Name: ТС_участвовавшие_в_ДТ_id_учТСвДТП_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
---
-
-ALTER SEQUENCE "ГИБДД"."ТС_участвовавшие_в_ДТ_id_учТСвДТП_seq" OWNED BY "ГИБДД"."ТС_участвовавшие_в_ДТП"."id_учТСвДТП";
 
 
 --
@@ -488,7 +449,7 @@ CREATE SEQUENCE "ГИБДД"."Транспортное_средство_id_ТС_
 ALTER SEQUENCE "ГИБДД"."Транспортное_средство_id_ТС_seq" OWNER TO postgres;
 
 --
--- TOC entry 5044 (class 0 OID 0)
+-- TOC entry 5032 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: Транспортное_средство_id_ТС_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
 --
@@ -505,7 +466,8 @@ CREATE TABLE "ГИБДД"."Участник_ДТП" (
     "id_уДТП" integer NOT NULL,
     "id_водителя" integer NOT NULL,
     "id_ДТП" integer NOT NULL,
-    "Роль_участника" "ГИБДД"."роль_участника" NOT NULL
+    "Роль_участника" "ГИБДД"."роль_участника" NOT NULL,
+    "id_ТС" integer
 );
 
 
@@ -528,7 +490,7 @@ CREATE SEQUENCE "ГИБДД"."Участник_ДТП_id_уДТП_seq"
 ALTER SEQUENCE "ГИБДД"."Участник_ДТП_id_уДТП_seq" OWNER TO postgres;
 
 --
--- TOC entry 5045 (class 0 OID 0)
+-- TOC entry 5033 (class 0 OID 0)
 -- Dependencies: 234
 -- Name: Участник_ДТП_id_уДТП_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
 --
@@ -572,7 +534,7 @@ CREATE SEQUENCE "ГИБДД"."Штраф_id_штрафа_seq"
 ALTER SEQUENCE "ГИБДД"."Штраф_id_штрафа_seq" OWNER TO postgres;
 
 --
--- TOC entry 5046 (class 0 OID 0)
+-- TOC entry 5034 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: Штраф_id_штрафа_seq; Type: SEQUENCE OWNED BY; Schema: ГИБДД; Owner: postgres
 --
@@ -581,7 +543,7 @@ ALTER SEQUENCE "ГИБДД"."Штраф_id_штрафа_seq" OWNED BY "ГИБД�
 
 
 --
--- TOC entry 4804 (class 2604 OID 17282)
+-- TOC entry 4799 (class 2604 OID 17282)
 -- Name: Владелец id_Владельца; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -589,7 +551,7 @@ ALTER TABLE ONLY "ГИБДД"."Владелец" ALTER COLUMN "id_Владель
 
 
 --
--- TOC entry 4799 (class 2604 OID 17229)
+-- TOC entry 4794 (class 2604 OID 17229)
 -- Name: Водитель id_водителя; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -597,7 +559,7 @@ ALTER TABLE ONLY "ГИБДД"."Водитель" ALTER COLUMN "id_водител
 
 
 --
--- TOC entry 4806 (class 2604 OID 17310)
+-- TOC entry 4801 (class 2604 OID 17310)
 -- Name: ДТП id_ДТП; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -605,7 +567,7 @@ ALTER TABLE ONLY "ГИБДД"."ДТП" ALTER COLUMN "id_ДТП" SET DEFAULT next
 
 
 --
--- TOC entry 4800 (class 2604 OID 17240)
+-- TOC entry 4795 (class 2604 OID 17240)
 -- Name: Инспектор id_инспектора; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -613,7 +575,7 @@ ALTER TABLE ONLY "ГИБДД"."Инспектор" ALTER COLUMN "id_инспек
 
 
 --
--- TOC entry 4802 (class 2604 OID 17264)
+-- TOC entry 4797 (class 2604 OID 17264)
 -- Name: Нарушения_ПДД Код_нарушения; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -621,7 +583,7 @@ ALTER TABLE ONLY "ГИБДД"."Нарушения_ПДД" ALTER COLUMN "Код_�
 
 
 --
--- TOC entry 4805 (class 2604 OID 17291)
+-- TOC entry 4800 (class 2604 OID 17291)
 -- Name: Период_владения id_ПерВлад; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -629,7 +591,7 @@ ALTER TABLE ONLY "ГИБДД"."Период_владения" ALTER COLUMN "id_�
 
 
 --
--- TOC entry 4809 (class 2604 OID 17359)
+-- TOC entry 4803 (class 2604 OID 17359)
 -- Name: Регистрация_нарушения id_нарушения; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -637,15 +599,7 @@ ALTER TABLE ONLY "ГИБДД"."Регистрация_нарушения" ALTER 
 
 
 --
--- TOC entry 4808 (class 2604 OID 17342)
--- Name: ТС_участвовавшие_в_ДТП id_учТСвДТП; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
---
-
-ALTER TABLE ONLY "ГИБДД"."ТС_участвовавшие_в_ДТП" ALTER COLUMN "id_учТСвДТП" SET DEFAULT nextval('"ГИБДД"."ТС_участвовавшие_в_ДТ_id_учТСвДТП_seq"'::regclass);
-
-
---
--- TOC entry 4801 (class 2604 OID 17251)
+-- TOC entry 4796 (class 2604 OID 17251)
 -- Name: Транспортное_средство id_ТС; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -653,7 +607,7 @@ ALTER TABLE ONLY "ГИБДД"."Транспортное_средство" ALTER 
 
 
 --
--- TOC entry 4807 (class 2604 OID 17325)
+-- TOC entry 4802 (class 2604 OID 17325)
 -- Name: Участник_ДТП id_уДТП; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -661,7 +615,7 @@ ALTER TABLE ONLY "ГИБДД"."Участник_ДТП" ALTER COLUMN "id_уДТ�
 
 
 --
--- TOC entry 4803 (class 2604 OID 17273)
+-- TOC entry 4798 (class 2604 OID 17273)
 -- Name: Штраф id_штрафа; Type: DEFAULT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -669,7 +623,7 @@ ALTER TABLE ONLY "ГИБДД"."Штраф" ALTER COLUMN "id_штрафа" SET DE
 
 
 --
--- TOC entry 5018 (class 0 OID 17279)
+-- TOC entry 5009 (class 0 OID 17279)
 -- Dependencies: 229
 -- Data for Name: Владелец; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
 --
@@ -689,7 +643,7 @@ COPY "ГИБДД"."Владелец" ("id_Владельца", "Номер_те�
 
 
 --
--- TOC entry 5008 (class 0 OID 17226)
+-- TOC entry 4999 (class 0 OID 17226)
 -- Dependencies: 219
 -- Data for Name: Водитель; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
 --
@@ -705,11 +659,12 @@ COPY "ГИБДД"."Водитель" ("id_водителя", "ФИО", "Номе
 8	Павлова Ольга Дмитриевна	+79168901234	г. Москва, ул. Садовая, д. 4, кв. 6
 9	Федоров Сергей Александрович	+79169012345	г. Москва, ул. Молодежная, д. 7, кв. 15
 10	Козлова Мария Петровна	+79160123456	г. Москва, ул. Школьная, д. 3, кв. 8
+11	Петя Здарова Петрович	+79213215251	г. Санкт-Петербург, Кронверский пр-кт, д. 31
 \.
 
 
 --
--- TOC entry 5022 (class 0 OID 17307)
+-- TOC entry 5013 (class 0 OID 17307)
 -- Dependencies: 233
 -- Data for Name: ДТП; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
 --
@@ -729,7 +684,7 @@ COPY "ГИБДД"."ДТП" ("id_ДТП", "id_инспектора", "Коорд�
 
 
 --
--- TOC entry 5010 (class 0 OID 17237)
+-- TOC entry 5001 (class 0 OID 17237)
 -- Dependencies: 221
 -- Data for Name: Инспектор; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
 --
@@ -749,7 +704,7 @@ COPY "ГИБДД"."Инспектор" ("id_инспектора", "Личный
 
 
 --
--- TOC entry 5014 (class 0 OID 17261)
+-- TOC entry 5005 (class 0 OID 17261)
 -- Dependencies: 225
 -- Data for Name: Нарушения_ПДД; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
 --
@@ -769,7 +724,7 @@ COPY "ГИБДД"."Нарушения_ПДД" ("Код_нарушения", "В�
 
 
 --
--- TOC entry 5020 (class 0 OID 17288)
+-- TOC entry 5011 (class 0 OID 17288)
 -- Dependencies: 231
 -- Data for Name: Период_владения; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
 --
@@ -795,8 +750,8 @@ COPY "ГИБДД"."Период_владения" ("id_ПерВлад", "id_ТС
 
 
 --
--- TOC entry 5028 (class 0 OID 17356)
--- Dependencies: 239
+-- TOC entry 5017 (class 0 OID 17356)
+-- Dependencies: 237
 -- Data for Name: Регистрация_нарушения; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
 --
 
@@ -815,30 +770,7 @@ COPY "ГИБДД"."Регистрация_нарушения" ("id_наруше�
 
 
 --
--- TOC entry 5026 (class 0 OID 17339)
--- Dependencies: 237
--- Data for Name: ТС_участвовавшие_в_ДТП; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
---
-
-COPY "ГИБДД"."ТС_участвовавшие_в_ДТП" ("id_учТСвДТП", "id_ТС", "id_ДТП") FROM stdin;
-1	1	1
-2	2	1
-3	3	2
-4	4	3
-5	5	3
-6	6	4
-7	7	5
-8	8	5
-9	9	6
-10	10	7
-11	1	8
-12	2	9
-13	3	10
-\.
-
-
---
--- TOC entry 5012 (class 0 OID 17248)
+-- TOC entry 5003 (class 0 OID 17248)
 -- Dependencies: 223
 -- Data for Name: Транспортное_средство; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
 --
@@ -861,30 +793,20 @@ COPY "ГИБДД"."Транспортное_средство" ("id_ТС", "Да�
 
 
 --
--- TOC entry 5024 (class 0 OID 17322)
+-- TOC entry 5015 (class 0 OID 17322)
 -- Dependencies: 235
 -- Data for Name: Участник_ДТП; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
 --
 
-COPY "ГИБДД"."Участник_ДТП" ("id_уДТП", "id_водителя", "id_ДТП", "Роль_участника") FROM stdin;
-1	1	1	Виновник
-2	2	1	Потерпевший
-3	3	2	Виновник
-4	4	3	Потерпевший
-5	5	3	Виновник
-6	6	4	Виновник
-7	7	5	Виновник
-8	8	5	Потерпевший
-9	9	6	Потерпевший
-10	10	7	Виновник
-11	1	8	Виновник
-12	2	9	Потерпевший
-13	3	10	Потерпевший
+COPY "ГИБДД"."Участник_ДТП" ("id_уДТП", "id_водителя", "id_ДТП", "Роль_участника", "id_ТС") FROM stdin;
+14	1	1	Потерпевший	1
+15	2	1	Виновник	2
+16	3	1	Неопределено	3
 \.
 
 
 --
--- TOC entry 5016 (class 0 OID 17270)
+-- TOC entry 5007 (class 0 OID 17270)
 -- Dependencies: 227
 -- Data for Name: Штраф; Type: TABLE DATA; Schema: ГИБДД; Owner: postgres
 --
@@ -904,7 +826,7 @@ COPY "ГИБДД"."Штраф" ("id_штрафа", "Сумма_штрафа", "�
 
 
 --
--- TOC entry 5047 (class 0 OID 0)
+-- TOC entry 5035 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: Владелец_id_Владельца_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
 --
@@ -913,16 +835,16 @@ SELECT pg_catalog.setval('"ГИБДД"."Владелец_id_Владельца_s
 
 
 --
--- TOC entry 5048 (class 0 OID 0)
+-- TOC entry 5036 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: Водитель_id_водителя_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"ГИБДД"."Водитель_id_водителя_seq"', 10, true);
+SELECT pg_catalog.setval('"ГИБДД"."Водитель_id_водителя_seq"', 11, true);
 
 
 --
--- TOC entry 5049 (class 0 OID 0)
+-- TOC entry 5037 (class 0 OID 0)
 -- Dependencies: 232
 -- Name: ДТП_id_ДТП_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
 --
@@ -931,7 +853,7 @@ SELECT pg_catalog.setval('"ГИБДД"."ДТП_id_ДТП_seq"', 10, true);
 
 
 --
--- TOC entry 5050 (class 0 OID 0)
+-- TOC entry 5038 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: Инспектор_id_инспектора_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
 --
@@ -940,7 +862,7 @@ SELECT pg_catalog.setval('"ГИБДД"."Инспектор_id_инспектор
 
 
 --
--- TOC entry 5051 (class 0 OID 0)
+-- TOC entry 5039 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: Нарушения_ПДД_Код_нарушения_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
 --
@@ -949,7 +871,7 @@ SELECT pg_catalog.setval('"ГИБДД"."Нарушения_ПДД_Код_нар�
 
 
 --
--- TOC entry 5052 (class 0 OID 0)
+-- TOC entry 5040 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: Период_владения_id_ПерВлад_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
 --
@@ -958,8 +880,8 @@ SELECT pg_catalog.setval('"ГИБДД"."Период_владения_id_Пер�
 
 
 --
--- TOC entry 5053 (class 0 OID 0)
--- Dependencies: 238
+-- TOC entry 5041 (class 0 OID 0)
+-- Dependencies: 236
 -- Name: Регистрация_нарушен_id_нарушения_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
 --
 
@@ -967,16 +889,7 @@ SELECT pg_catalog.setval('"ГИБДД"."Регистрация_нарушен_id
 
 
 --
--- TOC entry 5054 (class 0 OID 0)
--- Dependencies: 236
--- Name: ТС_участвовавшие_в_ДТ_id_учТСвДТП_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
---
-
-SELECT pg_catalog.setval('"ГИБДД"."ТС_участвовавшие_в_ДТ_id_учТСвДТП_seq"', 13, true);
-
-
---
--- TOC entry 5055 (class 0 OID 0)
+-- TOC entry 5042 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: Транспортное_средство_id_ТС_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
 --
@@ -985,16 +898,16 @@ SELECT pg_catalog.setval('"ГИБДД"."Транспортное_средств�
 
 
 --
--- TOC entry 5056 (class 0 OID 0)
+-- TOC entry 5043 (class 0 OID 0)
 -- Dependencies: 234
 -- Name: Участник_ДТП_id_уДТП_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"ГИБДД"."Участник_ДТП_id_уДТП_seq"', 13, true);
+SELECT pg_catalog.setval('"ГИБДД"."Участник_ДТП_id_уДТП_seq"', 16, true);
 
 
 --
--- TOC entry 5057 (class 0 OID 0)
+-- TOC entry 5044 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: Штраф_id_штрафа_seq; Type: SEQUENCE SET; Schema: ГИБДД; Owner: postgres
 --
@@ -1003,7 +916,7 @@ SELECT pg_catalog.setval('"ГИБДД"."Штраф_id_штрафа_seq"', 10, tr
 
 
 --
--- TOC entry 4839 (class 2606 OID 17286)
+-- TOC entry 4833 (class 2606 OID 17286)
 -- Name: Владелец Владелец_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1012,7 +925,7 @@ ALTER TABLE ONLY "ГИБДД"."Владелец"
 
 
 --
--- TOC entry 4827 (class 2606 OID 17235)
+-- TOC entry 4821 (class 2606 OID 17235)
 -- Name: Водитель Водитель_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1021,7 +934,7 @@ ALTER TABLE ONLY "ГИБДД"."Водитель"
 
 
 --
--- TOC entry 4843 (class 2606 OID 17315)
+-- TOC entry 4837 (class 2606 OID 17315)
 -- Name: ДТП ДТП_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1030,7 +943,7 @@ ALTER TABLE ONLY "ГИБДД"."ДТП"
 
 
 --
--- TOC entry 4829 (class 2606 OID 17244)
+-- TOC entry 4823 (class 2606 OID 17244)
 -- Name: Инспектор Инспектор_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1039,7 +952,7 @@ ALTER TABLE ONLY "ГИБДД"."Инспектор"
 
 
 --
--- TOC entry 4831 (class 2606 OID 17246)
+-- TOC entry 4825 (class 2606 OID 17246)
 -- Name: Инспектор Инспектор_Личный_номер_инспекто_key; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1048,7 +961,7 @@ ALTER TABLE ONLY "ГИБДД"."Инспектор"
 
 
 --
--- TOC entry 4835 (class 2606 OID 17268)
+-- TOC entry 4829 (class 2606 OID 17268)
 -- Name: Нарушения_ПДД Нарушения_ПДД_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1057,7 +970,7 @@ ALTER TABLE ONLY "ГИБДД"."Нарушения_ПДД"
 
 
 --
--- TOC entry 4841 (class 2606 OID 17295)
+-- TOC entry 4835 (class 2606 OID 17295)
 -- Name: Период_владения Период_владения_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1066,7 +979,7 @@ ALTER TABLE ONLY "ГИБДД"."Период_владения"
 
 
 --
--- TOC entry 4849 (class 2606 OID 17362)
+-- TOC entry 4841 (class 2606 OID 17362)
 -- Name: Регистрация_нарушения Регистрация_нарушения_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1075,16 +988,7 @@ ALTER TABLE ONLY "ГИБДД"."Регистрация_нарушения"
 
 
 --
--- TOC entry 4847 (class 2606 OID 17344)
--- Name: ТС_участвовавшие_в_ДТП ТС_участвовавшие_в_ДТП_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
---
-
-ALTER TABLE ONLY "ГИБДД"."ТС_участвовавшие_в_ДТП"
-    ADD CONSTRAINT "ТС_участвовавшие_в_ДТП_pkey" PRIMARY KEY ("id_учТСвДТП");
-
-
---
--- TOC entry 4833 (class 2606 OID 17259)
+-- TOC entry 4827 (class 2606 OID 17259)
 -- Name: Транспортное_средство Транспортное_средство_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1093,7 +997,7 @@ ALTER TABLE ONLY "ГИБДД"."Транспортное_средство"
 
 
 --
--- TOC entry 4845 (class 2606 OID 17327)
+-- TOC entry 4839 (class 2606 OID 17327)
 -- Name: Участник_ДТП Участник_ДТП_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1102,7 +1006,7 @@ ALTER TABLE ONLY "ГИБДД"."Участник_ДТП"
 
 
 --
--- TOC entry 4837 (class 2606 OID 17277)
+-- TOC entry 4831 (class 2606 OID 17277)
 -- Name: Штраф Штраф_pkey; Type: CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1111,7 +1015,7 @@ ALTER TABLE ONLY "ГИБДД"."Штраф"
 
 
 --
--- TOC entry 4852 (class 2606 OID 17316)
+-- TOC entry 4844 (class 2606 OID 17316)
 -- Name: ДТП ДТП_id_инспектора_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1120,7 +1024,7 @@ ALTER TABLE ONLY "ГИБДД"."ДТП"
 
 
 --
--- TOC entry 4850 (class 2606 OID 17301)
+-- TOC entry 4842 (class 2606 OID 17301)
 -- Name: Период_владения Период_владения_id_Владельца_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1129,7 +1033,7 @@ ALTER TABLE ONLY "ГИБДД"."Период_владения"
 
 
 --
--- TOC entry 4851 (class 2606 OID 17296)
+-- TOC entry 4843 (class 2606 OID 17296)
 -- Name: Период_владения Период_владения_id_ТС_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1138,7 +1042,7 @@ ALTER TABLE ONLY "ГИБДД"."Период_владения"
 
 
 --
--- TOC entry 4857 (class 2606 OID 17383)
+-- TOC entry 4848 (class 2606 OID 17383)
 -- Name: Регистрация_нарушения Регистрация_нару_Код_нарушения_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1147,7 +1051,7 @@ ALTER TABLE ONLY "ГИБДД"."Регистрация_нарушения"
 
 
 --
--- TOC entry 4858 (class 2606 OID 17368)
+-- TOC entry 4849 (class 2606 OID 17368)
 -- Name: Регистрация_нарушения Регистрация_наруш_id_инспектора_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1156,7 +1060,7 @@ ALTER TABLE ONLY "ГИБДД"."Регистрация_нарушения"
 
 
 --
--- TOC entry 4859 (class 2606 OID 17363)
+-- TOC entry 4850 (class 2606 OID 17363)
 -- Name: Регистрация_нарушения Регистрация_нарушен_id_водителя_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1165,7 +1069,7 @@ ALTER TABLE ONLY "ГИБДД"."Регистрация_нарушения"
 
 
 --
--- TOC entry 4860 (class 2606 OID 17378)
+-- TOC entry 4851 (class 2606 OID 17378)
 -- Name: Регистрация_нарушения Регистрация_нарушения_id_ТС_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1174,7 +1078,7 @@ ALTER TABLE ONLY "ГИБДД"."Регистрация_нарушения"
 
 
 --
--- TOC entry 4861 (class 2606 OID 17373)
+-- TOC entry 4852 (class 2606 OID 17373)
 -- Name: Регистрация_нарушения Регистрация_нарушения_id_штрафа_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1183,25 +1087,7 @@ ALTER TABLE ONLY "ГИБДД"."Регистрация_нарушения"
 
 
 --
--- TOC entry 4855 (class 2606 OID 17350)
--- Name: ТС_участвовавшие_в_ДТП ТС_участвовавшие_в_ДТП_id_ДТП_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
---
-
-ALTER TABLE ONLY "ГИБДД"."ТС_участвовавшие_в_ДТП"
-    ADD CONSTRAINT "ТС_участвовавшие_в_ДТП_id_ДТП_fkey" FOREIGN KEY ("id_ДТП") REFERENCES "ГИБДД"."ДТП"("id_ДТП");
-
-
---
--- TOC entry 4856 (class 2606 OID 17345)
--- Name: ТС_участвовавшие_в_ДТП ТС_участвовавшие_в_ДТП_id_ТС_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
---
-
-ALTER TABLE ONLY "ГИБДД"."ТС_участвовавшие_в_ДТП"
-    ADD CONSTRAINT "ТС_участвовавшие_в_ДТП_id_ТС_fkey" FOREIGN KEY ("id_ТС") REFERENCES "ГИБДД"."Транспортное_средство"("id_ТС");
-
-
---
--- TOC entry 4853 (class 2606 OID 17333)
+-- TOC entry 4845 (class 2606 OID 17333)
 -- Name: Участник_ДТП Участник_ДТП_id_ДТП_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1210,7 +1096,16 @@ ALTER TABLE ONLY "ГИБДД"."Участник_ДТП"
 
 
 --
--- TOC entry 4854 (class 2606 OID 17328)
+-- TOC entry 4846 (class 2606 OID 25622)
+-- Name: Участник_ДТП Участник_ДТП_id_ТС; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
+--
+
+ALTER TABLE ONLY "ГИБДД"."Участник_ДТП"
+    ADD CONSTRAINT "Участник_ДТП_id_ТС" FOREIGN KEY ("id_ТС") REFERENCES "ГИБДД"."Транспортное_средство"("id_ТС") NOT VALID;
+
+
+--
+-- TOC entry 4847 (class 2606 OID 17328)
 -- Name: Участник_ДТП Участник_ДТП_id_водителя_fkey; Type: FK CONSTRAINT; Schema: ГИБДД; Owner: postgres
 --
 
@@ -1218,7 +1113,7 @@ ALTER TABLE ONLY "ГИБДД"."Участник_ДТП"
     ADD CONSTRAINT "Участник_ДТП_id_водителя_fkey" FOREIGN KEY ("id_водителя") REFERENCES "ГИБДД"."Водитель"("id_водителя");
 
 
--- Completed on 2025-04-03 00:41:00
+-- Completed on 2025-04-03 16:03:47
 
 --
 -- PostgreSQL database dump complete
