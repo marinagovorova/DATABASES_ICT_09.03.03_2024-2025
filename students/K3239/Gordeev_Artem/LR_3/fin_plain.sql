@@ -5,7 +5,7 @@
 -- Dumped from database version 15.12 (Debian 15.12-1.pgdg120+1)
 -- Dumped by pg_dump version 15.12
 
--- Started on 2025-03-24 12:58:34 UTC
+-- Started on 2025-04-03 11:24:46 UTC
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -33,6 +33,7 @@ CREATE TABLE public.additional_service_connection (
     connection_date date NOT NULL,
     disconnection_date date,
     payment_day date NOT NULL,
+    id integer NOT NULL,
     CONSTRAINT additional_service_connection_check CHECK (((disconnection_date IS NULL) OR (disconnection_date >= connection_date))),
     CONSTRAINT additional_service_connection_check1 CHECK ((payment_day >= connection_date)),
     CONSTRAINT additional_service_connection_connection_date_check CHECK ((connection_date >= CURRENT_DATE))
@@ -40,6 +41,21 @@ CREATE TABLE public.additional_service_connection (
 
 
 ALTER TABLE public.additional_service_connection OWNER TO admin;
+
+--
+-- TOC entry 238 (class 1259 OID 16692)
+-- Name: additional_service_connection_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+ALTER TABLE public.additional_service_connection ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.additional_service_connection_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
 
 --
 -- TOC entry 225 (class 1259 OID 16474)
@@ -86,6 +102,7 @@ CREATE TABLE public.basic_service_connection (
     connection_date date NOT NULL,
     disconnection_date date,
     payment_day date NOT NULL,
+    id integer NOT NULL,
     CONSTRAINT basic_service_connection_check CHECK (((disconnection_date IS NULL) OR (disconnection_date >= connection_date))),
     CONSTRAINT basic_service_connection_check1 CHECK ((payment_day >= connection_date)),
     CONSTRAINT basic_service_connection_connection_date_check CHECK ((connection_date >= CURRENT_DATE))
@@ -93,6 +110,64 @@ CREATE TABLE public.basic_service_connection (
 
 
 ALTER TABLE public.basic_service_connection OWNER TO admin;
+
+--
+-- TOC entry 237 (class 1259 OID 16685)
+-- Name: basic_service_connection_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+ALTER TABLE public.basic_service_connection ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.basic_service_connection_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 240 (class 1259 OID 16701)
+-- Name: call; Type: TABLE; Schema: public; Owner: admin
+--
+
+CREATE TABLE public.call (
+    id_call integer NOT NULL,
+    receiver_zone_id integer NOT NULL,
+    subscriber_zone_id integer NOT NULL,
+    receiver_phone character varying(15) NOT NULL,
+    cost integer NOT NULL,
+    payment_status character varying(20) NOT NULL,
+    payment_date date,
+    payment_method character varying(20) NOT NULL,
+    call_start_time timestamp without time zone NOT NULL,
+    call_end_time timestamp without time zone NOT NULL,
+    id_contract_on_tariff integer NOT NULL,
+    CONSTRAINT call_check CHECK (((payment_date IS NULL) OR (payment_date >= call_end_time))),
+    CONSTRAINT call_check1 CHECK ((call_end_time >= call_start_time)),
+    CONSTRAINT call_cost_check CHECK ((cost >= 0)),
+    CONSTRAINT call_payment_method_check CHECK (((payment_method)::text = ANY ((ARRAY['Пакет'::character varying, 'Рубли'::character varying])::text[]))),
+    CONSTRAINT call_payment_status_check CHECK (((payment_status)::text = ANY ((ARRAY['оплачено'::character varying, 'не оплачено'::character varying])::text[]))),
+    CONSTRAINT call_receiver_phone_check CHECK (((receiver_phone)::text ~ '^\+7\d{10}$'::text))
+);
+
+
+ALTER TABLE public.call OWNER TO admin;
+
+--
+-- TOC entry 239 (class 1259 OID 16700)
+-- Name: call_id_call_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+ALTER TABLE public.call ALTER COLUMN id_call ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.call_id_call_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
 
 --
 -- TOC entry 221 (class 1259 OID 16439)
@@ -193,12 +268,53 @@ CREATE TABLE public.external_resource_connection (
     connection_date date NOT NULL,
     disconnection_date date,
     payment_day date NOT NULL,
+    id integer NOT NULL,
     CONSTRAINT external_resource_connection_check CHECK (((disconnection_date IS NULL) OR (disconnection_date >= connection_date))),
     CONSTRAINT external_resource_connection_check1 CHECK ((payment_day >= connection_date))
 );
 
 
 ALTER TABLE public.external_resource_connection OWNER TO admin;
+
+--
+-- TOC entry 235 (class 1259 OID 16673)
+-- Name: external_resource_connection_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE public.external_resource_connection_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.external_resource_connection_id_seq OWNER TO admin;
+
+--
+-- TOC entry 3525 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: external_resource_connection_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+--
+
+ALTER SEQUENCE public.external_resource_connection_id_seq OWNED BY public.external_resource_connection.id;
+
+
+--
+-- TOC entry 236 (class 1259 OID 16684)
+-- Name: external_resource_connection_id_seq1; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+ALTER TABLE public.external_resource_connection ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.external_resource_connection_id_seq1
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
 
 --
 -- TOC entry 232 (class 1259 OID 16564)
@@ -389,20 +505,20 @@ ALTER TABLE public.zone ALTER COLUMN id_zone ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
--- TOC entry 3487 (class 0 OID 16528)
+-- TOC entry 3509 (class 0 OID 16528)
 -- Dependencies: 230
 -- Data for Name: additional_service_connection; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.additional_service_connection (id_contract_on_tariff, id_service, connection_date, disconnection_date, payment_day) FROM stdin;
-2	4	2026-02-01	\N	2026-03-01
-3	5	2027-07-01	\N	2027-08-01
-4	6	2028-04-01	\N	2028-05-01
+COPY public.additional_service_connection (id_contract_on_tariff, id_service, connection_date, disconnection_date, payment_day, id) FROM stdin;
+2	4	2026-02-01	\N	2026-03-01	1
+3	5	2027-07-01	\N	2027-08-01	2
+4	6	2028-04-01	\N	2028-05-01	3
 \.
 
 
 --
--- TOC entry 3482 (class 0 OID 16474)
+-- TOC entry 3504 (class 0 OID 16474)
 -- Dependencies: 225
 -- Data for Name: balance; Type: TABLE DATA; Schema: public; Owner: admin
 --
@@ -415,20 +531,33 @@ COPY public.balance (id_balance, id_contract_on_tariff, remaining_sms, remaining
 
 
 --
--- TOC entry 3488 (class 0 OID 16546)
+-- TOC entry 3510 (class 0 OID 16546)
 -- Dependencies: 231
 -- Data for Name: basic_service_connection; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.basic_service_connection (id_tariff, id_service, connection_date, disconnection_date, payment_day) FROM stdin;
-13	4	2026-01-16	2026-04-16	2026-02-01
-14	5	2027-06-02	2027-07-02	2027-07-01
-15	6	2028-03-11	2028-09-11	2028-04-01
+COPY public.basic_service_connection (id_tariff, id_service, connection_date, disconnection_date, payment_day, id) FROM stdin;
+13	4	2026-01-16	2026-04-16	2026-02-01	1
+14	5	2027-06-02	2027-07-02	2027-07-01	2
+15	6	2028-03-11	2028-09-11	2028-04-01	3
 \.
 
 
 --
--- TOC entry 3478 (class 0 OID 16439)
+-- TOC entry 3519 (class 0 OID 16701)
+-- Dependencies: 240
+-- Data for Name: call; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+COPY public.call (id_call, receiver_zone_id, subscriber_zone_id, receiver_phone, cost, payment_status, payment_date, payment_method, call_start_time, call_end_time, id_contract_on_tariff) FROM stdin;
+4	14	13	+79165554433	50	оплачено	\N	Пакет	2023-10-05 14:00:00	2023-10-05 14:05:00	2
+5	15	14	+79167778899	70	не оплачено	\N	Рубли	2023-10-06 15:30:00	2023-10-06 15:35:00	3
+6	13	14	+79161234567	35	оплачено	\N	Пакет	2023-10-07 10:15:00	2023-10-07 10:20:00	3
+\.
+
+
+--
+-- TOC entry 3500 (class 0 OID 16439)
 -- Dependencies: 221
 -- Data for Name: contract_on_number; Type: TABLE DATA; Schema: public; Owner: admin
 --
@@ -441,7 +570,7 @@ COPY public.contract_on_number (id_contract, id_subscriber, termination_date, si
 
 
 --
--- TOC entry 3480 (class 0 OID 16455)
+-- TOC entry 3502 (class 0 OID 16455)
 -- Dependencies: 223
 -- Data for Name: contract_on_tariff; Type: TABLE DATA; Schema: public; Owner: admin
 --
@@ -454,7 +583,7 @@ COPY public.contract_on_tariff (id_contract_on_tariff, id_tariff, id_contract, b
 
 
 --
--- TOC entry 3490 (class 0 OID 16565)
+-- TOC entry 3512 (class 0 OID 16565)
 -- Dependencies: 233
 -- Data for Name: external_resource; Type: TABLE DATA; Schema: public; Owner: admin
 --
@@ -467,20 +596,20 @@ COPY public.external_resource (id_resource, price, name, description, payment_pe
 
 
 --
--- TOC entry 3491 (class 0 OID 16572)
+-- TOC entry 3513 (class 0 OID 16572)
 -- Dependencies: 234
 -- Data for Name: external_resource_connection; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.external_resource_connection (id_contract, id_resource, connection_date, disconnection_date, payment_day) FROM stdin;
-9	1	2026-01-16	\N	2026-02-01
-10	2	2027-06-02	\N	2027-07-01
-11	3	2028-03-11	\N	2028-04-01
+COPY public.external_resource_connection (id_contract, id_resource, connection_date, disconnection_date, payment_day, id) FROM stdin;
+9	1	2026-01-16	\N	2026-02-01	1
+10	2	2027-06-02	\N	2027-07-01	2
+11	3	2028-03-11	\N	2028-04-01	3
 \.
 
 
 --
--- TOC entry 3484 (class 0 OID 16490)
+-- TOC entry 3506 (class 0 OID 16490)
 -- Dependencies: 227
 -- Data for Name: interzone_tariff; Type: TABLE DATA; Schema: public; Owner: admin
 --
@@ -493,7 +622,7 @@ COPY public.interzone_tariff (id_interzone_tariff, sms_price, minute_price, send
 
 
 --
--- TOC entry 3486 (class 0 OID 16521)
+-- TOC entry 3508 (class 0 OID 16521)
 -- Dependencies: 229
 -- Data for Name: service; Type: TABLE DATA; Schema: public; Owner: admin
 --
@@ -506,7 +635,7 @@ COPY public.service (id_service, price, name, description, payment_period) FROM 
 
 
 --
--- TOC entry 3472 (class 0 OID 16403)
+-- TOC entry 3494 (class 0 OID 16403)
 -- Dependencies: 215
 -- Data for Name: subscriber; Type: TABLE DATA; Schema: public; Owner: admin
 --
@@ -519,7 +648,7 @@ COPY public.subscriber (id_subscriber, full_name, passport_data, current_address
 
 
 --
--- TOC entry 3476 (class 0 OID 16422)
+-- TOC entry 3498 (class 0 OID 16422)
 -- Dependencies: 219
 -- Data for Name: tariff; Type: TABLE DATA; Schema: public; Owner: admin
 --
@@ -532,7 +661,7 @@ COPY public.tariff (id_tariff, cost, connection_conditions, appearance_date, arc
 
 
 --
--- TOC entry 3474 (class 0 OID 16413)
+-- TOC entry 3496 (class 0 OID 16413)
 -- Dependencies: 217
 -- Data for Name: zone; Type: TABLE DATA; Schema: public; Owner: admin
 --
@@ -545,7 +674,16 @@ COPY public.zone (id_zone, zone_code, city, country, zone_type, price_per_mb) FR
 
 
 --
--- TOC entry 3497 (class 0 OID 0)
+-- TOC entry 3526 (class 0 OID 0)
+-- Dependencies: 238
+-- Name: additional_service_connection_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.additional_service_connection_id_seq', 3, true);
+
+
+--
+-- TOC entry 3527 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: balance_id_balance_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
@@ -554,7 +692,25 @@ SELECT pg_catalog.setval('public.balance_id_balance_seq', 3, true);
 
 
 --
--- TOC entry 3498 (class 0 OID 0)
+-- TOC entry 3528 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: basic_service_connection_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.basic_service_connection_id_seq', 3, true);
+
+
+--
+-- TOC entry 3529 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: call_id_call_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.call_id_call_seq', 6, true);
+
+
+--
+-- TOC entry 3530 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: contract_on_number_id_contract_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
@@ -563,7 +719,7 @@ SELECT pg_catalog.setval('public.contract_on_number_id_contract_seq', 11, true);
 
 
 --
--- TOC entry 3499 (class 0 OID 0)
+-- TOC entry 3531 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: contract_on_tariff_id_contract_on_tariff_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
@@ -572,7 +728,25 @@ SELECT pg_catalog.setval('public.contract_on_tariff_id_contract_on_tariff_seq', 
 
 
 --
--- TOC entry 3500 (class 0 OID 0)
+-- TOC entry 3532 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: external_resource_connection_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.external_resource_connection_id_seq', 3, true);
+
+
+--
+-- TOC entry 3533 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: external_resource_connection_id_seq1; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.external_resource_connection_id_seq1', 1, false);
+
+
+--
+-- TOC entry 3534 (class 0 OID 0)
 -- Dependencies: 232
 -- Name: external_resource_id_resource_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
@@ -581,7 +755,7 @@ SELECT pg_catalog.setval('public.external_resource_id_resource_seq', 3, true);
 
 
 --
--- TOC entry 3501 (class 0 OID 0)
+-- TOC entry 3535 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: interzone_tariff_id_interzone_tariff_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
@@ -590,7 +764,7 @@ SELECT pg_catalog.setval('public.interzone_tariff_id_interzone_tariff_seq', 3, t
 
 
 --
--- TOC entry 3502 (class 0 OID 0)
+-- TOC entry 3536 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: service_id_service_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
@@ -599,7 +773,7 @@ SELECT pg_catalog.setval('public.service_id_service_seq', 6, true);
 
 
 --
--- TOC entry 3503 (class 0 OID 0)
+-- TOC entry 3537 (class 0 OID 0)
 -- Dependencies: 214
 -- Name: subscriber_id_subscriber_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
@@ -608,7 +782,7 @@ SELECT pg_catalog.setval('public.subscriber_id_subscriber_seq', 6, true);
 
 
 --
--- TOC entry 3504 (class 0 OID 0)
+-- TOC entry 3538 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: tariff_id_tariff_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
@@ -617,7 +791,7 @@ SELECT pg_catalog.setval('public.tariff_id_tariff_seq', 15, true);
 
 
 --
--- TOC entry 3505 (class 0 OID 0)
+-- TOC entry 3539 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: zone_id_zone_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
@@ -626,16 +800,16 @@ SELECT pg_catalog.setval('public.zone_id_zone_seq', 15, true);
 
 
 --
--- TOC entry 3309 (class 2606 OID 16535)
+-- TOC entry 3324 (class 2606 OID 16698)
 -- Name: additional_service_connection additional_service_connection_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
 ALTER TABLE ONLY public.additional_service_connection
-    ADD CONSTRAINT additional_service_connection_pkey PRIMARY KEY (id_contract_on_tariff, id_service);
+    ADD CONSTRAINT additional_service_connection_pkey PRIMARY KEY (id);
 
 
 --
--- TOC entry 3301 (class 2606 OID 16483)
+-- TOC entry 3316 (class 2606 OID 16483)
 -- Name: balance balance_id_contract_on_tariff_key; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -644,7 +818,7 @@ ALTER TABLE ONLY public.balance
 
 
 --
--- TOC entry 3303 (class 2606 OID 16481)
+-- TOC entry 3318 (class 2606 OID 16481)
 -- Name: balance balance_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -653,16 +827,25 @@ ALTER TABLE ONLY public.balance
 
 
 --
--- TOC entry 3311 (class 2606 OID 16553)
+-- TOC entry 3326 (class 2606 OID 16691)
 -- Name: basic_service_connection basic_service_connection_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
 ALTER TABLE ONLY public.basic_service_connection
-    ADD CONSTRAINT basic_service_connection_pkey PRIMARY KEY (id_tariff, id_service);
+    ADD CONSTRAINT basic_service_connection_pkey PRIMARY KEY (id);
 
 
 --
--- TOC entry 3295 (class 2606 OID 16448)
+-- TOC entry 3334 (class 2606 OID 16711)
+-- Name: call call_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.call
+    ADD CONSTRAINT call_pkey PRIMARY KEY (id_call);
+
+
+--
+-- TOC entry 3310 (class 2606 OID 16448)
 -- Name: contract_on_number contract_on_number_phone_number_key; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -671,7 +854,7 @@ ALTER TABLE ONLY public.contract_on_number
 
 
 --
--- TOC entry 3297 (class 2606 OID 16446)
+-- TOC entry 3312 (class 2606 OID 16446)
 -- Name: contract_on_number contract_on_number_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -680,7 +863,7 @@ ALTER TABLE ONLY public.contract_on_number
 
 
 --
--- TOC entry 3299 (class 2606 OID 16462)
+-- TOC entry 3314 (class 2606 OID 16462)
 -- Name: contract_on_tariff contract_on_tariff_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -689,16 +872,16 @@ ALTER TABLE ONLY public.contract_on_tariff
 
 
 --
--- TOC entry 3315 (class 2606 OID 16578)
+-- TOC entry 3330 (class 2606 OID 16676)
 -- Name: external_resource_connection external_resource_connection_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
 ALTER TABLE ONLY public.external_resource_connection
-    ADD CONSTRAINT external_resource_connection_pkey PRIMARY KEY (id_contract, id_resource);
+    ADD CONSTRAINT external_resource_connection_pkey PRIMARY KEY (id);
 
 
 --
--- TOC entry 3313 (class 2606 OID 16571)
+-- TOC entry 3328 (class 2606 OID 16571)
 -- Name: external_resource external_resource_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -707,7 +890,7 @@ ALTER TABLE ONLY public.external_resource
 
 
 --
--- TOC entry 3305 (class 2606 OID 16497)
+-- TOC entry 3320 (class 2606 OID 16497)
 -- Name: interzone_tariff interzone_tariff_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -716,7 +899,7 @@ ALTER TABLE ONLY public.interzone_tariff
 
 
 --
--- TOC entry 3307 (class 2606 OID 16527)
+-- TOC entry 3322 (class 2606 OID 16527)
 -- Name: service service_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -725,7 +908,7 @@ ALTER TABLE ONLY public.service
 
 
 --
--- TOC entry 3285 (class 2606 OID 16411)
+-- TOC entry 3300 (class 2606 OID 16411)
 -- Name: subscriber subscriber_passport_data_key; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -734,7 +917,7 @@ ALTER TABLE ONLY public.subscriber
 
 
 --
--- TOC entry 3287 (class 2606 OID 16409)
+-- TOC entry 3302 (class 2606 OID 16409)
 -- Name: subscriber subscriber_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -743,7 +926,7 @@ ALTER TABLE ONLY public.subscriber
 
 
 --
--- TOC entry 3293 (class 2606 OID 16432)
+-- TOC entry 3308 (class 2606 OID 16432)
 -- Name: tariff tariff_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -752,7 +935,16 @@ ALTER TABLE ONLY public.tariff
 
 
 --
--- TOC entry 3289 (class 2606 OID 16418)
+-- TOC entry 3332 (class 2606 OID 16682)
+-- Name: external_resource_connection uq_contract_resource; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.external_resource_connection
+    ADD CONSTRAINT uq_contract_resource UNIQUE (id_contract, id_resource);
+
+
+--
+-- TOC entry 3304 (class 2606 OID 16418)
 -- Name: zone zone_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -761,7 +953,7 @@ ALTER TABLE ONLY public.zone
 
 
 --
--- TOC entry 3291 (class 2606 OID 16420)
+-- TOC entry 3306 (class 2606 OID 16420)
 -- Name: zone zone_zone_code_key; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -770,7 +962,7 @@ ALTER TABLE ONLY public.zone
 
 
 --
--- TOC entry 3323 (class 2606 OID 16536)
+-- TOC entry 3342 (class 2606 OID 16536)
 -- Name: additional_service_connection additional_service_connection_id_contract_on_tariff_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -779,7 +971,7 @@ ALTER TABLE ONLY public.additional_service_connection
 
 
 --
--- TOC entry 3324 (class 2606 OID 16541)
+-- TOC entry 3343 (class 2606 OID 16541)
 -- Name: additional_service_connection additional_service_connection_id_service_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -788,7 +980,7 @@ ALTER TABLE ONLY public.additional_service_connection
 
 
 --
--- TOC entry 3320 (class 2606 OID 16484)
+-- TOC entry 3339 (class 2606 OID 16484)
 -- Name: balance balance_id_contract_on_tariff_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -797,7 +989,7 @@ ALTER TABLE ONLY public.balance
 
 
 --
--- TOC entry 3325 (class 2606 OID 16559)
+-- TOC entry 3344 (class 2606 OID 16559)
 -- Name: basic_service_connection basic_service_connection_id_service_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -806,7 +998,7 @@ ALTER TABLE ONLY public.basic_service_connection
 
 
 --
--- TOC entry 3326 (class 2606 OID 16554)
+-- TOC entry 3345 (class 2606 OID 16554)
 -- Name: basic_service_connection basic_service_connection_id_tariff_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -815,7 +1007,34 @@ ALTER TABLE ONLY public.basic_service_connection
 
 
 --
--- TOC entry 3317 (class 2606 OID 16449)
+-- TOC entry 3348 (class 2606 OID 16722)
+-- Name: call call_id_contract_on_tariff_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.call
+    ADD CONSTRAINT call_id_contract_on_tariff_fkey FOREIGN KEY (id_contract_on_tariff) REFERENCES public.contract_on_tariff(id_contract_on_tariff);
+
+
+--
+-- TOC entry 3349 (class 2606 OID 16712)
+-- Name: call call_receiver_zone_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.call
+    ADD CONSTRAINT call_receiver_zone_id_fkey FOREIGN KEY (receiver_zone_id) REFERENCES public.zone(id_zone);
+
+
+--
+-- TOC entry 3350 (class 2606 OID 16717)
+-- Name: call call_subscriber_zone_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.call
+    ADD CONSTRAINT call_subscriber_zone_id_fkey FOREIGN KEY (subscriber_zone_id) REFERENCES public.zone(id_zone);
+
+
+--
+-- TOC entry 3336 (class 2606 OID 16449)
 -- Name: contract_on_number contract_on_number_id_subscriber_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -824,7 +1043,7 @@ ALTER TABLE ONLY public.contract_on_number
 
 
 --
--- TOC entry 3318 (class 2606 OID 16468)
+-- TOC entry 3337 (class 2606 OID 16468)
 -- Name: contract_on_tariff contract_on_tariff_id_contract_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -833,7 +1052,7 @@ ALTER TABLE ONLY public.contract_on_tariff
 
 
 --
--- TOC entry 3319 (class 2606 OID 16463)
+-- TOC entry 3338 (class 2606 OID 16463)
 -- Name: contract_on_tariff contract_on_tariff_id_tariff_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -842,7 +1061,7 @@ ALTER TABLE ONLY public.contract_on_tariff
 
 
 --
--- TOC entry 3327 (class 2606 OID 16579)
+-- TOC entry 3346 (class 2606 OID 16579)
 -- Name: external_resource_connection external_resource_connection_id_contract_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -851,7 +1070,7 @@ ALTER TABLE ONLY public.external_resource_connection
 
 
 --
--- TOC entry 3328 (class 2606 OID 16584)
+-- TOC entry 3347 (class 2606 OID 16584)
 -- Name: external_resource_connection external_resource_connection_id_resource_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -860,7 +1079,7 @@ ALTER TABLE ONLY public.external_resource_connection
 
 
 --
--- TOC entry 3321 (class 2606 OID 16503)
+-- TOC entry 3340 (class 2606 OID 16503)
 -- Name: interzone_tariff interzone_tariff_receiver_zone_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -869,7 +1088,7 @@ ALTER TABLE ONLY public.interzone_tariff
 
 
 --
--- TOC entry 3322 (class 2606 OID 16498)
+-- TOC entry 3341 (class 2606 OID 16498)
 -- Name: interzone_tariff interzone_tariff_sender_zone_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -878,7 +1097,7 @@ ALTER TABLE ONLY public.interzone_tariff
 
 
 --
--- TOC entry 3316 (class 2606 OID 16433)
+-- TOC entry 3335 (class 2606 OID 16433)
 -- Name: tariff tariff_id_zone_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -886,7 +1105,7 @@ ALTER TABLE ONLY public.tariff
     ADD CONSTRAINT tariff_id_zone_fkey FOREIGN KEY (id_zone) REFERENCES public.zone(id_zone);
 
 
--- Completed on 2025-03-24 12:58:34 UTC
+-- Completed on 2025-04-03 11:24:46 UTC
 
 --
 -- PostgreSQL database dump complete
