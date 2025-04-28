@@ -39,6 +39,16 @@
 [ЛР 3.2 Создание БД PostgreSQL в pgAdmin. Резервное копирование и восстановление БД]()
 #### Защита лабораторной работы №3
 По итогам выполнения работы студент представляет реализованную БД в pgadmim. На GIT должен быть загружен pdf-файл отчета по работе в соответствии с требованиями, изложенными в файле работы. Отчет подготавливается по итогам выполнения ЛР 3.2. При представлении реализованной базы данных необходимо устно обосновать состояние реализованной БД в соответствии с нормальными формами.
+### Лабораторная работа 4 Запросы на выборку данных к БД PostgreSQL. Представления. Работа с индексами
+**Лабораторная работа 4 является ключевой контрольной точкой по разделу.**
+
+**Целью работы** является овладение практическими навыками создания представлений и запросов на выборку данных к базе данных PostgreSQL, использования подзапросов при модификации данных и индексов.
+
+Подробно **задание** описано в [тексте работы](https://docs.google.com/document/d/1UrIes0wz9YptDmP_ZH4jyW5vKo282yq_/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+
+Вске материалы по лекции 3.4 Построение запросов к БД. Select SQL. Представления. Индексы [здесь](https://drive.google.com/drive/folders/1Xc_vICozpLvcJVHY7ncLTs1c041v00dG?usp=drive_link).
+#### Защита лабораторной работы №4
+По итогам выполнения работы студент представляет отчет. На GIT должен быть загружен pdf-файл отчета в соответствии с требованиями, изложенными в файле работы. При представлении реализованного задания проводится устное собеседование по результатам работы.
 # 3 семестр 2024-2025
 ## Раздел 1 ВВЕДЕНИЕ
 ### Лекция 1.1 [Актуальность проблематики АИС и лежащих в их основе БД](https://clck.ru/3DLW6A) c
@@ -112,11 +122,11 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 ### 3.4.4 [SELECT SQL. Соединения](https://docs.google.com/presentation/d/1qd1nzSX7QMKYvx65OLuJjz5EtVmtnj-H/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 ### 3.4.5 [SELECT SQL. Агрегатные функции. Группирующие запросы](https://docs.google.com/presentation/d/1OXXH1dj4exjoR8nke3sCLGQ_20OuX83s/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 ### 3.4.6 [SELECT SQL. NULL-значения](https://docs.google.com/presentation/d/1BSdIlGHb4vbjRFn3GUS2GTqjtSJGiOqh/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
-### 3.4.7 SELECT SQL. Представления. Модификация данных
-### 3.4.8 Индексы в реляционной БД
+### 3.4.7 [SELECT SQL. Представления. Модификация данных](https://docs.google.com/presentation/d/1SAvJoUQdHdL1quwiywPGAvtPQbX7-gvm/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
+### 3.4.8 [Индексы в реляционной БД](https://docs.google.com/presentation/d/1QqXtwWN-MB7CK1DMNr4PoMOeNb4gWgsa/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (презентация)
 ### [Операторы языка SQL Select](https://docs.google.com/document/d/15PbK32s7Q5ChKl5yqS1H5aOSr1PFv4J3/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true) (текстовые материалы)
 #### Тестовая база данных: 
-[Скрипты запросов БД Колледж 3.2.3-3.2.8](https://docs.google.com/document/d/1FNO7THVbLA2ttBk6_chz4xYdAgy5IWXf/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
+[Скрипты запросов БД Колледж 3.2.3-3.2.8](https://docs.google.com/document/d/112xANK_D95wKKL_uc8Scc9TDXmQRvL6F/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 ##  ОНЛАЙН-КУРС "Оператор SELECT (версия 2021)"
 В рамках практического онлайн-курса **[Оператор SELECT (версия 2021)](https://learnsql.ru/)"** предлагается выполнить 60 практических заданий (SQL-запросов) на выборку данных (по нескольким предметным областям).
 
