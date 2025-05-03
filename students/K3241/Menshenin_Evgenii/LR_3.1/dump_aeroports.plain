@@ -5,7 +5,7 @@
 -- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.4
 
--- Started on 2025-03-19 23:30:03 MSK
+-- Started on 2025-05-03 20:19:08 MSK
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -28,7 +28,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 
 
 --
--- TOC entry 3772 (class 0 OID 0)
+-- TOC entry 3770 (class 0 OID 0)
 -- Dependencies: 2
 -- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
 --
@@ -105,6 +105,7 @@ CREATE TABLE public."CREW" (
     medical_status text NOT NULL,
     medical_reason text,
     flight_id uuid,
+    member_id uuid,
     CONSTRAINT chk_medical_check_date CHECK ((medical_check_date <= CURRENT_DATE)),
     CONSTRAINT chk_medical_reason_length CHECK ((length(medical_reason) <= 500)),
     CONSTRAINT chk_medical_status CHECK ((medical_status = ANY (ARRAY['FitforDuty'::text, 'UnfitforDuty'::text, 'OnSickLeave'::text, 'InQuarantine'::text, 'Recovered'::text, 'MedicalClearancePending'::text]))),
@@ -276,9 +277,9 @@ ALTER TABLE public."TICKETS" OWNER TO postgres;
 --
 
 CREATE TABLE public."TRANSIT" (
-    transit_id "char"[] NOT NULL,
     arrival_flight_id uuid NOT NULL,
     departure_flight_id uuid NOT NULL,
+    transit_id uuid NOT NULL,
     CONSTRAINT chk_arrival_departure_different CHECK ((arrival_flight_id <> departure_flight_id))
 );
 
@@ -286,7 +287,7 @@ CREATE TABLE public."TRANSIT" (
 ALTER TABLE public."TRANSIT" OWNER TO postgres;
 
 --
--- TOC entry 3756 (class 0 OID 16394)
+-- TOC entry 3754 (class 0 OID 16394)
 -- Dependencies: 219
 -- Data for Name: AIRPORTS; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -298,7 +299,7 @@ JFK	USA	Operational	New York	John F. Kennedy International Airport
 
 
 --
--- TOC entry 3758 (class 0 OID 16452)
+-- TOC entry 3756 (class 0 OID 16452)
 -- Dependencies: 221
 -- Data for Name: CASH_REGISTERS; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -310,7 +311,7 @@ a430db59-ca6e-4eae-acf3-7a77733cfe09	Moscow Airport Terminal B	Open
 
 
 --
--- TOC entry 3763 (class 0 OID 16514)
+-- TOC entry 3761 (class 0 OID 16514)
 -- Dependencies: 226
 -- Data for Name: COMPANY; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -324,18 +325,18 @@ c01fa98e-59dc-4710-ad5f-56bac7e78e9d	CampusAir	USA
 
 
 --
--- TOC entry 3765 (class 0 OID 16533)
+-- TOC entry 3763 (class 0 OID 16533)
 -- Dependencies: 228
 -- Data for Name: CREW; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."CREW" (crew_id, role, medical_check_date, medical_status, medical_reason, flight_id) FROM stdin;
-b104ec73-09fa-4fa0-a487-e4627b7c1e52	Pilot	2025-02-17	FitforDuty	\N	e974f44a-9c87-44ed-aefb-11b7b8d331e1
+COPY public."CREW" (crew_id, role, medical_check_date, medical_status, medical_reason, flight_id, member_id) FROM stdin;
+b104ec73-09fa-4fa0-a487-e4627b7c1e52	Pilot	2025-02-17	FitforDuty	\N	e974f44a-9c87-44ed-aefb-11b7b8d331e1	\N
 \.
 
 
 --
--- TOC entry 3764 (class 0 OID 16521)
+-- TOC entry 3762 (class 0 OID 16521)
 -- Dependencies: 227
 -- Data for Name: CREW_MEMBERS; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -346,7 +347,7 @@ b104ec73-09fa-4fa0-a487-e4627b7c1e52	e1169c5a-068a-4ffa-802f-bf6896c3c47c	Ivan P
 
 
 --
--- TOC entry 3755 (class 0 OID 16389)
+-- TOC entry 3753 (class 0 OID 16389)
 -- Dependencies: 218
 -- Data for Name: FLIGHT; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -357,7 +358,7 @@ Scheduled	e974f44a-9c87-44ed-aefb-11b7b8d331e1	\N	02:02:28.760758+03	\N	00:02:28
 
 
 --
--- TOC entry 3759 (class 0 OID 16459)
+-- TOC entry 3757 (class 0 OID 16459)
 -- Dependencies: 222
 -- Data for Name: PASSENGERS; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -368,7 +369,7 @@ COPY public."PASSENGERS" (passenger_id, full_name, passport_serial, passport_num
 
 
 --
--- TOC entry 3766 (class 0 OID 16550)
+-- TOC entry 3764 (class 0 OID 16550)
 -- Dependencies: 229
 -- Data for Name: PLANES; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -378,7 +379,7 @@ COPY public."PLANES" (plane_id, model_id, company_id, status, flight_duration, l
 
 
 --
--- TOC entry 3762 (class 0 OID 16507)
+-- TOC entry 3760 (class 0 OID 16507)
 -- Dependencies: 225
 -- Data for Name: PLANE_MODELS; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -390,7 +391,7 @@ e1468bc8-ca46-4b03-9e18-2f07dfe6999f	Boeing 737	160	600	2.5	20000	3000	commercia
 
 
 --
--- TOC entry 3760 (class 0 OID 16466)
+-- TOC entry 3758 (class 0 OID 16466)
 -- Dependencies: 223
 -- Data for Name: SEATS; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -402,7 +403,7 @@ cd09f0d8-8dd9-499a-ab44-30038dc654c0	e974f44a-9c87-44ed-aefb-11b7b8d331e1	12A	Ec
 
 
 --
--- TOC entry 3761 (class 0 OID 16480)
+-- TOC entry 3759 (class 0 OID 16480)
 -- Dependencies: 224
 -- Data for Name: TICKETS; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -413,12 +414,12 @@ aa8b7bc8-7cdc-40ef-9e96-242bd218a91c	e974f44a-9c87-44ed-aefb-11b7b8d331e1	cd09f0
 
 
 --
--- TOC entry 3757 (class 0 OID 16424)
+-- TOC entry 3755 (class 0 OID 16424)
 -- Dependencies: 220
 -- Data for Name: TRANSIT; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."TRANSIT" (transit_id, arrival_flight_id, departure_flight_id) FROM stdin;
+COPY public."TRANSIT" (arrival_flight_id, departure_flight_id, transit_id) FROM stdin;
 \.
 
 
@@ -441,7 +442,7 @@ ALTER TABLE ONLY public."AIRPORTS"
 
 
 --
--- TOC entry 3560 (class 2606 OID 16874)
+-- TOC entry 3558 (class 2606 OID 16874)
 -- Name: CASH_REGISTERS CASH_REGISTERS_cash_register_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -450,7 +451,7 @@ ALTER TABLE ONLY public."CASH_REGISTERS"
 
 
 --
--- TOC entry 3562 (class 2606 OID 16458)
+-- TOC entry 3560 (class 2606 OID 16458)
 -- Name: CASH_REGISTERS CASH_REGISTERS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -459,7 +460,7 @@ ALTER TABLE ONLY public."CASH_REGISTERS"
 
 
 --
--- TOC entry 3580 (class 2606 OID 16876)
+-- TOC entry 3578 (class 2606 OID 16876)
 -- Name: COMPANY COMPANY_company_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -468,7 +469,7 @@ ALTER TABLE ONLY public."COMPANY"
 
 
 --
--- TOC entry 3582 (class 2606 OID 16520)
+-- TOC entry 3580 (class 2606 OID 16520)
 -- Name: COMPANY COMPANY_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -477,7 +478,7 @@ ALTER TABLE ONLY public."COMPANY"
 
 
 --
--- TOC entry 3584 (class 2606 OID 16880)
+-- TOC entry 3582 (class 2606 OID 16880)
 -- Name: CREW_MEMBERS CREW_MEMBERS_member_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -486,7 +487,7 @@ ALTER TABLE ONLY public."CREW_MEMBERS"
 
 
 --
--- TOC entry 3586 (class 2606 OID 16527)
+-- TOC entry 3584 (class 2606 OID 16527)
 -- Name: CREW_MEMBERS CREW_MEMBERS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -495,7 +496,7 @@ ALTER TABLE ONLY public."CREW_MEMBERS"
 
 
 --
--- TOC entry 3588 (class 2606 OID 16878)
+-- TOC entry 3586 (class 2606 OID 16878)
 -- Name: CREW CREW_crew_id_flight_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -504,7 +505,7 @@ ALTER TABLE ONLY public."CREW"
 
 
 --
--- TOC entry 3590 (class 2606 OID 16539)
+-- TOC entry 3588 (class 2606 OID 16539)
 -- Name: CREW CREW_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -531,7 +532,7 @@ ALTER TABLE ONLY public."FLIGHT"
 
 
 --
--- TOC entry 3564 (class 2606 OID 16884)
+-- TOC entry 3562 (class 2606 OID 16884)
 -- Name: PASSENGERS PASSENGERS_passenger_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -540,7 +541,7 @@ ALTER TABLE ONLY public."PASSENGERS"
 
 
 --
--- TOC entry 3566 (class 2606 OID 16465)
+-- TOC entry 3564 (class 2606 OID 16465)
 -- Name: PASSENGERS PASSENGERS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -549,7 +550,7 @@ ALTER TABLE ONLY public."PASSENGERS"
 
 
 --
--- TOC entry 3592 (class 2606 OID 16556)
+-- TOC entry 3590 (class 2606 OID 16556)
 -- Name: PLANES PLANES_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -558,7 +559,7 @@ ALTER TABLE ONLY public."PLANES"
 
 
 --
--- TOC entry 3594 (class 2606 OID 16886)
+-- TOC entry 3592 (class 2606 OID 16886)
 -- Name: PLANES PLANES_plane_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -567,7 +568,7 @@ ALTER TABLE ONLY public."PLANES"
 
 
 --
--- TOC entry 3576 (class 2606 OID 16888)
+-- TOC entry 3574 (class 2606 OID 16888)
 -- Name: PLANE_MODELS PLANE_MODELS_model_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -576,7 +577,7 @@ ALTER TABLE ONLY public."PLANE_MODELS"
 
 
 --
--- TOC entry 3578 (class 2606 OID 16513)
+-- TOC entry 3576 (class 2606 OID 16513)
 -- Name: PLANE_MODELS PLANE_MODELS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -585,7 +586,7 @@ ALTER TABLE ONLY public."PLANE_MODELS"
 
 
 --
--- TOC entry 3568 (class 2606 OID 16474)
+-- TOC entry 3566 (class 2606 OID 16474)
 -- Name: SEATS SEATS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -594,7 +595,7 @@ ALTER TABLE ONLY public."SEATS"
 
 
 --
--- TOC entry 3570 (class 2606 OID 16890)
+-- TOC entry 3568 (class 2606 OID 16890)
 -- Name: SEATS SEATS_seat_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -603,7 +604,7 @@ ALTER TABLE ONLY public."SEATS"
 
 
 --
--- TOC entry 3572 (class 2606 OID 16486)
+-- TOC entry 3570 (class 2606 OID 16486)
 -- Name: TICKETS TICKETS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -612,7 +613,7 @@ ALTER TABLE ONLY public."TICKETS"
 
 
 --
--- TOC entry 3574 (class 2606 OID 16892)
+-- TOC entry 3572 (class 2606 OID 16892)
 -- Name: TICKETS TICKETS_ticket_id_seat_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -621,21 +622,12 @@ ALTER TABLE ONLY public."TICKETS"
 
 
 --
--- TOC entry 3556 (class 2606 OID 16430)
+-- TOC entry 3556 (class 2606 OID 17219)
 -- Name: TRANSIT TRANSIT_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."TRANSIT"
     ADD CONSTRAINT "TRANSIT_pkey" PRIMARY KEY (transit_id);
-
-
---
--- TOC entry 3558 (class 2606 OID 16870)
--- Name: TRANSIT TRANSIT_transit_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."TRANSIT"
-    ADD CONSTRAINT "TRANSIT_transit_id_key" UNIQUE (transit_id);
 
 
 --
@@ -657,7 +649,16 @@ ALTER TABLE public."PASSENGERS"
 
 
 --
--- TOC entry 3605 (class 2606 OID 16528)
+-- TOC entry 3604 (class 2606 OID 17213)
+-- Name: CREW 123; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CREW"
+    ADD CONSTRAINT "123" FOREIGN KEY (member_id) REFERENCES public."CREW_MEMBERS"(member_id) NOT VALID;
+
+
+--
+-- TOC entry 3603 (class 2606 OID 16528)
 -- Name: CREW_MEMBERS CREW_MEMBERS_company_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -666,16 +667,7 @@ ALTER TABLE ONLY public."CREW_MEMBERS"
 
 
 --
--- TOC entry 3606 (class 2606 OID 16545)
--- Name: CREW CREW_crew_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."CREW"
-    ADD CONSTRAINT "CREW_crew_id_fkey" FOREIGN KEY (crew_id) REFERENCES public."CREW_MEMBERS"(member_id);
-
-
---
--- TOC entry 3607 (class 2606 OID 16540)
+-- TOC entry 3605 (class 2606 OID 16540)
 -- Name: CREW CREW_flight_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -684,7 +676,7 @@ ALTER TABLE ONLY public."CREW"
 
 
 --
--- TOC entry 3595 (class 2606 OID 16575)
+-- TOC entry 3593 (class 2606 OID 16575)
 -- Name: FLIGHT FLIGHT_departure_airport_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -693,7 +685,7 @@ ALTER TABLE ONLY public."FLIGHT"
 
 
 --
--- TOC entry 3596 (class 2606 OID 16580)
+-- TOC entry 3594 (class 2606 OID 16580)
 -- Name: FLIGHT FLIGHT_destination_airport_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -702,7 +694,7 @@ ALTER TABLE ONLY public."FLIGHT"
 
 
 --
--- TOC entry 3597 (class 2606 OID 16567)
+-- TOC entry 3595 (class 2606 OID 16567)
 -- Name: FLIGHT FLIGHT_plane_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -711,7 +703,7 @@ ALTER TABLE ONLY public."FLIGHT"
 
 
 --
--- TOC entry 3608 (class 2606 OID 16557)
+-- TOC entry 3606 (class 2606 OID 16557)
 -- Name: PLANES PLANES_company_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -720,7 +712,7 @@ ALTER TABLE ONLY public."PLANES"
 
 
 --
--- TOC entry 3609 (class 2606 OID 16562)
+-- TOC entry 3607 (class 2606 OID 16562)
 -- Name: PLANES PLANES_model_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -729,7 +721,7 @@ ALTER TABLE ONLY public."PLANES"
 
 
 --
--- TOC entry 3600 (class 2606 OID 16475)
+-- TOC entry 3598 (class 2606 OID 16475)
 -- Name: SEATS SEATS_flight_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -738,7 +730,7 @@ ALTER TABLE ONLY public."SEATS"
 
 
 --
--- TOC entry 3601 (class 2606 OID 16497)
+-- TOC entry 3599 (class 2606 OID 16497)
 -- Name: TICKETS TICKETS_cash_register_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -747,7 +739,7 @@ ALTER TABLE ONLY public."TICKETS"
 
 
 --
--- TOC entry 3602 (class 2606 OID 16487)
+-- TOC entry 3600 (class 2606 OID 16487)
 -- Name: TICKETS TICKETS_flight_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -756,7 +748,7 @@ ALTER TABLE ONLY public."TICKETS"
 
 
 --
--- TOC entry 3603 (class 2606 OID 16502)
+-- TOC entry 3601 (class 2606 OID 16502)
 -- Name: TICKETS TICKETS_passanger_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -765,7 +757,7 @@ ALTER TABLE ONLY public."TICKETS"
 
 
 --
--- TOC entry 3604 (class 2606 OID 16492)
+-- TOC entry 3602 (class 2606 OID 16492)
 -- Name: TICKETS TICKETS_seat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -774,7 +766,7 @@ ALTER TABLE ONLY public."TICKETS"
 
 
 --
--- TOC entry 3598 (class 2606 OID 16442)
+-- TOC entry 3596 (class 2606 OID 16442)
 -- Name: TRANSIT TRANSIT_arrival_flight_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -783,7 +775,7 @@ ALTER TABLE ONLY public."TRANSIT"
 
 
 --
--- TOC entry 3599 (class 2606 OID 16447)
+-- TOC entry 3597 (class 2606 OID 16447)
 -- Name: TRANSIT TRANSIT_departure_fligh_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -791,7 +783,7 @@ ALTER TABLE ONLY public."TRANSIT"
     ADD CONSTRAINT "TRANSIT_departure_fligh_id_fkey" FOREIGN KEY (departure_flight_id) REFERENCES public."FLIGHT"(flight_id) NOT VALID;
 
 
--- Completed on 2025-03-19 23:30:03 MSK
+-- Completed on 2025-05-03 20:19:08 MSK
 
 --
 -- PostgreSQL database dump complete
