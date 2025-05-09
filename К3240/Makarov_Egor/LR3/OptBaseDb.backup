@@ -1,0 +1,779 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 15.12
+-- Dumped by pg_dump version 15.12
+
+-- Started on 2025-04-14 22:25:06
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 227 (class 1259 OID 16537)
+-- Name: Customer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Customer" (
+    customer_id integer NOT NULL,
+    customer_address "char" NOT NULL,
+    customer_company_name "char"
+);
+
+
+ALTER TABLE public."Customer" OWNER TO postgres;
+
+--
+-- TOC entry 214 (class 1259 OID 16403)
+-- Name: Manufacturer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Manufacturer" (
+    manufacturer_id integer NOT NULL,
+    company_name text NOT NULL,
+    "manufacturer's_address" text NOT NULL,
+    status text NOT NULL
+);
+
+
+ALTER TABLE public."Manufacturer" OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16454)
+-- Name: Order; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Order" (
+    order_id integer NOT NULL,
+    customer_id integer NOT NULL,
+    worker_id integer NOT NULL,
+    order_date date NOT NULL,
+    selling_price integer NOT NULL,
+    product_count integer,
+    status "char" NOT NULL
+);
+
+
+ALTER TABLE public."Order" OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 16410)
+-- Name: Product; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Product" (
+    product_id integer NOT NULL,
+    manufacturer_id integer NOT NULL,
+    unit_of_measurement_id integer NOT NULL,
+    product_price_id integer NOT NULL,
+    product_name text NOT NULL,
+    status text NOT NULL
+);
+
+
+ALTER TABLE public."Product" OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 16439)
+-- Name: Product price; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Product price" (
+    product_price_id integer NOT NULL,
+    product_id integer NOT NULL,
+    beginning_of_the_validity_period date NOT NULL,
+    end_of_the_validity_period date NOT NULL
+);
+
+
+ALTER TABLE public."Product price" OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16464)
+-- Name: Provider; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Provider" (
+    provider_id integer NOT NULL,
+    company_name "char" NOT NULL,
+    company_address "char" NOT NULL
+);
+
+
+ALTER TABLE public."Provider" OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 16469)
+-- Name: Purchase prices; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Purchase prices" (
+    purchase_price integer NOT NULL,
+    beggining_of_the_period date NOT NULL,
+    ending_of_the_period date NOT NULL,
+    unit_price integer NOT NULL,
+    product_id integer NOT NULL,
+    provider_id integer NOT NULL
+);
+
+
+ALTER TABLE public."Purchase prices" OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 16449)
+-- Name: Scope of delivery; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Scope of delivery" (
+    shipment_composition integer NOT NULL,
+    shipment_id integer NOT NULL,
+    product_count integer,
+    product_price integer NOT NULL,
+    product_id integer NOT NULL
+);
+
+
+ALTER TABLE public."Scope of delivery" OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 16486)
+-- Name: Shipment; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Shipment" (
+    shipment_id integer NOT NULL,
+    provider_id integer NOT NULL,
+    worker_id integer NOT NULL,
+    batch_number integer NOT NULL,
+    date_of_delivery date NOT NULL,
+    status "char" NOT NULL
+);
+
+
+ALTER TABLE public."Shipment" OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 16459)
+-- Name: Worker; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Worker" (
+    worker_id integer NOT NULL,
+    "employee's_service_number" integer NOT NULL,
+    status "char" NOT NULL
+);
+
+
+ALTER TABLE public."Worker" OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 16444)
+-- Name: order structure; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."order structure" (
+    order_composition_id integer NOT NULL,
+    "product _id" integer NOT NULL,
+    order_id integer NOT NULL,
+    product_price integer NOT NULL,
+    product_count integer
+);
+
+
+ALTER TABLE public."order structure" OWNER TO postgres;
+
+--
+-- TOC entry 226 (class 1259 OID 16517)
+-- Name: post; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.post (
+    "current_ position_ id" integer NOT NULL,
+    post_id integer NOT NULL,
+    worker_id integer NOT NULL,
+    begging_of_the_period date NOT NULL,
+    ending_of_the_period date NOT NULL,
+    status "char" NOT NULL
+);
+
+
+ALTER TABLE public.post OWNER TO postgres;
+
+--
+-- TOC entry 228 (class 1259 OID 16581)
+-- Name: posts_list_post_list_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.posts_list_post_list_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.posts_list_post_list_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 225 (class 1259 OID 16502)
+-- Name: posts list; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."posts list" (
+    "post's_list_id" integer DEFAULT nextval('public.posts_list_post_list_id_seq'::regclass) NOT NULL,
+    post_id integer NOT NULL,
+    title "char" NOT NULL
+);
+
+
+ALTER TABLE public."posts list" OWNER TO postgres;
+
+--
+-- TOC entry 216 (class 1259 OID 16420)
+-- Name: units; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.units (
+    unit_of_measurement_id integer NOT NULL,
+    name text NOT NULL
+);
+
+
+ALTER TABLE public.units OWNER TO postgres;
+
+--
+-- TOC entry 3433 (class 0 OID 16537)
+-- Dependencies: 227
+-- Data for Name: Customer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Customer" (customer_id, customer_address, customer_company_name) FROM stdin;
+1	\\320	\\320
+2	\\320	\\320
+3	7	C
+4	3	C
+\.
+
+
+--
+-- TOC entry 3420 (class 0 OID 16403)
+-- Dependencies: 214
+-- Data for Name: Manufacturer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Manufacturer" (manufacturer_id, company_name, "manufacturer's_address", status) FROM stdin;
+1	Company A	123 Main St	active
+2	Company B	456 Elm St	inactive
+\.
+
+
+--
+-- TOC entry 3426 (class 0 OID 16454)
+-- Dependencies: 220
+-- Data for Name: Order; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Order" (order_id, customer_id, worker_id, order_date, selling_price, product_count, status) FROM stdin;
+1	1	1	2025-04-04	250	5	c
+2	2	2	2025-04-05	300	3	p
+\.
+
+
+--
+-- TOC entry 3421 (class 0 OID 16410)
+-- Dependencies: 215
+-- Data for Name: Product; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Product" (product_id, manufacturer_id, unit_of_measurement_id, product_price_id, product_name, status) FROM stdin;
+1	1	1	1	Product 1	available
+2	2	2	2	Product 2	available
+\.
+
+
+--
+-- TOC entry 3423 (class 0 OID 16439)
+-- Dependencies: 217
+-- Data for Name: Product price; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Product price" (product_price_id, product_id, beginning_of_the_validity_period, end_of_the_validity_period) FROM stdin;
+1	1	2025-01-01	2025-12-31
+2	2	2025-01-01	2025-12-31
+\.
+
+
+--
+-- TOC entry 3428 (class 0 OID 16464)
+-- Dependencies: 222
+-- Data for Name: Provider; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Provider" (provider_id, company_name, company_address) FROM stdin;
+1	\\320	\\320
+2	\\320	\\320
+101	P	1
+102	C	4
+\.
+
+
+--
+-- TOC entry 3429 (class 0 OID 16469)
+-- Dependencies: 223
+-- Data for Name: Purchase prices; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Purchase prices" (purchase_price, beggining_of_the_period, ending_of_the_period, unit_price, product_id, provider_id) FROM stdin;
+5000	2025-01-01	2025-12-31	100	1	101
+7000	2025-01-01	2025-12-31	150	2	102
+\.
+
+
+--
+-- TOC entry 3425 (class 0 OID 16449)
+-- Dependencies: 219
+-- Data for Name: Scope of delivery; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Scope of delivery" (shipment_composition, shipment_id, product_count, product_price, product_id) FROM stdin;
+1	1	100	5000	1
+2	2	200	7000	2
+\.
+
+
+--
+-- TOC entry 3430 (class 0 OID 16486)
+-- Dependencies: 224
+-- Data for Name: Shipment; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Shipment" (shipment_id, provider_id, worker_id, batch_number, date_of_delivery, status) FROM stdin;
+1	1	1	1001	2025-04-06	s
+2	2	2	1002	2025-04-07	p
+\.
+
+
+--
+-- TOC entry 3427 (class 0 OID 16459)
+-- Dependencies: 221
+-- Data for Name: Worker; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Worker" (worker_id, "employee's_service_number", status) FROM stdin;
+1	12345	a
+2	67890	i
+\.
+
+
+--
+-- TOC entry 3424 (class 0 OID 16444)
+-- Dependencies: 218
+-- Data for Name: order structure; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."order structure" (order_composition_id, "product _id", order_id, product_price, product_count) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3432 (class 0 OID 16517)
+-- Dependencies: 226
+-- Data for Name: post; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.post ("current_ position_ id", post_id, worker_id, begging_of_the_period, ending_of_the_period, status) FROM stdin;
+1	1	1	2025-04-01	2025-12-31	a
+2	2	2	2025-04-01	2025-12-31	i
+\.
+
+
+--
+-- TOC entry 3431 (class 0 OID 16502)
+-- Dependencies: 225
+-- Data for Name: posts list; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."posts list" ("post's_list_id", post_id, title) FROM stdin;
+1	1	\\320
+2	2	\\320
+\.
+
+
+--
+-- TOC entry 3422 (class 0 OID 16420)
+-- Dependencies: 216
+-- Data for Name: units; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.units (unit_of_measurement_id, name) FROM stdin;
+1	шт
+2	кг
+3	л
+6	м²
+7	м³
+8	м1
+9	м2
+\.
+
+
+--
+-- TOC entry 3440 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: posts_list_post_list_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.posts_list_post_list_id_seq', 1, false);
+
+
+--
+-- TOC entry 3234 (class 2606 OID 16426)
+-- Name: units units of measurement _pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.units
+    ADD CONSTRAINT "units of measurement _pkey" PRIMARY KEY (unit_of_measurement_id);
+
+
+--
+-- TOC entry 3245 (class 2606 OID 16458)
+-- Name: Order Заказ_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Order"
+    ADD CONSTRAINT "Заказ_pkey" PRIMARY KEY (order_id);
+
+
+--
+-- TOC entry 3260 (class 2606 OID 16521)
+-- Name: post Занимаемая должность_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.post
+    ADD CONSTRAINT "Занимаемая должность_pkey" PRIMARY KEY ("current_ position_ id");
+
+
+--
+-- TOC entry 3262 (class 2606 OID 16541)
+-- Name: Customer Покупатель _pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Customer"
+    ADD CONSTRAINT "Покупатель _pkey" PRIMARY KEY (customer_id);
+
+
+--
+-- TOC entry 3256 (class 2606 OID 16490)
+-- Name: Shipment Поставка_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Shipment"
+    ADD CONSTRAINT "Поставка_pkey" PRIMARY KEY (shipment_id);
+
+
+--
+-- TOC entry 3249 (class 2606 OID 16468)
+-- Name: Provider Поставщик_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Provider"
+    ADD CONSTRAINT "Поставщик_pkey" PRIMARY KEY (provider_id);
+
+
+--
+-- TOC entry 3227 (class 2606 OID 16409)
+-- Name: Manufacturer Производитель_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Manufacturer"
+    ADD CONSTRAINT "Производитель_pkey" PRIMARY KEY (manufacturer_id);
+
+
+--
+-- TOC entry 3239 (class 2606 OID 16448)
+-- Name: order structure Состав заказа_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."order structure"
+    ADD CONSTRAINT "Состав заказа_pkey" PRIMARY KEY (order_composition_id);
+
+
+--
+-- TOC entry 3242 (class 2606 OID 16453)
+-- Name: Scope of delivery Состав поставки _pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Scope of delivery"
+    ADD CONSTRAINT "Состав поставки _pkey" PRIMARY KEY (shipment_composition);
+
+
+--
+-- TOC entry 3247 (class 2606 OID 16463)
+-- Name: Worker Сотрудник_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Worker"
+    ADD CONSTRAINT "Сотрудник_pkey" PRIMARY KEY (worker_id);
+
+
+--
+-- TOC entry 3258 (class 2606 OID 16506)
+-- Name: posts list Справочник должностей_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."posts list"
+    ADD CONSTRAINT "Справочник должностей_pkey" PRIMARY KEY ("post's_list_id");
+
+
+--
+-- TOC entry 3232 (class 2606 OID 16414)
+-- Name: Product Товар_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Product"
+    ADD CONSTRAINT "Товар_pkey" PRIMARY KEY (product_id);
+
+
+--
+-- TOC entry 3236 (class 2606 OID 16443)
+-- Name: Product price Цена товара_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Product price"
+    ADD CONSTRAINT "Цена товара_pkey" PRIMARY KEY (product_price_id);
+
+
+--
+-- TOC entry 3253 (class 2606 OID 16473)
+-- Name: Purchase prices Цены закупки_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Purchase prices"
+    ADD CONSTRAINT "Цены закупки_pkey" PRIMARY KEY (purchase_price);
+
+
+--
+-- TOC entry 3228 (class 1259 OID 16438)
+-- Name: fki_FK_unit_of_measurement_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_FK_unit_of_measurement_id" ON public."Product" USING btree (unit_of_measurement_id);
+
+
+--
+-- TOC entry 3229 (class 1259 OID 16580)
+-- Name: fki_FK_units_of_measurement_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_FK_units_of_measurement_id" ON public."Product" USING btree (unit_of_measurement_id);
+
+
+--
+-- TOC entry 3243 (class 1259 OID 16547)
+-- Name: fki_customer_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_customer_id ON public."Order" USING btree (customer_id);
+
+
+--
+-- TOC entry 3237 (class 1259 OID 16569)
+-- Name: fki_order_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_order_id ON public."order structure" USING btree (order_id);
+
+
+--
+-- TOC entry 3250 (class 1259 OID 16485)
+-- Name: fki_product_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_product_id ON public."Purchase prices" USING btree (product_id);
+
+
+--
+-- TOC entry 3251 (class 1259 OID 16479)
+-- Name: fki_provider_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_provider_id ON public."Purchase prices" USING btree (provider_id);
+
+
+--
+-- TOC entry 3240 (class 1259 OID 16553)
+-- Name: fki_shipment_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_shipment_id ON public."Scope of delivery" USING btree (shipment_id);
+
+
+--
+-- TOC entry 3230 (class 1259 OID 16432)
+-- Name: fki_unit_of_measurement_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_unit_of_measurement_id ON public."Product" USING btree (product_id);
+
+
+--
+-- TOC entry 3254 (class 1259 OID 16501)
+-- Name: fki_worker_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX fki_worker_id ON public."Shipment" USING btree (worker_id);
+
+
+--
+-- TOC entry 3263 (class 2606 OID 16415)
+-- Name: Product FK_manufacturer_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Product"
+    ADD CONSTRAINT "FK_manufacturer_id" FOREIGN KEY (manufacturer_id) REFERENCES public."Manufacturer"(manufacturer_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3264 (class 2606 OID 16575)
+-- Name: Product FK_units_of_measurement_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Product"
+    ADD CONSTRAINT "FK_units_of_measurement_id" FOREIGN KEY (unit_of_measurement_id) REFERENCES public.units(unit_of_measurement_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3270 (class 2606 OID 16542)
+-- Name: Order customer_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Order"
+    ADD CONSTRAINT customer_id FOREIGN KEY (customer_id) REFERENCES public."Customer"(customer_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3266 (class 2606 OID 16564)
+-- Name: order structure order_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."order structure"
+    ADD CONSTRAINT order_id FOREIGN KEY (order_id) REFERENCES public."Order"(order_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3276 (class 2606 OID 16522)
+-- Name: post post_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.post
+    ADD CONSTRAINT post_id FOREIGN KEY (post_id) REFERENCES public."posts list"("post's_list_id") ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3272 (class 2606 OID 16480)
+-- Name: Purchase prices product_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Purchase prices"
+    ADD CONSTRAINT product_id FOREIGN KEY (product_id) REFERENCES public."Product"(product_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3267 (class 2606 OID 16559)
+-- Name: order structure product_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."order structure"
+    ADD CONSTRAINT product_id FOREIGN KEY ("product _id") REFERENCES public."Product"(product_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3265 (class 2606 OID 16570)
+-- Name: Product price product_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Product price"
+    ADD CONSTRAINT product_id FOREIGN KEY (product_id) REFERENCES public."Product"(product_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3268 (class 2606 OID 16615)
+-- Name: Scope of delivery product_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Scope of delivery"
+    ADD CONSTRAINT product_id FOREIGN KEY (product_id) REFERENCES public."Product"(product_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3273 (class 2606 OID 16474)
+-- Name: Purchase prices provider_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Purchase prices"
+    ADD CONSTRAINT provider_id FOREIGN KEY (provider_id) REFERENCES public."Provider"(provider_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3274 (class 2606 OID 16491)
+-- Name: Shipment provider_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Shipment"
+    ADD CONSTRAINT provider_id FOREIGN KEY (provider_id) REFERENCES public."Provider"(provider_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3269 (class 2606 OID 16548)
+-- Name: Scope of delivery shipment_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Scope of delivery"
+    ADD CONSTRAINT shipment_id FOREIGN KEY (shipment_id) REFERENCES public."Shipment"(shipment_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3275 (class 2606 OID 16496)
+-- Name: Shipment worker_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Shipment"
+    ADD CONSTRAINT worker_id FOREIGN KEY (worker_id) REFERENCES public."Worker"(worker_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3277 (class 2606 OID 16527)
+-- Name: post worker_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.post
+    ADD CONSTRAINT worker_id FOREIGN KEY (worker_id) REFERENCES public."Worker"(worker_id) ON UPDATE CASCADE;
+
+
+--
+-- TOC entry 3271 (class 2606 OID 16532)
+-- Name: Order worker_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Order"
+    ADD CONSTRAINT worker_id FOREIGN KEY (worker_id) REFERENCES public."Worker"(worker_id) ON UPDATE CASCADE;
+
+
+-- Completed on 2025-04-14 22:25:06
+
+--
+-- PostgreSQL database dump complete
+--
+
