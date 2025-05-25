@@ -1,0 +1,103 @@
+learn> db.habitats.insertMany([
+...   {
+...     _id: "forest", 
+...     name: "Enchanted Forest", 
+...     description: "Dense magical forest with ancient trees and mystical streams"
+...   },
+...   {
+...     _id: "mountain", 
+...     name: "Crystal Mountains", 
+...     description: "High peaks with crystal caves and magical waterfalls"
+...   },
+...   {
+...     _id: "valley", 
+...     name: "Rainbow Valley", 
+...     description: "Colorful valley with permanent rainbows and magical flowers"
+...   }
+... ]);
+Uncaught:
+MongoBulkWriteError: E11000 duplicate key error collection: learn.habitats index: _id_ dup key: { _id: "forest" }
+Result: BulkWriteResult {
+  insertedCount: 0,
+  matchedCount: 0,
+  modifiedCount: 0,
+  deletedCount: 0,
+  upsertedCount: 0,
+  upsertedIds: {},
+  insertedIds: {}
+}
+Write Errors: [
+  WriteError {
+    err: {
+      index: 0,
+      code: 11000,
+      errmsg: 'E11000 duplicate key error collection: learn.habitats index: _id_ dup key: { _id: "forest" }',
+      errInfo: undefined,
+      op: {
+        _id: 'forest',
+        name: 'Enchanted Forest',
+        description: 'Dense magical forest with ancient trees and mystical streams'
+      }
+    }
+  }
+]
+learn> db.habitats.deleteMany();
+MongoshInvalidInputError: [COMMON-10001] Missing required argument at position 0 (Collection.deleteMany)
+learn> db.habitats.deleteMany({});
+{ acknowledged: true, deletedCount: 3 }
+learn> db.habitats.insertMany([ { _id: "forest", name: "Enchanted Forest", description: "Dense magical forest with ancient trees and mystical streams" }, { _id: "mountain", name: "Crystal Mountains", description: "High peaks with crystal caves and magical waterfalls" }, { _id: "valley", name: "Rainbow Valley", description: "Colorful valley with permanent rainbows and magical flowers" }] );
+{
+  acknowledged: true,
+  insertedIds: { '0': 'forest', '1': 'mountain', '2': 'valley' }
+}
+learn> db.unicorns.updateOne(
+...   {name: 'Aurora'},
+...   {$set: {habitat: {$ref: "habitats", $id: "forest"}}}
+... );
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+learn> db.unicorns.updateOne(
+...   {name: 'Nimue'},
+...   {$set: {habitat: {$ref: "habitats", $id: "valley"}}}
+... );
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+learn> db.unicorns.updateOne(
+...   {name: 'Unicrom'},
+...   {$set: {habitat: {$ref: "habitats", $id: "mountain"}}}
+... );
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+learn> db.unicorns.find({habitat: {$exists: true}}, {name: 1, habitat: 1});
+[
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca8'),
+    name: 'Aurora',
+    habitat: DBRef('habitats', 'forest')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca9'),
+    name: 'Unicrom',
+    habitat: DBRef('habitats', 'mountain')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb1'),
+    name: 'Nimue',
+    habitat: DBRef('habitats', 'valley')
+  }
+]

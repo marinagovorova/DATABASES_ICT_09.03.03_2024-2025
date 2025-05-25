@@ -1,0 +1,185 @@
+learn> db.towns.insertMany([
+...   {
+...     name: "Punxsutawney", 
+...     populatiuon: 6200, 
+...     last_sensus: ISODate("2008-01-31"), 
+...     famous_for: [""], 
+...     mayor: {
+...       name: "Jim Wehrle" 
+...     }
+...   },
+...   {
+...     name: "New York", 
+...     populatiuon: 22200000, 
+...     last_sensus: ISODate("2009-07-31"), 
+...     famous_for: ["status of liberty", "food"], 
+...     mayor: {
+...       name: "Michael Bloomberg", 
+...       party: "I"
+...     }
+...   },
+...   {
+...     name: "Portland", 
+...     populatiuon: 528000, 
+...     last_sensus: ISODate("2009-07-20"), 
+...     famous_for: ["beer", "food"], 
+...     mayor: {
+...       name: "Sam Adams", 
+...       party: "D"
+...     }
+...   }
+... ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('683310f85b810f068d544cb3'),
+    '1': ObjectId('683310f85b810f068d544cb4'),
+    '2': ObjectId('683310f85b810f068d544cb5')
+  }
+}
+learn> db.towns.find({"mayor.party": "I"}, {name: 1, mayor: 1, _id: 0});
+[
+  {
+    name: 'New York',
+    mayor: { name: 'Michael Bloomberg', party: 'I' }
+  }
+]
+learn> db.towns.find({"mayor.party": {$exists: false}}, {name: 1, mayor: 1, _id: 0});
+[ { name: 'Punxsutawney', mayor: { name: 'Jim Wehrle' } } ]
+learn> 
+
+learn> function getMaleUnicorns() {
+...   return db.unicorns.find({gender: 'm'});
+... }
+[Function: getMaleUnicorns]
+learn> getMaleUnicorns();
+[
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca7'),
+    name: 'Horny',
+    loves: [ 'carrot', 'papaya' ],
+    weight: 600,
+    gender: 'm',
+    vampires: 68
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca9'),
+    name: 'Unicrom',
+    loves: [ 'energon', 'redbull' ],
+    weight: 984,
+    gender: 'm',
+    vampires: 187,
+    habitat: DBRef('habitats', 'mountain')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544caa'),
+    name: 'Roooooodles',
+    loves: [ 'apple' ],
+    weight: 575,
+    gender: 'm',
+    vampires: 104
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cad'),
+    name: 'Kenny',
+    loves: [ 'grape', 'lemon' ],
+    weight: 690,
+    gender: 'm',
+    vampires: 44
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cae'),
+    name: 'Raleigh',
+    loves: [ 'apple', 'sugar', 'redbull' ],
+    weight: 421,
+    gender: 'm',
+    vampires: 7
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb0'),
+    name: 'Pilot',
+    loves: [ 'apple', 'watermelon', 'chocolate' ],
+    weight: 650,
+    gender: 'm',
+    vampires: 59
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb2'),
+    name: 'Dunx',
+    loves: [ 'grape', 'watermelon' ],
+    weight: 704,
+    gender: 'm',
+    vampires: 170
+  },
+  {
+    _id: ObjectId('68330d72bdb7be45f2544cb6'),
+    name: 'Barny',
+    loves: [ 'grape' ],
+    weight: 340,
+    gender: 'm',
+    vampires: 5
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca7'),
+    name: 'Horny',
+    loves: [ 'carrot', 'papaya' ],
+    weight: 600,
+    gender: 'm',
+    vampires: 63
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca9'),
+    name: 'Unicrom',
+    loves: [ 'energon', 'redbull' ],
+    weight: 984,
+    gender: 'm',
+    vampires: 182
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544caa'),
+    name: 'Roooooodles',
+    loves: [ 'apple' ],
+    weight: 575,
+    gender: 'm',
+    vampires: 99
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cad'),
+    name: 'Kenny',
+    loves: [ 'grape', 'lemon' ],
+    weight: 690,
+    gender: 'm',
+    vampires: 39
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cae'),
+    name: 'Raleigh',
+    loves: [ 'apple', 'sugar' ],
+    weight: 421,
+    gender: 'm',
+    vampires: 2
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cb0'),
+    name: 'Pilot',
+    loves: [ 'apple', 'watermelon' ],
+    weight: 650,
+    gender: 'm',
+    vampires: 54
+  },
+  {
+    _id: ObjectId('68330e075b810f068d544cb2'),
+    name: 'Dunx',
+    loves: [ 'grape', 'watermelon' ],
+    weight: 704,
+    gender: 'm',
+    vampires: 165
+  }
+]
+learn> var cursor = db.unicorns.find({gender: 'm'}).sort({name: 1}).limit(2);
+
+learn> cursor.forEach(function(unicorn) {
+...   print(`Имя: ${unicorn.name}, Вес: ${unicorn.weight}`);
+... });
+Имя: Barny, Вес: 340
+Имя: Dunx, Вес: 704
