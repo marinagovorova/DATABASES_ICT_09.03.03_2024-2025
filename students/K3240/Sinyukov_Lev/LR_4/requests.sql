@@ -38,9 +38,17 @@ WHERE trip.departure_date BETWEEN CURRENT_DATE - 7 AND CURRENT_DATE;
 SELECT route.name, COUNT(trip.trip_id) AS trip_count FROM route
 JOIN trip ON trip.route_id = route.route_id
 WHERE trip.departure_date BETWEEN CURRENT_DATE - INTERVAL '1 month' AND CURRENT_DATE
-GROUP BY route.route_id
-ORDER BY trip_count DESC
-LIMIT 1;
+GROUP BY route.route_id, route.name
+HAVING COUNT(trip.trip_id) = (
+        SELECT MAX(trip_count)
+        FROM (
+            SELECT COUNT(trip.trip_id) AS trip_count FROM route
+            JOIN trip ON trip.route_id = route.route_id
+            WHERE trip.departure_date BETWEEN CURRENT_DATE - INTERVAL '1 month' AND CURRENT_DATE
+            GROUP BY route.route_id
+        ) AS counts
+    );
+
 
 -- Вывести тип автобуса, который используется на всех рейсах 
 SELECT bus_model.manufacturer, bus_model.model_name FROM bus_model
@@ -50,16 +58,27 @@ GROUP BY bus_model.bus_model_id
 HAVING COUNT(DISTINCT trip.route_id) = (SELECT COUNT(DISTINCT route_id) FROM trip);
 
 -- Вывести данные водителя, который провел максимальное время в пути за прошедшую неделю
-SELECT driver.full_name, SUM(route.travel_time) AS total_travel_time FROM crew
+SELECT driver.full_name, SUM(route.travel_time) AS total_travel_time
+FROM crew
 JOIN passport_driver ON crew.passport_driver_id = passport_driver.passport_id
 JOIN driver ON driver.driver_id = passport_driver.driver_id
 JOIN trip ON trip.trip_id = crew.trip_id
 JOIN route ON route.route_id = trip.route_id
-WHERE trip.departure_date BETWEEN CURRENT_DATE - 7 AND CURRENT_DATE
-GROUP BY driver.driver_id
-ORDER BY total_travel_time DESC
-LIMIT 1;
-
+WHERE trip.departure_date BETWEEN CURRENT_DATE - INTERVAL '7 days' AND CURRENT_DATE
+GROUP BY driver.driver_id, driver.full_name
+HAVING SUM(route.travel_time) = (
+    SELECT MAX(total_travel_time)
+    FROM (
+        SELECT SUM(route.travel_time) AS total_travel_time
+        FROM crew
+        JOIN passport_driver ON crew.passport_driver_id = passport_driver.passport_id
+        JOIN driver ON driver.driver_id = passport_driver.driver_id
+        JOIN trip ON trip.trip_id = crew.trip_id
+        JOIN route ON route.route_id = trip.route_id
+        WHERE trip.departure_date BETWEEN CURRENT_DATE - INTERVAL '7 days' AND CURRENT_DATE
+        GROUP BY driver.driver_id
+    ) AS max_times
+);
 
 -- ПРЕДСТАВЛЕНИЯ 
 
