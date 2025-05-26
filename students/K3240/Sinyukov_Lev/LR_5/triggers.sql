@@ -145,25 +145,28 @@ UPDATE ticket SET status = 'Cancelled' WHERE trip_id = 8 AND seat_number = 100;
 
 SELECT * FROM ticket WHERE trip_id = 8 AND seat_number = 100;
 
+
 -- 7. Проверка данных ФИО пассажира на дублирование в таблице 
 
 CREATE OR REPLACE FUNCTION prevent_duplicate_passenger()
 RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (
-        SELECT 1 FROM passenger WHERE full_name = NEW.full_name
+        SELECT 1 FROM passport_passenger WHERE series = NEW.series
     ) THEN
-        RAISE EXCEPTION 'Пассажир с такими ФИО уже существует';
+        RAISE EXCEPTION 'Пассажир с такими данными уже существует';
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_unique_passenger_name
-BEFORE INSERT ON passenger
+BEFORE INSERT ON passport_passenger
 FOR EACH ROW
 EXECUTE FUNCTION prevent_duplicate_passenger();
 
 -- Проверка
 
-INSERT INTO passenger (full_name) VALUES ('passenger')
+INSERT INTO passenger (full_name) VALUES ('I?')
+
+INSERT INTO passport_passenger (series, number, issue_date, issue_place, registration_address, passenger_id) VALUES (1234, 567890, '2001-01-01', 'Moscow', 'Moscow, AAA', 2);
