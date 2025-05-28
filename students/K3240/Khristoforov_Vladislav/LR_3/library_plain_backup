@@ -1,0 +1,1882 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 17.4
+-- Dumped by pg_dump version 17.4
+
+-- Started on 2025-04-03 23:03:10
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 5042 (class 1262 OID 16400)
+-- Name: library; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE library WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'ru-RU';
+
+
+ALTER DATABASE library OWNER TO postgres;
+
+\connect library
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 6 (class 2615 OID 16401)
+-- Name: library_schema; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA library_schema;
+
+
+ALTER SCHEMA library_schema OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 231 (class 1259 OID 16502)
+-- Name: assignment; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.assignment (
+    assignment_id integer NOT NULL,
+    start_date date NOT NULL,
+    end_date date DEFAULT '10000-01-01'::date NOT NULL,
+    work_schedule character varying(50) NOT NULL,
+    wage_rate_num real NOT NULL,
+    bonus integer DEFAULT 0 NOT NULL,
+    premium_coefficient real DEFAULT 0 NOT NULL,
+    employee_id integer NOT NULL,
+    position_id integer NOT NULL,
+    CONSTRAINT assignment_date_chk CHECK ((end_date >= start_date)),
+    CONSTRAINT bonus_chk CHECK ((bonus >= 0)),
+    CONSTRAINT premium_coefficient_chk CHECK ((premium_coefficient >= (0)::double precision)),
+    CONSTRAINT wage_rate_num_chk CHECK ((wage_rate_num > (0)::double precision))
+);
+
+
+ALTER TABLE library_schema.assignment OWNER TO postgres;
+
+--
+-- TOC entry 230 (class 1259 OID 16501)
+-- Name: assignment_assignment_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.assignment_assignment_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.assignment_assignment_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5043 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: assignment_assignment_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.assignment_assignment_id_seq OWNED BY library_schema.assignment.assignment_id;
+
+
+--
+-- TOC entry 235 (class 1259 OID 16544)
+-- Name: copy; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.copy (
+    copy_id integer NOT NULL,
+    inventory_num character varying(20) NOT NULL,
+    copy_condition character varying(20) NOT NULL,
+    status character varying(20) NOT NULL,
+    receipt_id integer NOT NULL,
+    CONSTRAINT copy_condition_chk CHECK (((copy_condition)::text = ANY ((ARRAY['good'::character varying, 'worn'::character varying, 'defective'::character varying, 'other'::character varying])::text[]))),
+    CONSTRAINT copy_status_chk CHECK (((status)::text = ANY ((ARRAY['issued'::character varying, 'available'::character varying, 'written_off'::character varying, 'other'::character varying])::text[])))
+);
+
+
+ALTER TABLE library_schema.copy OWNER TO postgres;
+
+--
+-- TOC entry 234 (class 1259 OID 16543)
+-- Name: copy_copy_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.copy_copy_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.copy_copy_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5044 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: copy_copy_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.copy_copy_id_seq OWNED BY library_schema.copy.copy_id;
+
+
+--
+-- TOC entry 225 (class 1259 OID 16450)
+-- Name: creation; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.creation (
+    creation_id integer NOT NULL,
+    type character varying(15) NOT NULL,
+    list_num integer NOT NULL,
+    publication_id integer NOT NULL,
+    creator_id integer NOT NULL,
+    CONSTRAINT creation_type_chk CHECK (((type)::text = ANY ((ARRAY['authorship'::character varying, 'translation'::character varying, 'compilation'::character varying, 'editing'::character varying, 'illustration'::character varying])::text[]))),
+    CONSTRAINT list_num_chk CHECK ((list_num > 0))
+);
+
+
+ALTER TABLE library_schema.creation OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 16449)
+-- Name: creation_creation_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.creation_creation_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.creation_creation_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5045 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: creation_creation_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.creation_creation_id_seq OWNED BY library_schema.creation.creation_id;
+
+
+--
+-- TOC entry 223 (class 1259 OID 16435)
+-- Name: creator; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.creator (
+    creator_id integer NOT NULL,
+    full_name character varying(80) NOT NULL,
+    email character varying(50),
+    phone character varying(16),
+    CONSTRAINT creator_email_chk CHECK (((email IS NULL) OR ((email)::text ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'::text))),
+    CONSTRAINT creator_phone_chk CHECK (((phone IS NULL) OR ((phone)::text ~ '^\+[1-9][0-9]{7,15}$'::text)))
+);
+
+
+ALTER TABLE library_schema.creator OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16434)
+-- Name: creator_creator_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.creator_creator_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.creator_creator_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5046 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: creator_creator_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.creator_creator_id_seq OWNED BY library_schema.creator.creator_id;
+
+
+--
+-- TOC entry 227 (class 1259 OID 16469)
+-- Name: employee; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.employee (
+    employee_id integer NOT NULL,
+    full_name character varying(80) NOT NULL,
+    phone character varying(16) NOT NULL,
+    email character varying(50) NOT NULL,
+    CONSTRAINT employee_email_chk CHECK (((email)::text ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'::text)),
+    CONSTRAINT emplyee_phone_chk CHECK (((phone)::text ~ '^\+[1-9][0-9]{7,15}$'::text))
+);
+
+
+ALTER TABLE library_schema.employee OWNER TO postgres;
+
+--
+-- TOC entry 226 (class 1259 OID 16468)
+-- Name: employee_employee_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.employee_employee_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.employee_employee_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5047 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: employee_employee_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.employee_employee_id_seq OWNED BY library_schema.employee.employee_id;
+
+
+--
+-- TOC entry 237 (class 1259 OID 16555)
+-- Name: loan; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.loan (
+    loan_id integer NOT NULL,
+    loan_date date DEFAULT CURRENT_DATE NOT NULL,
+    return_date date NOT NULL,
+    actual_return_date date,
+    fine boolean DEFAULT false NOT NULL,
+    copy_id integer NOT NULL,
+    reader_id integer NOT NULL,
+    employee_id integer NOT NULL,
+    CONSTRAINT loan_actual_return_date_chk CHECK (((actual_return_date IS NULL) OR ((actual_return_date >= loan_date) AND (actual_return_date <= CURRENT_DATE)))),
+    CONSTRAINT loan_date_chk CHECK ((loan_date <= CURRENT_DATE)),
+    CONSTRAINT loan_return_date_chk CHECK (((return_date >= loan_date) AND (return_date <= (loan_date + '10 days'::interval))))
+);
+
+
+ALTER TABLE library_schema.loan OWNER TO postgres;
+
+--
+-- TOC entry 236 (class 1259 OID 16554)
+-- Name: loan_loan_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.loan_loan_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.loan_loan_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5048 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: loan_loan_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.loan_loan_id_seq OWNED BY library_schema.loan.loan_id;
+
+
+--
+-- TOC entry 229 (class 1259 OID 16478)
+-- Name: position; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema."position" (
+    position_id integer NOT NULL,
+    position_title character varying(50) NOT NULL,
+    salary integer NOT NULL,
+    CONSTRAINT salary_chk CHECK ((salary > 0))
+);
+
+
+ALTER TABLE library_schema."position" OWNER TO postgres;
+
+--
+-- TOC entry 228 (class 1259 OID 16477)
+-- Name: position_position_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.position_position_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.position_position_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5049 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: position_position_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.position_position_id_seq OWNED BY library_schema."position".position_id;
+
+
+--
+-- TOC entry 219 (class 1259 OID 16403)
+-- Name: publication; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.publication (
+    publication_id integer NOT NULL,
+    title character varying(255) NOT NULL,
+    volume_num integer DEFAULT 0 NOT NULL,
+    original_lang character varying(15) NOT NULL,
+    publication_type character varying(50) NOT NULL,
+    knowledge_field character varying(50) NOT NULL,
+    publication_year integer NOT NULL,
+    page_num integer NOT NULL,
+    isbn character(13) NOT NULL,
+    publisher_id integer NOT NULL
+);
+
+
+ALTER TABLE library_schema.publication OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 16402)
+-- Name: publication_publication_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.publication_publication_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.publication_publication_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5050 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: publication_publication_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.publication_publication_id_seq OWNED BY library_schema.publication.publication_id;
+
+
+--
+-- TOC entry 221 (class 1259 OID 16420)
+-- Name: publisher; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.publisher (
+    publisher_id integer NOT NULL,
+    name character varying(50) NOT NULL,
+    city character varying(180) NOT NULL,
+    phone character varying(16) NOT NULL,
+    email character varying(50) NOT NULL
+);
+
+
+ALTER TABLE library_schema.publisher OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16419)
+-- Name: publisher_publisher_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.publisher_publisher_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.publisher_publisher_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5051 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: publisher_publisher_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.publisher_publisher_id_seq OWNED BY library_schema.publisher.publisher_id;
+
+
+--
+-- TOC entry 233 (class 1259 OID 16526)
+-- Name: reader; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.reader (
+    reader_id integer NOT NULL,
+    form_num character varying(20) NOT NULL,
+    registration_date date NOT NULL,
+    status character varying(20) NOT NULL,
+    full_name character varying(80) NOT NULL,
+    passport_details character(10) NOT NULL,
+    address character varying(255) NOT NULL,
+    phone character varying(16) NOT NULL,
+    email character varying(50) NOT NULL,
+    CONSTRAINT reader_email_chk CHECK (((email)::text ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'::text)),
+    CONSTRAINT reader_full_name_chk CHECK (((full_name)::text ~ '^[A-Za-zÀ-ÖØ-öø-ÿА-Яа-яЁё-]+([ -][A-Za-zÀ-ÖØ-öø-ÿА-Яа-яЁё]+)*$'::text)),
+    CONSTRAINT reader_phone_chk CHECK (((phone)::text ~ '^\+[1-9][0-9]{7,15}$'::text)),
+    CONSTRAINT reader_status_chk CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'suspended'::character varying, 'blocked'::character varying])::text[]))),
+    CONSTRAINT registration_date_chk CHECK (((registration_date >= '2000-01-01'::date) AND (registration_date <= CURRENT_DATE)))
+);
+
+
+ALTER TABLE library_schema.reader OWNER TO postgres;
+
+--
+-- TOC entry 232 (class 1259 OID 16525)
+-- Name: reader_reader_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.reader_reader_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.reader_reader_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5052 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: reader_reader_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.reader_reader_id_seq OWNED BY library_schema.reader.reader_id;
+
+
+--
+-- TOC entry 247 (class 1259 OID 16644)
+-- Name: receipt; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.receipt (
+    receipt_id integer NOT NULL,
+    quantity integer NOT NULL,
+    unit_price numeric(10,2) NOT NULL,
+    publication_id integer NOT NULL,
+    receipt_document_id integer NOT NULL,
+    CONSTRAINT receipt_quantity_chk CHECK ((quantity > 0)),
+    CONSTRAINT receipt_unit_price_chk CHECK ((unit_price > (0)::numeric))
+);
+
+
+ALTER TABLE library_schema.receipt OWNER TO postgres;
+
+--
+-- TOC entry 245 (class 1259 OID 16621)
+-- Name: receipt_document; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.receipt_document (
+    receipt_document_id integer NOT NULL,
+    document_num character varying(20) NOT NULL,
+    document_date date NOT NULL,
+    document_type character varying(40) NOT NULL,
+    receipt_source character varying(80) NOT NULL,
+    quantity_total integer NOT NULL,
+    cost_total numeric(10,2) NOT NULL,
+    receipt_date date NOT NULL,
+    employee_id integer NOT NULL,
+    supplier_id integer,
+    CONSTRAINT rd_cost_total_chk CHECK ((cost_total > (0)::numeric)),
+    CONSTRAINT rd_quantity_total_chk CHECK ((quantity_total > 0)),
+    CONSTRAINT rd_type_chk CHECK (((document_type)::text = ANY ((ARRAY['invoice'::character varying, 'acceptance_act'::character varying, 'donation_act'::character varying, 'replacement_act'::character varying])::text[]))),
+    CONSTRAINT receipt_date_chk CHECK (((receipt_date >= document_date) AND (receipt_date <= CURRENT_DATE)))
+);
+
+
+ALTER TABLE library_schema.receipt_document OWNER TO postgres;
+
+--
+-- TOC entry 244 (class 1259 OID 16620)
+-- Name: receipt_document_receipt_document_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.receipt_document_receipt_document_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.receipt_document_receipt_document_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5053 (class 0 OID 0)
+-- Dependencies: 244
+-- Name: receipt_document_receipt_document_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.receipt_document_receipt_document_id_seq OWNED BY library_schema.receipt_document.receipt_document_id;
+
+
+--
+-- TOC entry 246 (class 1259 OID 16643)
+-- Name: receipt_receipt_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.receipt_receipt_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.receipt_receipt_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5054 (class 0 OID 0)
+-- Dependencies: 246
+-- Name: receipt_receipt_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.receipt_receipt_id_seq OWNED BY library_schema.receipt.receipt_id;
+
+
+--
+-- TOC entry 241 (class 1259 OID 16593)
+-- Name: storage; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.storage (
+    storage_id integer NOT NULL,
+    start_date date NOT NULL,
+    end_date date DEFAULT '10000-01-01'::date NOT NULL,
+    storage_location_id integer NOT NULL,
+    copy_id integer NOT NULL,
+    CONSTRAINT storage_end_date_chk CHECK ((end_date >= start_date))
+);
+
+
+ALTER TABLE library_schema.storage OWNER TO postgres;
+
+--
+-- TOC entry 239 (class 1259 OID 16583)
+-- Name: storage_location; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.storage_location (
+    storage_location_id integer NOT NULL,
+    room_num integer NOT NULL,
+    rack_num integer NOT NULL,
+    shelf_num integer NOT NULL,
+    CONSTRAINT rack_num_chk CHECK ((rack_num > 0)),
+    CONSTRAINT room_num_chk CHECK ((room_num > 0)),
+    CONSTRAINT shelf_num_chk CHECK ((shelf_num > 0))
+);
+
+
+ALTER TABLE library_schema.storage_location OWNER TO postgres;
+
+--
+-- TOC entry 238 (class 1259 OID 16582)
+-- Name: storage_location_storage_location_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.storage_location_storage_location_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.storage_location_storage_location_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5055 (class 0 OID 0)
+-- Dependencies: 238
+-- Name: storage_location_storage_location_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.storage_location_storage_location_id_seq OWNED BY library_schema.storage_location.storage_location_id;
+
+
+--
+-- TOC entry 240 (class 1259 OID 16592)
+-- Name: storage_storage_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.storage_storage_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.storage_storage_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5056 (class 0 OID 0)
+-- Dependencies: 240
+-- Name: storage_storage_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.storage_storage_id_seq OWNED BY library_schema.storage.storage_id;
+
+
+--
+-- TOC entry 243 (class 1259 OID 16612)
+-- Name: supplier; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.supplier (
+    supplier_id integer NOT NULL,
+    supplier_name character varying(50) NOT NULL,
+    address character varying(255) NOT NULL,
+    phone character varying(16) NOT NULL,
+    email character varying(50) NOT NULL,
+    CONSTRAINT supplier_email_chk CHECK (((email)::text ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'::text)),
+    CONSTRAINT supplier_phone_chk CHECK (((phone)::text ~ '^\+[1-9][0-9]{7,15}$'::text))
+);
+
+
+ALTER TABLE library_schema.supplier OWNER TO postgres;
+
+--
+-- TOC entry 242 (class 1259 OID 16611)
+-- Name: supplier_supplier_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.supplier_supplier_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.supplier_supplier_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5057 (class 0 OID 0)
+-- Dependencies: 242
+-- Name: supplier_supplier_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.supplier_supplier_id_seq OWNED BY library_schema.supplier.supplier_id;
+
+
+--
+-- TOC entry 251 (class 1259 OID 16681)
+-- Name: write_off; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.write_off (
+    " write_off_id" integer NOT NULL,
+    revaluation_coefficient real NOT NULL,
+    copy_id integer NOT NULL,
+    write_off_act_id integer NOT NULL,
+    CONSTRAINT wo_revaluation_coef_chk CHECK ((revaluation_coefficient >= (0)::double precision))
+);
+
+
+ALTER TABLE library_schema.write_off OWNER TO postgres;
+
+--
+-- TOC entry 250 (class 1259 OID 16680)
+-- Name: write_off_ write_off_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema."write_off_ write_off_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema."write_off_ write_off_id_seq" OWNER TO postgres;
+
+--
+-- TOC entry 5058 (class 0 OID 0)
+-- Dependencies: 250
+-- Name: write_off_ write_off_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema."write_off_ write_off_id_seq" OWNED BY library_schema.write_off." write_off_id";
+
+
+--
+-- TOC entry 249 (class 1259 OID 16664)
+-- Name: write_off_act; Type: TABLE; Schema: library_schema; Owner: postgres
+--
+
+CREATE TABLE library_schema.write_off_act (
+    write_off_act_id integer NOT NULL,
+    act_num character varying(20) NOT NULL,
+    act_date date NOT NULL,
+    quantity_total integer NOT NULL,
+    cost_total numeric(10,2) NOT NULL,
+    reason character varying(25) NOT NULL,
+    post_direction character varying(255) NOT NULL,
+    employee_id integer NOT NULL,
+    CONSTRAINT woa_cost_total_chk CHECK ((cost_total > (0)::numeric)),
+    CONSTRAINT woa_quantity_total_chk CHECK ((quantity_total > 0)),
+    CONSTRAINT woa_reason_chk CHECK (((reason)::text = ANY ((ARRAY['physical_loss'::character varying, 'worn_out'::character varying, 'defective'::character varying, 'obsolete'::character varying, 'non_core'::character varying])::text[])))
+);
+
+
+ALTER TABLE library_schema.write_off_act OWNER TO postgres;
+
+--
+-- TOC entry 248 (class 1259 OID 16663)
+-- Name: write_off_act_write_off_act_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+--
+
+CREATE SEQUENCE library_schema.write_off_act_write_off_act_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema.write_off_act_write_off_act_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5059 (class 0 OID 0)
+-- Dependencies: 248
+-- Name: write_off_act_write_off_act_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema.write_off_act_write_off_act_id_seq OWNED BY library_schema.write_off_act.write_off_act_id;
+
+
+--
+-- TOC entry 4729 (class 2604 OID 16505)
+-- Name: assignment assignment_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.assignment ALTER COLUMN assignment_id SET DEFAULT nextval('library_schema.assignment_assignment_id_seq'::regclass);
+
+
+--
+-- TOC entry 4734 (class 2604 OID 16547)
+-- Name: copy copy_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.copy ALTER COLUMN copy_id SET DEFAULT nextval('library_schema.copy_copy_id_seq'::regclass);
+
+
+--
+-- TOC entry 4726 (class 2604 OID 16453)
+-- Name: creation creation_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.creation ALTER COLUMN creation_id SET DEFAULT nextval('library_schema.creation_creation_id_seq'::regclass);
+
+
+--
+-- TOC entry 4725 (class 2604 OID 16438)
+-- Name: creator creator_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.creator ALTER COLUMN creator_id SET DEFAULT nextval('library_schema.creator_creator_id_seq'::regclass);
+
+
+--
+-- TOC entry 4727 (class 2604 OID 16472)
+-- Name: employee employee_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.employee ALTER COLUMN employee_id SET DEFAULT nextval('library_schema.employee_employee_id_seq'::regclass);
+
+
+--
+-- TOC entry 4735 (class 2604 OID 16558)
+-- Name: loan loan_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.loan ALTER COLUMN loan_id SET DEFAULT nextval('library_schema.loan_loan_id_seq'::regclass);
+
+
+--
+-- TOC entry 4728 (class 2604 OID 16481)
+-- Name: position position_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema."position" ALTER COLUMN position_id SET DEFAULT nextval('library_schema.position_position_id_seq'::regclass);
+
+
+--
+-- TOC entry 4722 (class 2604 OID 16406)
+-- Name: publication publication_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.publication ALTER COLUMN publication_id SET DEFAULT nextval('library_schema.publication_publication_id_seq'::regclass);
+
+
+--
+-- TOC entry 4724 (class 2604 OID 16423)
+-- Name: publisher publisher_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.publisher ALTER COLUMN publisher_id SET DEFAULT nextval('library_schema.publisher_publisher_id_seq'::regclass);
+
+
+--
+-- TOC entry 4733 (class 2604 OID 16529)
+-- Name: reader reader_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.reader ALTER COLUMN reader_id SET DEFAULT nextval('library_schema.reader_reader_id_seq'::regclass);
+
+
+--
+-- TOC entry 4743 (class 2604 OID 16647)
+-- Name: receipt receipt_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.receipt ALTER COLUMN receipt_id SET DEFAULT nextval('library_schema.receipt_receipt_id_seq'::regclass);
+
+
+--
+-- TOC entry 4742 (class 2604 OID 16624)
+-- Name: receipt_document receipt_document_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.receipt_document ALTER COLUMN receipt_document_id SET DEFAULT nextval('library_schema.receipt_document_receipt_document_id_seq'::regclass);
+
+
+--
+-- TOC entry 4739 (class 2604 OID 16596)
+-- Name: storage storage_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.storage ALTER COLUMN storage_id SET DEFAULT nextval('library_schema.storage_storage_id_seq'::regclass);
+
+
+--
+-- TOC entry 4738 (class 2604 OID 16586)
+-- Name: storage_location storage_location_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.storage_location ALTER COLUMN storage_location_id SET DEFAULT nextval('library_schema.storage_location_storage_location_id_seq'::regclass);
+
+
+--
+-- TOC entry 4741 (class 2604 OID 16615)
+-- Name: supplier supplier_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.supplier ALTER COLUMN supplier_id SET DEFAULT nextval('library_schema.supplier_supplier_id_seq'::regclass);
+
+
+--
+-- TOC entry 4745 (class 2604 OID 16684)
+-- Name: write_off  write_off_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.write_off ALTER COLUMN " write_off_id" SET DEFAULT nextval('library_schema."write_off_ write_off_id_seq"'::regclass);
+
+
+--
+-- TOC entry 4744 (class 2604 OID 16667)
+-- Name: write_off_act write_off_act_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.write_off_act ALTER COLUMN write_off_act_id SET DEFAULT nextval('library_schema.write_off_act_write_off_act_id_seq'::regclass);
+
+
+--
+-- TOC entry 5016 (class 0 OID 16502)
+-- Dependencies: 231
+-- Data for Name: assignment; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.assignment VALUES (1, '2024-01-01', '2024-12-31', '9-5', 1, 5000, 1.2, 1, 1);
+INSERT INTO library_schema.assignment VALUES (2, '2024-01-01', '2024-12-31', '9-5', 1, 3000, 1.1, 2, 2);
+INSERT INTO library_schema.assignment VALUES (3, '2024-01-01', '2024-12-31', '9-5', 1, 2000, 1, 3, 3);
+INSERT INTO library_schema.assignment VALUES (4, '2024-01-01', '2024-12-31', '9-5', 1, 1500, 1, 4, 4);
+INSERT INTO library_schema.assignment VALUES (5, '2024-01-01', '2024-12-31', '9-5', 1, 1500, 1, 5, 5);
+INSERT INTO library_schema.assignment VALUES (6, '2024-01-01', '2024-12-31', '9-5', 1, 1000, 1, 6, 6);
+
+
+--
+-- TOC entry 5020 (class 0 OID 16544)
+-- Dependencies: 235
+-- Data for Name: copy; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.copy VALUES (11, 'INV1001', 'good', 'available', 1);
+INSERT INTO library_schema.copy VALUES (12, 'INV1002', 'good', 'available', 1);
+INSERT INTO library_schema.copy VALUES (13, 'INV1003', 'worn', 'written_off', 2);
+INSERT INTO library_schema.copy VALUES (14, 'INV1004', 'good', 'available', 2);
+INSERT INTO library_schema.copy VALUES (15, 'INV1005', 'defective', 'written_off', 3);
+INSERT INTO library_schema.copy VALUES (16, 'INV1006', 'good', 'available', 3);
+INSERT INTO library_schema.copy VALUES (17, 'INV1007', 'worn', 'issued', 4);
+INSERT INTO library_schema.copy VALUES (18, 'INV1008', 'good', 'available', 4);
+INSERT INTO library_schema.copy VALUES (19, 'INV1009', 'good', 'available', 5);
+INSERT INTO library_schema.copy VALUES (20, 'INV1010', 'good', 'available', 5);
+INSERT INTO library_schema.copy VALUES (21, 'INV1011', 'good', 'available', 6);
+INSERT INTO library_schema.copy VALUES (22, 'INV1012', 'worn', 'written_off', 6);
+INSERT INTO library_schema.copy VALUES (23, 'INV1013', 'good', 'available', 7);
+INSERT INTO library_schema.copy VALUES (24, 'INV1014', 'good', 'available', 7);
+INSERT INTO library_schema.copy VALUES (25, 'INV1015', 'good', 'available', 8);
+INSERT INTO library_schema.copy VALUES (26, 'INV1016', 'defective', 'written_off', 8);
+INSERT INTO library_schema.copy VALUES (27, 'INV1017', 'good', 'available', 9);
+INSERT INTO library_schema.copy VALUES (28, 'INV1018', 'worn', 'written_off', 9);
+INSERT INTO library_schema.copy VALUES (29, 'INV1019', 'good', 'available', 10);
+INSERT INTO library_schema.copy VALUES (30, 'INV1020', 'good', 'available', 10);
+
+
+--
+-- TOC entry 5010 (class 0 OID 16450)
+-- Dependencies: 225
+-- Data for Name: creation; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.creation VALUES (46, 'authorship', 1, 8, 4);
+INSERT INTO library_schema.creation VALUES (47, 'authorship', 1, 9, 5);
+INSERT INTO library_schema.creation VALUES (48, 'authorship', 1, 10, 6);
+INSERT INTO library_schema.creation VALUES (49, 'authorship', 1, 11, 7);
+INSERT INTO library_schema.creation VALUES (50, 'authorship', 1, 12, 8);
+INSERT INTO library_schema.creation VALUES (51, 'authorship', 1, 13, 9);
+INSERT INTO library_schema.creation VALUES (52, 'authorship', 1, 14, 8);
+INSERT INTO library_schema.creation VALUES (53, 'authorship', 1, 15, 11);
+INSERT INTO library_schema.creation VALUES (54, 'authorship', 1, 16, 12);
+INSERT INTO library_schema.creation VALUES (55, 'authorship', 1, 17, 13);
+INSERT INTO library_schema.creation VALUES (56, 'translation', 1, 9, 4);
+INSERT INTO library_schema.creation VALUES (57, 'translation', 2, 10, 5);
+INSERT INTO library_schema.creation VALUES (58, 'editing', 1, 11, 6);
+INSERT INTO library_schema.creation VALUES (59, 'illustration', 1, 12, 7);
+INSERT INTO library_schema.creation VALUES (60, 'compilation', 1, 13, 8);
+
+
+--
+-- TOC entry 5008 (class 0 OID 16435)
+-- Dependencies: 223
+-- Data for Name: creator; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.creator VALUES (4, 'Stephen Hawking', 'shawking@example.com', '+441234567891');
+INSERT INTO library_schema.creator VALUES (5, 'Leo Tolstoy', 'tolstoy@example.com', '+71234567890');
+INSERT INTO library_schema.creator VALUES (6, 'Francis Scott Fitzgerald', 'fscott@example.com', '+12125550126');
+INSERT INTO library_schema.creator VALUES (7, 'Charles Darwin', 'darwin@example.com', '+441234567892');
+INSERT INTO library_schema.creator VALUES (8, 'Dan Brown', 'danbrown@example.com', '+12125550127');
+INSERT INTO library_schema.creator VALUES (9, 'Victor Hugo', 'victorhugo@example.com', '+33123456789');
+INSERT INTO library_schema.creator VALUES (10, 'Dan Simmons', 'dansimmons@example.com', '+12125550128');
+INSERT INTO library_schema.creator VALUES (11, 'Carl Sagan', 'carlsagan@example.com', '+441234567893');
+INSERT INTO library_schema.creator VALUES (12, 'Paulo Coelho', 'paulocoelho@example.com', '+551234567890');
+INSERT INTO library_schema.creator VALUES (13, 'George Orwell', 'gorwell@example.com', '+441234567894');
+
+
+--
+-- TOC entry 5012 (class 0 OID 16469)
+-- Dependencies: 227
+-- Data for Name: employee; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.employee VALUES (1, 'Alice Johnson', '+12125550129', 'alice.johnson@library.com');
+INSERT INTO library_schema.employee VALUES (2, 'Bob Smith', '+12125550130', 'bob.smith@library.com');
+INSERT INTO library_schema.employee VALUES (3, 'Carol White', '+12125550131', 'carol.white@library.com');
+INSERT INTO library_schema.employee VALUES (4, 'David Brown', '+12125550132', 'david.brown@library.com');
+INSERT INTO library_schema.employee VALUES (5, 'Eve Black', '+12125550133', 'eve.black@library.com');
+INSERT INTO library_schema.employee VALUES (6, 'Frank Green', '+12125550134', 'frank.green@library.com');
+
+
+--
+-- TOC entry 5022 (class 0 OID 16555)
+-- Dependencies: 237
+-- Data for Name: loan; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.loan VALUES (32, '2024-06-20', '2024-06-30', '2024-06-29', false, 13, 2, 2);
+INSERT INTO library_schema.loan VALUES (33, '2024-06-21', '2024-06-30', '2024-06-30', false, 22, 3, 3);
+INSERT INTO library_schema.loan VALUES (34, '2024-06-22', '2024-07-02', NULL, false, 17, 4, 4);
+INSERT INTO library_schema.loan VALUES (35, '2024-06-23', '2024-07-03', '2024-07-03', true, 28, 5, 5);
+INSERT INTO library_schema.loan VALUES (36, '2024-06-24', '2024-07-04', NULL, false, 12, 6, 6);
+INSERT INTO library_schema.loan VALUES (37, '2024-06-25', '2024-07-05', '2024-07-05', false, 14, 7, 1);
+INSERT INTO library_schema.loan VALUES (38, '2024-06-26', '2024-07-06', NULL, false, 19, 8, 2);
+INSERT INTO library_schema.loan VALUES (39, '2024-06-27', '2024-07-07', '2024-07-07', false, 20, 9, 3);
+INSERT INTO library_schema.loan VALUES (40, '2024-06-28', '2024-07-08', '2024-07-08', true, 21, 10, 4);
+INSERT INTO library_schema.loan VALUES (41, '2024-06-29', '2024-07-09', NULL, false, 24, 11, 5);
+INSERT INTO library_schema.loan VALUES (42, '2024-06-30', '2024-07-10', '2024-07-10', false, 25, 2, 6);
+INSERT INTO library_schema.loan VALUES (43, '2024-07-01', '2024-07-11', NULL, false, 26, 3, 1);
+INSERT INTO library_schema.loan VALUES (44, '2024-07-02', '2024-07-12', '2024-07-12', false, 27, 4, 2);
+INSERT INTO library_schema.loan VALUES (45, '2024-07-03', '2024-07-13', NULL, true, 28, 5, 3);
+INSERT INTO library_schema.loan VALUES (46, '2024-07-04', '2024-07-14', '2024-07-14', false, 25, 6, 4);
+INSERT INTO library_schema.loan VALUES (47, '2024-07-05', '2024-07-15', NULL, false, 26, 7, 5);
+INSERT INTO library_schema.loan VALUES (48, '2024-07-06', '2024-07-16', '2024-07-16', false, 23, 8, 6);
+INSERT INTO library_schema.loan VALUES (49, '2024-07-07', '2024-07-17', NULL, true, 30, 9, 1);
+INSERT INTO library_schema.loan VALUES (50, '2024-07-08', '2024-07-18', '2024-07-18', false, 29, 10, 2);
+INSERT INTO library_schema.loan VALUES (51, '2024-07-09', '2024-07-19', NULL, false, 11, 11, 3);
+INSERT INTO library_schema.loan VALUES (52, '2024-07-10', '2024-07-20', '2024-07-20', false, 12, 2, 4);
+INSERT INTO library_schema.loan VALUES (53, '2024-07-11', '2024-07-21', NULL, false, 13, 3, 5);
+INSERT INTO library_schema.loan VALUES (54, '2024-07-12', '2024-07-22', '2024-07-22', false, 14, 4, 6);
+INSERT INTO library_schema.loan VALUES (55, '2024-07-13', '2024-07-23', NULL, true, 15, 5, 1);
+INSERT INTO library_schema.loan VALUES (56, '2024-07-14', '2024-07-24', '2024-07-24', false, 16, 6, 2);
+INSERT INTO library_schema.loan VALUES (57, '2024-07-15', '2024-07-25', NULL, false, 17, 7, 3);
+INSERT INTO library_schema.loan VALUES (58, '2024-07-16', '2024-07-26', '2024-07-26', false, 18, 8, 4);
+INSERT INTO library_schema.loan VALUES (59, '2024-07-17', '2024-07-27', NULL, false, 19, 9, 5);
+INSERT INTO library_schema.loan VALUES (60, '2024-07-18', '2024-07-28', '2024-07-28', false, 20, 10, 6);
+INSERT INTO library_schema.loan VALUES (61, '2024-07-19', '2024-07-29', NULL, true, 21, 11, 1);
+INSERT INTO library_schema.loan VALUES (62, '2024-07-20', '2024-07-30', '2024-07-30', false, 22, 2, 2);
+
+
+--
+-- TOC entry 5014 (class 0 OID 16478)
+-- Dependencies: 229
+-- Data for Name: position; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema."position" VALUES (1, 'Library Director', 80000);
+INSERT INTO library_schema."position" VALUES (2, 'Senior Librarian', 60000);
+INSERT INTO library_schema."position" VALUES (3, 'Librarian', 45000);
+INSERT INTO library_schema."position" VALUES (4, 'Archivist', 40000);
+INSERT INTO library_schema."position" VALUES (5, 'Cataloguer', 35000);
+INSERT INTO library_schema."position" VALUES (6, 'Research Librarian', 50000);
+INSERT INTO library_schema."position" VALUES (7, 'Library Assistant', 30000);
+INSERT INTO library_schema."position" VALUES (8, 'Digital Services Librarian', 55000);
+INSERT INTO library_schema."position" VALUES (9, 'Children’s Librarian', 40000);
+INSERT INTO library_schema."position" VALUES (10, 'Reference Librarian', 45000);
+INSERT INTO library_schema."position" VALUES (11, 'Circulation Manager', 50000);
+INSERT INTO library_schema."position" VALUES (12, 'Library Technician', 32000);
+INSERT INTO library_schema."position" VALUES (13, 'Conservator', 48000);
+
+
+--
+-- TOC entry 5004 (class 0 OID 16403)
+-- Dependencies: 219
+-- Data for Name: publication; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.publication VALUES (8, 'A Brief History of Time', 1, 'English', 'Book', 'Science', 1988, 256, '9780553380163', 3);
+INSERT INTO library_schema.publication VALUES (9, 'War and Peace', 1, 'Russian', 'Book', 'Literature', 1869, 1225, '9780199232765', 1);
+INSERT INTO library_schema.publication VALUES (10, 'The Great Gatsby', 1, 'English', 'Book', 'Literature', 1925, 180, '9780743273565', 4);
+INSERT INTO library_schema.publication VALUES (11, 'The Origin of Species', 1, 'English', 'Book', 'Science', 1859, 502, '9780192806238', 2);
+INSERT INTO library_schema.publication VALUES (12, 'Digital Fortress', 1, 'English', 'Book', 'Technology', 1998, 384, '9780312944926', 5);
+INSERT INTO library_schema.publication VALUES (13, 'Les Misérables', 1, 'French', 'Book', 'Literature', 1862, 1463, '9780451419439', 1);
+INSERT INTO library_schema.publication VALUES (14, 'The Da Vinci Code', 1, 'English', 'Book', 'Literature', 2003, 489, '9780307474278', 3);
+INSERT INTO library_schema.publication VALUES (15, 'Cosmos', 1, 'English', 'Book', 'Science', 1980, 365, '9780345539434', 2);
+INSERT INTO library_schema.publication VALUES (16, 'The Alchemist', 1, 'Portuguese', 'Book', 'Literature', 1988, 208, '9780061122415', 4);
+INSERT INTO library_schema.publication VALUES (17, '1984', 1, 'English', 'Book', 'Literature', 1949, 328, '9780451524935', 5);
+
+
+--
+-- TOC entry 5006 (class 0 OID 16420)
+-- Dependencies: 221
+-- Data for Name: publisher; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.publisher VALUES (1, 'Oxford Press', 'London', '+441234567890', 'contact@oxfordpress.com');
+INSERT INTO library_schema.publisher VALUES (2, 'Cambridge University Press', 'Cambridge', '+441234567891', 'info@cambridge.org');
+INSERT INTO library_schema.publisher VALUES (3, 'Penguin Random House', 'New York', '+12125550123', 'support@penguinrandomhouse.com');
+INSERT INTO library_schema.publisher VALUES (4, 'HarperCollins', 'New York', '+12125550124', 'info@harpercollins.com');
+INSERT INTO library_schema.publisher VALUES (5, 'Simon & Schuster', 'New York', '+12125550125', 'contact@simonandschuster.com');
+
+
+--
+-- TOC entry 5018 (class 0 OID 16526)
+-- Dependencies: 233
+-- Data for Name: reader; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.reader VALUES (2, 'RF1001', '2024-01-15', 'active', 'Michael Brown', 'AB12345678', '123 Main St, City', '+12125550135', 'michael.brown@example.com');
+INSERT INTO library_schema.reader VALUES (3, 'RF1002', '2024-02-20', 'active', 'Susan Green', 'CD23456789', '456 Oak St, City', '+12125550136', 'susan.green@example.com');
+INSERT INTO library_schema.reader VALUES (4, 'RF1003', '2024-03-05', 'suspended', 'Robert Black', 'EF34567890', '789 Pine St, City', '+12125550137', 'robert.black@example.com');
+INSERT INTO library_schema.reader VALUES (5, 'RF1004', '2024-03-10', 'blocked', 'Linda White', 'GH45678901', '101 Maple Ave, City', '+12125550138', 'linda.white@example.com');
+INSERT INTO library_schema.reader VALUES (6, 'RF1005', '2024-04-01', 'suspended', 'James Smith', 'IJ56789012', '202 Birch Rd, City', '+12125550139', 'james.smith@example.com');
+INSERT INTO library_schema.reader VALUES (7, 'RF1006', '2024-04-15', 'active', 'Patricia Taylor', 'KL67890123', '303 Cedar Ln, City', '+12125550140', 'patricia.taylor@example.com');
+INSERT INTO library_schema.reader VALUES (8, 'RF1007', '2024-05-01', 'active', 'Barbara Davis', 'MN78901234', '404 Elm St, City', '+12125550141', 'barbara.davis@example.com');
+INSERT INTO library_schema.reader VALUES (9, 'RF1008', '2024-05-20', 'active', 'Christopher Miller', 'OP89012345', '505 Spruce St, City', '+12125550142', 'christopher.miller@example.com');
+INSERT INTO library_schema.reader VALUES (10, 'RF1009', '2024-06-05', 'active', 'Jennifer Wilson', 'QR90123456', '606 Fir St, City', '+12125550143', 'jennifer.wilson@example.com');
+INSERT INTO library_schema.reader VALUES (11, 'RF1010', '2024-06-15', 'active', 'William Moore', 'ST01234567', '707 Poplar St, City', '+12125550144', 'william.moore@example.com');
+
+
+--
+-- TOC entry 5032 (class 0 OID 16644)
+-- Dependencies: 247
+-- Data for Name: receipt; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.receipt VALUES (1, 2, 25.00, 8, 1);
+INSERT INTO library_schema.receipt VALUES (2, 3, 30.00, 9, 2);
+INSERT INTO library_schema.receipt VALUES (3, 1, 20.00, 10, 3);
+INSERT INTO library_schema.receipt VALUES (4, 4, 22.50, 11, 4);
+INSERT INTO library_schema.receipt VALUES (5, 2, 27.50, 12, 5);
+INSERT INTO library_schema.receipt VALUES (6, 3, 25.00, 13, 6);
+INSERT INTO library_schema.receipt VALUES (7, 1, 30.00, 14, 7);
+INSERT INTO library_schema.receipt VALUES (8, 4, 28.00, 15, 8);
+INSERT INTO library_schema.receipt VALUES (9, 2, 24.00, 16, 9);
+INSERT INTO library_schema.receipt VALUES (10, 3, 26.00, 17, 10);
+
+
+--
+-- TOC entry 5030 (class 0 OID 16621)
+-- Dependencies: 245
+-- Data for Name: receipt_document; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.receipt_document VALUES (1, 'DOC1001', '2024-05-01', 'invoice', 'Supplier Invoice', 100, 2500.00, '2024-05-02', 1, 1);
+INSERT INTO library_schema.receipt_document VALUES (2, 'DOC1002', '2024-05-05', 'acceptance_act', 'Delivery Note', 150, 3750.00, '2024-05-06', 2, 2);
+INSERT INTO library_schema.receipt_document VALUES (3, 'DOC1003', '2024-05-10', 'donation_act', 'Donation', 50, 1250.00, '2024-05-11', 3, NULL);
+INSERT INTO library_schema.receipt_document VALUES (4, 'DOC1004', '2024-05-15', 'replacement_act', 'Replacement', 30, 900.00, '2024-05-16', 4, 3);
+INSERT INTO library_schema.receipt_document VALUES (5, 'DOC1005', '2024-05-20', 'invoice', 'Supplier Invoice', 200, 5000.00, '2024-05-21', 5, 4);
+INSERT INTO library_schema.receipt_document VALUES (6, 'DOC1006', '2024-05-25', 'acceptance_act', 'Delivery Note', 120, 3000.00, '2024-05-26', 6, 5);
+INSERT INTO library_schema.receipt_document VALUES (7, 'DOC1007', '2024-05-30', 'donation_act', 'Donation', 80, 2000.00, '2024-05-31', 1, NULL);
+INSERT INTO library_schema.receipt_document VALUES (8, 'DOC1008', '2024-06-01', 'replacement_act', 'Replacement', 60, 1500.00, '2024-06-02', 2, 1);
+INSERT INTO library_schema.receipt_document VALUES (9, 'DOC1009', '2024-06-05', 'invoice', 'Supplier Invoice', 90, 2250.00, '2024-06-06', 3, 2);
+INSERT INTO library_schema.receipt_document VALUES (10, 'DOC1010', '2024-06-10', 'acceptance_act', 'Delivery Note', 110, 2750.00, '2024-06-11', 4, 3);
+
+
+--
+-- TOC entry 5026 (class 0 OID 16593)
+-- Dependencies: 241
+-- Data for Name: storage; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.storage VALUES (1, '2024-06-01', '2024-12-31', 1, 11);
+INSERT INTO library_schema.storage VALUES (2, '2024-06-01', '2024-12-31', 1, 12);
+INSERT INTO library_schema.storage VALUES (3, '2024-06-01', '2024-12-31', 2, 13);
+INSERT INTO library_schema.storage VALUES (4, '2024-06-01', '2024-12-31', 2, 14);
+INSERT INTO library_schema.storage VALUES (5, '2024-06-01', '2024-12-31', 3, 15);
+INSERT INTO library_schema.storage VALUES (6, '2024-06-01', '2024-12-31', 3, 16);
+INSERT INTO library_schema.storage VALUES (7, '2024-06-01', '2024-12-31', 4, 17);
+INSERT INTO library_schema.storage VALUES (8, '2024-06-01', '2024-12-31', 4, 18);
+INSERT INTO library_schema.storage VALUES (9, '2024-06-01', '2024-12-31', 5, 19);
+INSERT INTO library_schema.storage VALUES (10, '2024-06-01', '2024-12-31', 5, 20);
+
+
+--
+-- TOC entry 5024 (class 0 OID 16583)
+-- Dependencies: 239
+-- Data for Name: storage_location; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.storage_location VALUES (1, 101, 1, 1);
+INSERT INTO library_schema.storage_location VALUES (2, 102, 2, 2);
+INSERT INTO library_schema.storage_location VALUES (3, 103, 3, 3);
+INSERT INTO library_schema.storage_location VALUES (4, 104, 4, 4);
+INSERT INTO library_schema.storage_location VALUES (5, 105, 5, 5);
+
+
+--
+-- TOC entry 5028 (class 0 OID 16612)
+-- Dependencies: 243
+-- Data for Name: supplier; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.supplier VALUES (1, 'Global Books', '123 International Ave, London', '+441234567895', 'info@globalbooks.com');
+INSERT INTO library_schema.supplier VALUES (2, 'Book World', '456 World St, New York', '+12125550145', 'contact@bookworld.com');
+INSERT INTO library_schema.supplier VALUES (3, 'Universal Publishing', '789 Universal Rd, Berlin', '+493012345678', 'sales@universalpub.com');
+INSERT INTO library_schema.supplier VALUES (4, 'Elite Books', '101 Elite Blvd, Paris', '+33123456780', 'support@elitebooks.fr');
+INSERT INTO library_schema.supplier VALUES (5, 'Modern Publishing', '202 Modern St, Tokyo', '+81312345678', 'info@modernpub.jp');
+
+
+--
+-- TOC entry 5036 (class 0 OID 16681)
+-- Dependencies: 251
+-- Data for Name: write_off; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.write_off VALUES (1, 1, 15, 1);
+INSERT INTO library_schema.write_off VALUES (2, 0.8, 22, 2);
+INSERT INTO library_schema.write_off VALUES (3, 1.2, 26, 3);
+
+
+--
+-- TOC entry 5034 (class 0 OID 16664)
+-- Dependencies: 249
+-- Data for Name: write_off_act; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+--
+
+INSERT INTO library_schema.write_off_act VALUES (1, 'WOA1001', '2024-07-01', 5, 125.00, 'worn_out', 'Sent for recycling', 1);
+INSERT INTO library_schema.write_off_act VALUES (2, 'WOA1002', '2024-07-05', 3, 75.00, 'defective', 'Archived', 2);
+INSERT INTO library_schema.write_off_act VALUES (3, 'WOA1003', '2024-07-10', 2, 50.00, 'obsolete', 'Disposed', 3);
+
+
+--
+-- TOC entry 5060 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: assignment_assignment_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.assignment_assignment_id_seq', 6, true);
+
+
+--
+-- TOC entry 5061 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: copy_copy_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.copy_copy_id_seq', 30, true);
+
+
+--
+-- TOC entry 5062 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: creation_creation_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.creation_creation_id_seq', 60, true);
+
+
+--
+-- TOC entry 5063 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: creator_creator_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.creator_creator_id_seq', 13, true);
+
+
+--
+-- TOC entry 5064 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: employee_employee_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.employee_employee_id_seq', 6, true);
+
+
+--
+-- TOC entry 5065 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: loan_loan_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.loan_loan_id_seq', 62, true);
+
+
+--
+-- TOC entry 5066 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: position_position_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.position_position_id_seq', 13, true);
+
+
+--
+-- TOC entry 5067 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: publication_publication_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.publication_publication_id_seq', 17, true);
+
+
+--
+-- TOC entry 5068 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: publisher_publisher_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.publisher_publisher_id_seq', 7, true);
+
+
+--
+-- TOC entry 5069 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: reader_reader_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.reader_reader_id_seq', 11, true);
+
+
+--
+-- TOC entry 5070 (class 0 OID 0)
+-- Dependencies: 244
+-- Name: receipt_document_receipt_document_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.receipt_document_receipt_document_id_seq', 10, true);
+
+
+--
+-- TOC entry 5071 (class 0 OID 0)
+-- Dependencies: 246
+-- Name: receipt_receipt_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.receipt_receipt_id_seq', 10, true);
+
+
+--
+-- TOC entry 5072 (class 0 OID 0)
+-- Dependencies: 238
+-- Name: storage_location_storage_location_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.storage_location_storage_location_id_seq', 5, true);
+
+
+--
+-- TOC entry 5073 (class 0 OID 0)
+-- Dependencies: 240
+-- Name: storage_storage_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.storage_storage_id_seq', 10, true);
+
+
+--
+-- TOC entry 5074 (class 0 OID 0)
+-- Dependencies: 242
+-- Name: supplier_supplier_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.supplier_supplier_id_seq', 5, true);
+
+
+--
+-- TOC entry 5075 (class 0 OID 0)
+-- Dependencies: 250
+-- Name: write_off_ write_off_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema."write_off_ write_off_id_seq"', 3, true);
+
+
+--
+-- TOC entry 5076 (class 0 OID 0)
+-- Dependencies: 248
+-- Name: write_off_act_write_off_act_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema.write_off_act_write_off_act_id_seq', 3, true);
+
+
+--
+-- TOC entry 4835 (class 2606 OID 16674)
+-- Name: write_off_act act_number_unique; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.write_off_act
+    ADD CONSTRAINT act_number_unique UNIQUE (act_num);
+
+
+--
+-- TOC entry 4809 (class 2606 OID 16514)
+-- Name: assignment assignment_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.assignment
+    ADD CONSTRAINT assignment_pkey PRIMARY KEY (assignment_id);
+
+
+--
+-- TOC entry 4817 (class 2606 OID 16551)
+-- Name: copy copy_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.copy
+    ADD CONSTRAINT copy_pkey PRIMARY KEY (copy_id);
+
+
+--
+-- TOC entry 4803 (class 2606 OID 16457)
+-- Name: creation creation_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.creation
+    ADD CONSTRAINT creation_pkey PRIMARY KEY (creation_id);
+
+
+--
+-- TOC entry 4755 (class 2606 OID 16542)
+-- Name: creator creator_name_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema.creator
+    ADD CONSTRAINT creator_name_chk CHECK (((full_name)::text ~ '^[A-Za-zÀ-ÖØ-öø-ÿА-Яа-яЁё-]+([ -][A-Za-zÀ-ÖØ-öø-ÿА-Яа-яЁё]+)*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 4801 (class 2606 OID 16442)
+-- Name: creator creator_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.creator
+    ADD CONSTRAINT creator_pkey PRIMARY KEY (creator_id);
+
+
+--
+-- TOC entry 4760 (class 2606 OID 16541)
+-- Name: employee employee_name_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema.employee
+    ADD CONSTRAINT employee_name_chk CHECK (((full_name)::text ~ '^[A-Za-zÀ-ÖØ-öø-ÿА-Яа-яЁё-]+([ -][A-Za-zÀ-ÖØ-öø-ÿА-Яа-яЁё]+)*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 4805 (class 2606 OID 16476)
+-- Name: employee employee_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.employee
+    ADD CONSTRAINT employee_pkey PRIMARY KEY (employee_id);
+
+
+--
+-- TOC entry 4811 (class 2606 OID 16538)
+-- Name: reader form_num_unique; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.reader
+    ADD CONSTRAINT form_num_unique UNIQUE (form_num);
+
+
+--
+-- TOC entry 4819 (class 2606 OID 16553)
+-- Name: copy inventory_num_unique; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.copy
+    ADD CONSTRAINT inventory_num_unique UNIQUE (inventory_num);
+
+
+--
+-- TOC entry 4795 (class 2606 OID 16418)
+-- Name: publication isbn_unique; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.publication
+    ADD CONSTRAINT isbn_unique UNIQUE (isbn);
+
+
+--
+-- TOC entry 4746 (class 2606 OID 16414)
+-- Name: publication knowledge_field_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema.publication
+    ADD CONSTRAINT knowledge_field_chk CHECK (((knowledge_field)::text = ANY ((ARRAY['Literature'::character varying, 'Science'::character varying, 'Technology'::character varying, 'Engineering'::character varying, 'Mathematics'::character varying, 'Medicine'::character varying, 'Law'::character varying, 'Economics'::character varying, 'History'::character varying, 'Philosophy'::character varying, 'Psychology'::character varying, 'Sociology'::character varying, 'Education'::character varying, 'Linguistics'::character varying, 'Political Science'::character varying, 'Art'::character varying, 'Music'::character varying, 'Religion'::character varying, 'Astronomy'::character varying, 'Physics'::character varying, 'Chemistry'::character varying, 'Biology'::character varying, 'Computer Science'::character varying, 'Environmental Science'::character varying, 'Geography'::character varying, 'Anthropology'::character varying, 'Archaeology'::character varying, 'Military Science'::character varying, 'Sports Science'::character varying, 'Cultural Studies'::character varying, 'Library Science'::character varying])::text[]))) NOT VALID;
+
+
+--
+-- TOC entry 4821 (class 2606 OID 16565)
+-- Name: loan loan_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.loan
+    ADD CONSTRAINT loan_pkey PRIMARY KEY (loan_id);
+
+
+--
+-- TOC entry 4747 (class 2606 OID 16413)
+-- Name: publication original_lang_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema.publication
+    ADD CONSTRAINT original_lang_chk CHECK (((original_lang)::text = ANY ((ARRAY['English'::character varying, 'Russian'::character varying, 'French'::character varying, 'German'::character varying, 'Spanish'::character varying, 'Chinese'::character varying, 'Japanese'::character varying, 'Italian'::character varying, 'Portuguese'::character varying, 'Arabic'::character varying, 'Hindi'::character varying, 'Dutch'::character varying, 'Korean'::character varying, 'Turkish'::character varying, 'Greek'::character varying, 'Polish'::character varying, 'Swedish'::character varying, 'Finnish'::character varying, 'Czech'::character varying, 'Ukrainian'::character varying, 'Hebrew'::character varying, 'Latin'::character varying, 'Esperanto'::character varying])::text[]))) NOT VALID;
+
+
+--
+-- TOC entry 4748 (class 2606 OID 16416)
+-- Name: publication page_num_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema.publication
+    ADD CONSTRAINT page_num_chk CHECK ((page_num > 0)) NOT VALID;
+
+
+--
+-- TOC entry 4807 (class 2606 OID 16484)
+-- Name: position position_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema."position"
+    ADD CONSTRAINT position_pkey PRIMARY KEY (position_id);
+
+
+--
+-- TOC entry 4762 (class 2606 OID 16485)
+-- Name: position position_title_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema."position"
+    ADD CONSTRAINT position_title_chk CHECK (((position_title)::text = ANY ((ARRAY['Librarian'::character varying, 'Senior Librarian'::character varying, 'Archivist'::character varying, 'Library Assistant'::character varying, 'Library Director'::character varying, 'Cataloguer'::character varying, 'Research Librarian'::character varying, 'Acquisitions Librarian'::character varying, 'Digital Services Librarian'::character varying, 'Children’s Librarian'::character varying, 'Reference Librarian'::character varying, 'Circulation Manager'::character varying, 'Library Technician'::character varying, 'Conservator'::character varying])::text[]))) NOT VALID;
+
+
+--
+-- TOC entry 4797 (class 2606 OID 16409)
+-- Name: publication publication_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.publication
+    ADD CONSTRAINT publication_pkey PRIMARY KEY (publication_id);
+
+
+--
+-- TOC entry 4749 (class 2606 OID 16412)
+-- Name: publication publication_type_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema.publication
+    ADD CONSTRAINT publication_type_chk CHECK (((publication_type)::text = ANY ((ARRAY['Book'::character varying, 'Journal'::character varying, 'Magazine'::character varying, 'Newspaper'::character varying, 'E-book'::character varying, 'Manuscript'::character varying, 'Thesis'::character varying, 'Report'::character varying, 'Conference Proceedings'::character varying, 'Reference Book'::character varying, 'Encyclopedia'::character varying, 'Dictionary'::character varying, 'Technical Document'::character varying, 'Research Paper'::character varying, 'White Paper'::character varying, 'Graphic Novel'::character varying, 'Comic Book'::character varying, 'Sheet Music'::character varying, 'Map'::character varying, 'Patent Document'::character varying, 'Government Publication'::character varying, 'Audio Book'::character varying])::text[]))) NOT VALID;
+
+
+--
+-- TOC entry 4750 (class 2606 OID 16415)
+-- Name: publication publication_year_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema.publication
+    ADD CONSTRAINT publication_year_chk CHECK (((publication_year >= 1400) AND ((publication_year)::numeric <= EXTRACT(year FROM CURRENT_DATE)))) NOT VALID;
+
+
+--
+-- TOC entry 4752 (class 2606 OID 16427)
+-- Name: publisher publisher_email_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema.publisher
+    ADD CONSTRAINT publisher_email_chk CHECK (((email)::text ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 4753 (class 2606 OID 16448)
+-- Name: publisher publisher_phone_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema.publisher
+    ADD CONSTRAINT publisher_phone_chk CHECK (((phone IS NULL) OR ((phone)::text ~ '^\+[1-9][0-9]{7,15}$'::text))) NOT VALID;
+
+
+--
+-- TOC entry 4799 (class 2606 OID 16425)
+-- Name: publisher publisher_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.publisher
+    ADD CONSTRAINT publisher_pkey PRIMARY KEY (publisher_id);
+
+
+--
+-- TOC entry 4829 (class 2606 OID 16632)
+-- Name: receipt_document rd_num_unique; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.receipt_document
+    ADD CONSTRAINT rd_num_unique UNIQUE (document_num);
+
+
+--
+-- TOC entry 4813 (class 2606 OID 16540)
+-- Name: reader reader_passport_unique; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.reader
+    ADD CONSTRAINT reader_passport_unique UNIQUE (passport_details);
+
+
+--
+-- TOC entry 4815 (class 2606 OID 16536)
+-- Name: reader reader_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.reader
+    ADD CONSTRAINT reader_pkey PRIMARY KEY (reader_id);
+
+
+--
+-- TOC entry 4831 (class 2606 OID 16630)
+-- Name: receipt_document receipt_document_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.receipt_document
+    ADD CONSTRAINT receipt_document_pkey PRIMARY KEY (receipt_document_id);
+
+
+--
+-- TOC entry 4833 (class 2606 OID 16651)
+-- Name: receipt receipt_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.receipt
+    ADD CONSTRAINT receipt_pkey PRIMARY KEY (receipt_id);
+
+
+--
+-- TOC entry 4823 (class 2606 OID 16591)
+-- Name: storage_location storage_location_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.storage_location
+    ADD CONSTRAINT storage_location_pkey PRIMARY KEY (storage_location_id);
+
+
+--
+-- TOC entry 4825 (class 2606 OID 16600)
+-- Name: storage storage_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.storage
+    ADD CONSTRAINT storage_pkey PRIMARY KEY (storage_id);
+
+
+--
+-- TOC entry 4827 (class 2606 OID 16619)
+-- Name: supplier supplier_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.supplier
+    ADD CONSTRAINT supplier_pkey PRIMARY KEY (supplier_id);
+
+
+--
+-- TOC entry 4751 (class 2606 OID 16410)
+-- Name: publication volume_num_chk; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE library_schema.publication
+    ADD CONSTRAINT volume_num_chk CHECK ((volume_num >= 0)) NOT VALID;
+
+
+--
+-- TOC entry 4837 (class 2606 OID 16672)
+-- Name: write_off_act write_off_act_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.write_off_act
+    ADD CONSTRAINT write_off_act_pkey PRIMARY KEY (write_off_act_id);
+
+
+--
+-- TOC entry 4839 (class 2606 OID 16687)
+-- Name: write_off write_off_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.write_off
+    ADD CONSTRAINT write_off_pkey PRIMARY KEY (" write_off_id");
+
+
+--
+-- TOC entry 4843 (class 2606 OID 16515)
+-- Name: assignment fk_assignment_employee; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.assignment
+    ADD CONSTRAINT fk_assignment_employee FOREIGN KEY (employee_id) REFERENCES library_schema.employee(employee_id);
+
+
+--
+-- TOC entry 4844 (class 2606 OID 16520)
+-- Name: assignment fk_assignment_position; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.assignment
+    ADD CONSTRAINT fk_assignment_position FOREIGN KEY (position_id) REFERENCES library_schema."position"(position_id);
+
+
+--
+-- TOC entry 4845 (class 2606 OID 16698)
+-- Name: copy fk_copy_receipt; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.copy
+    ADD CONSTRAINT fk_copy_receipt FOREIGN KEY (receipt_id) REFERENCES library_schema.receipt(receipt_id) NOT VALID;
+
+
+--
+-- TOC entry 4841 (class 2606 OID 16463)
+-- Name: creation fk_creator; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.creation
+    ADD CONSTRAINT fk_creator FOREIGN KEY (creator_id) REFERENCES library_schema.creator(creator_id);
+
+
+--
+-- TOC entry 4846 (class 2606 OID 16566)
+-- Name: loan fk_loan_copy; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.loan
+    ADD CONSTRAINT fk_loan_copy FOREIGN KEY (copy_id) REFERENCES library_schema.copy(copy_id);
+
+
+--
+-- TOC entry 4847 (class 2606 OID 16576)
+-- Name: loan fk_loan_employee; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.loan
+    ADD CONSTRAINT fk_loan_employee FOREIGN KEY (employee_id) REFERENCES library_schema.employee(employee_id);
+
+
+--
+-- TOC entry 4848 (class 2606 OID 16571)
+-- Name: loan fk_loan_reader; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.loan
+    ADD CONSTRAINT fk_loan_reader FOREIGN KEY (reader_id) REFERENCES library_schema.reader(reader_id);
+
+
+--
+-- TOC entry 4842 (class 2606 OID 16458)
+-- Name: creation fk_publication; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.creation
+    ADD CONSTRAINT fk_publication FOREIGN KEY (publication_id) REFERENCES library_schema.publication(publication_id);
+
+
+--
+-- TOC entry 4840 (class 2606 OID 16428)
+-- Name: publication fk_publisher; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.publication
+    ADD CONSTRAINT fk_publisher FOREIGN KEY (publisher_id) REFERENCES library_schema.publisher(publisher_id) NOT VALID;
+
+
+--
+-- TOC entry 4851 (class 2606 OID 16633)
+-- Name: receipt_document fk_rd_employee; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.receipt_document
+    ADD CONSTRAINT fk_rd_employee FOREIGN KEY (employee_id) REFERENCES library_schema.employee(employee_id);
+
+
+--
+-- TOC entry 4852 (class 2606 OID 16638)
+-- Name: receipt_document fk_rd_supplier; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.receipt_document
+    ADD CONSTRAINT fk_rd_supplier FOREIGN KEY (supplier_id) REFERENCES library_schema.supplier(supplier_id);
+
+
+--
+-- TOC entry 4853 (class 2606 OID 16652)
+-- Name: receipt fk_receipt_publication; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.receipt
+    ADD CONSTRAINT fk_receipt_publication FOREIGN KEY (publication_id) REFERENCES library_schema.publication(publication_id);
+
+
+--
+-- TOC entry 4854 (class 2606 OID 16657)
+-- Name: receipt fk_receipt_rd; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.receipt
+    ADD CONSTRAINT fk_receipt_rd FOREIGN KEY (receipt_document_id) REFERENCES library_schema.receipt_document(receipt_document_id);
+
+
+--
+-- TOC entry 4849 (class 2606 OID 16606)
+-- Name: storage fk_storage_copy; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.storage
+    ADD CONSTRAINT fk_storage_copy FOREIGN KEY (copy_id) REFERENCES library_schema.copy(copy_id);
+
+
+--
+-- TOC entry 4850 (class 2606 OID 16601)
+-- Name: storage fk_storage_location; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.storage
+    ADD CONSTRAINT fk_storage_location FOREIGN KEY (storage_location_id) REFERENCES library_schema.storage_location(storage_location_id);
+
+
+--
+-- TOC entry 4856 (class 2606 OID 16693)
+-- Name: write_off fk_wo_act; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.write_off
+    ADD CONSTRAINT fk_wo_act FOREIGN KEY (write_off_act_id) REFERENCES library_schema.write_off_act(write_off_act_id);
+
+
+--
+-- TOC entry 4857 (class 2606 OID 16688)
+-- Name: write_off fk_wo_copy; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.write_off
+    ADD CONSTRAINT fk_wo_copy FOREIGN KEY (copy_id) REFERENCES library_schema.copy(copy_id);
+
+
+--
+-- TOC entry 4855 (class 2606 OID 16675)
+-- Name: write_off_act fk_woa_employee; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema.write_off_act
+    ADD CONSTRAINT fk_woa_employee FOREIGN KEY (employee_id) REFERENCES library_schema.employee(employee_id);
+
+
+-- Completed on 2025-04-03 23:03:10
+
+--
+-- PostgreSQL database dump complete
+--
+
