@@ -1,0 +1,126 @@
+learn> db.unicorns.find({}, {name: 1, loves: {$slice: 1}, _id: 0});
+[
+  { name: 'Horny', loves: [ 'carrot' ] },
+  { name: 'Aurora', loves: [ 'carrot' ] },
+  { name: 'Unicrom', loves: [ 'energon' ] },
+  { name: 'Roooooodles', loves: [ 'apple' ] },
+  { name: 'Solnara', loves: [ 'apple' ] },
+  { name: 'Ayna', loves: [ 'strawberry' ] },
+  { name: 'Kenny', loves: [ 'grape' ] },
+  { name: 'Raleigh', loves: [ 'apple' ] },
+  { name: 'Leia', loves: [ 'apple' ] },
+  { name: 'Pilot', loves: [ 'apple' ] },
+  { name: 'Nimue', loves: [ 'grape' ] },
+  { name: 'Dunx', loves: [ 'grape' ] },
+  { name: 'Barny', loves: [ 'grape' ] },
+  { name: 'Horny', loves: [ 'carrot' ] },
+  { name: 'Aurora', loves: [ 'carrot' ] },
+  { name: 'Unicrom', loves: [ 'energon' ] },
+  { name: 'Roooooodles', loves: [ 'apple' ] },
+  { name: 'Solnara', loves: [ 'apple' ] },
+  { name: 'Ayna', loves: [ 'strawberry' ] },
+  { name: 'Kenny', loves: [ 'grape' ] }
+]
+Type "it" for more
+learn> db.unicorns.find({gender: 'f', weight: {$gte: 500, $lte: 700}}, {_id: 0});
+[
+  {
+    name: 'Solnara',
+    loves: [ 'apple', 'carrot', 'chocolate' ],
+    weight: 550,
+    gender: 'f',
+    vampires: 80
+  },
+  {
+    name: 'Leia',
+    loves: [ 'apple', 'watermelon' ],
+    weight: 601,
+    gender: 'f',
+    vampires: 33
+  },
+  {
+    name: 'Nimue',
+    loves: [ 'grape', 'carrot' ],
+    weight: 540,
+    gender: 'f',
+    habitat: DBRef('habitats', 'valley')
+  },
+  {
+    name: 'Solnara',
+    loves: [ 'apple', 'carrot', 'chocolate' ],
+    weight: 550,
+    gender: 'f',
+    vampires: 80
+  },
+  {
+    name: 'Leia',
+    loves: [ 'apple', 'watermelon' ],
+    weight: 601,
+    gender: 'f',
+    vampires: 33
+  },
+  {
+    name: 'Nimue',
+    loves: [ 'grape', 'carrot' ],
+    weight: 540,
+    gender: 'f'
+  }
+]
+learn> db.unicorns.find({
+...   gender: 'm', 
+...   weight: {$gte: 500}, 
+...   loves: {$all: ['grape', 'lemon']}
+... }, {_id: 0});
+[
+  {
+    name: 'Kenny',
+    loves: [ 'grape', 'lemon' ],
+    weight: 690,
+    gender: 'm',
+    vampires: 44
+  },
+  {
+    name: 'Kenny',
+    loves: [ 'grape', 'lemon' ],
+    weight: 690,
+    gender: 'm',
+    vampires: 39
+  }
+]
+learn> db.unicorns.find({vampires: {$exists: false}});
+[
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb1'),
+    name: 'Nimue',
+    loves: [ 'grape', 'carrot' ],
+    weight: 540,
+    gender: 'f',
+    habitat: DBRef('habitats', 'valley')
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cb1'),
+    name: 'Nimue',
+    loves: [ 'grape', 'carrot' ],
+    weight: 540,
+    gender: 'f'
+  }
+]
+learn> db.unicorns.find({gender: 'm'}, {name: 1, loves: {$slice: 1}, _id: 0}).sort({name: 1});
+[
+  { name: 'Barny', loves: [ 'grape' ] },
+  { name: 'Dunx', loves: [ 'grape' ] },
+  { name: 'Dunx', loves: [ 'grape' ] },
+  { name: 'Horny', loves: [ 'carrot' ] },
+  { name: 'Horny', loves: [ 'carrot' ] },
+  { name: 'Kenny', loves: [ 'grape' ] },
+  { name: 'Kenny', loves: [ 'grape' ] },
+  { name: 'Pilot', loves: [ 'apple' ] },
+  { name: 'Pilot', loves: [ 'apple' ] },
+  { name: 'Raleigh', loves: [ 'apple' ] },
+  { name: 'Raleigh', loves: [ 'apple' ] },
+  { name: 'Roooooodles', loves: [ 'apple' ] },
+  { name: 'Roooooodles', loves: [ 'apple' ] },
+  { name: 'Unicrom', loves: [ 'energon' ] },
+  { name: 'Unicrom', loves: [ 'energon' ] }
+]
+learn> 

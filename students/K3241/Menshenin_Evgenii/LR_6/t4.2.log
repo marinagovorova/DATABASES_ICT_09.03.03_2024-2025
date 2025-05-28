@@ -1,0 +1,754 @@
+learn>   db.unicorns.createIndex({name: 1}, {unique: true});
+MongoServerError[DuplicateKey]: Index build failed: 38da1a16-e7bb-4cab-b84e-084b5a95cf3c: Collection learn.unicorns ( 0c4d1c76-77f1-4118-af90-fffd39a43186 ) :: caused by :: E11000 duplicate key error collection: learn.unicorns index: name_1 dup key: { name: "Aurora" }
+learn> db.unicorns.find();
+[
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca7'),
+    name: 'Horny',
+    loves: [ 'carrot', 'papaya' ],
+    weight: 600,
+    gender: 'm',
+    vampires: 73
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca8'),
+    name: 'Aurora',
+    loves: [ 'carrot', 'grape', 'sugar', 'lemon' ],
+    weight: 450,
+    gender: 'f',
+    vampires: 43,
+    habitat: DBRef('habitats', 'forest')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca9'),
+    name: 'Unicrom',
+    loves: [ 'energon', 'redbull' ],
+    weight: 984,
+    gender: 'm',
+    vampires: 192,
+    habitat: DBRef('habitats', 'mountain')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544caa'),
+    name: 'Roooooodles',
+    loves: [ 'apple' ],
+    weight: 575,
+    gender: 'm',
+    vampires: 109
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cab'),
+    name: 'Solnara',
+    loves: [ 'apple', 'carrot', 'chocolate' ],
+    weight: 550,
+    gender: 'f',
+    vampires: 80
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cac'),
+    name: 'Ayna',
+    loves: [ 'strawberry', 'lemon' ],
+    weight: 800,
+    gender: 'f',
+    vampires: 51
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cad'),
+    name: 'Kenny',
+    loves: [ 'grape', 'lemon' ],
+    weight: 690,
+    gender: 'm',
+    vampires: 49
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cae'),
+    name: 'Raleigh',
+    loves: [ 'apple', 'sugar', 'redbull', 'redbull' ],
+    weight: 421,
+    gender: 'm',
+    vampires: 12
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544caf'),
+    name: 'Leia',
+    loves: [ 'apple', 'watermelon' ],
+    weight: 601,
+    gender: 'f',
+    vampires: 33
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb0'),
+    name: 'Pilot',
+    loves: [ 'apple', 'watermelon', 'chocolate', 'chocolate' ],
+    weight: 650,
+    gender: 'm',
+    vampires: 64
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb1'),
+    name: 'Nimue',
+    loves: [ 'grape', 'carrot' ],
+    weight: 540,
+    gender: 'f',
+    habitat: DBRef('habitats', 'valley')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb2'),
+    name: 'Dunx',
+    loves: [ 'grape', 'watermelon' ],
+    weight: 704,
+    gender: 'm',
+    vampires: 175
+  },
+  {
+    _id: ObjectId('68330d72bdb7be45f2544cb6'),
+    name: 'Barny',
+    loves: [ 'grape' ],
+    weight: 340,
+    gender: 'm',
+    vampires: 10
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca7'),
+    name: 'Horny',
+    loves: [ 'carrot', 'papaya' ],
+    weight: 600,
+    gender: 'm',
+    vampires: 68
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca8'),
+    name: 'Aurora',
+    loves: [ 'carrot', 'grape' ],
+    weight: 450,
+    gender: 'f',
+    vampires: 43
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca9'),
+    name: 'Unicrom',
+    loves: [ 'energon', 'redbull' ],
+    weight: 984,
+    gender: 'm',
+    vampires: 187
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544caa'),
+    name: 'Roooooodles',
+    loves: [ 'apple' ],
+    weight: 575,
+    gender: 'm',
+    vampires: 104
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cab'),
+    name: 'Solnara',
+    loves: [ 'apple', 'carrot', 'chocolate' ],
+    weight: 550,
+    gender: 'f',
+    vampires: 80
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cac'),
+    name: 'Ayna',
+    loves: [ 'strawberry', 'lemon' ],
+    weight: 733,
+    gender: 'f',
+    vampires: 40
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cad'),
+    name: 'Kenny',
+    loves: [ 'grape', 'lemon' ],
+    weight: 690,
+    gender: 'm',
+    vampires: 44
+  }
+]
+Type "it" for more
+learn> db.unicorns.deleteMany([{
+...     _id: ObjectId('68330e005b810f068d544ca7'),
+...     name: 'Horny',
+...     loves: [ 'carrot', 'papaya' ],
+...     weight: 600,
+...     gender: 'm',
+...     vampires: 68
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544ca8'),
+...     name: 'Aurora',
+...     loves: [ 'carrot', 'grape' ],
+...     weight: 450,
+...     gender: 'f',
+...     vampires: 43
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544ca9'),
+...     name: 'Unicrom',
+...     loves: [ 'energon', 'redbull' ],
+...     weight: 984,
+...     gender: 'm',
+...     vampires: 187
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544caa'),
+...     name: 'Roooooodles',
+...     loves: [ 'apple' ],
+...     weight: 575,
+...     gender: 'm',
+...     vampires: 104
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544cab'),
+...     name: 'Solnara',
+...     loves: [ 'apple', 'carrot', 'chocolate' ],
+...     weight: 550,
+...     gender: 'f',
+...     vampires: 80
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544cac'),
+...     name: 'Ayna',
+...     loves: [ 'strawberry', 'lemon' ],
+...     weight: 733,
+...     gender: 'f',
+...     vampires: 40
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544cad'),
+...     name: 'Kenny',
+...     loves: [ 'grape', 'lemon' ],
+...     weight: 690,
+...     gender: 'm',
+...     vampires: 44
+...   }]);
+MongoServerError[TypeMismatch]: BSON field 'delete.deletes.q' is the wrong type 'array', expected type 'object'
+learn> db.unicorns.deleteMany({
+...     _id: ObjectId('68330e005b810f068d544ca7'),
+...     name: 'Horny',
+...     loves: [ 'carrot', 'papaya' ],
+...     weight: 600,
+...     gender: 'm',
+...     vampires: 68
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544ca8'),
+...     name: 'Aurora',
+...     loves: [ 'carrot', 'grape' ],
+...     weight: 450,
+...     gender: 'f',
+...     vampires: 43
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544ca9'),
+...     name: 'Unicrom',
+...     loves: [ 'energon', 'redbull' ],
+...     weight: 984,
+...     gender: 'm',
+...     vampires: 187
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544caa'),
+...     name: 'Roooooodles',
+...     loves: [ 'apple' ],
+...     weight: 575,
+...     gender: 'm',
+...     vampires: 104
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544cab'),
+...     name: 'Solnara',
+...     loves: [ 'apple', 'carrot', 'chocolate' ],
+...     weight: 550,
+...     gender: 'f',
+...     vampires: 80
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544cac'),
+...     name: 'Ayna',
+...     loves: [ 'strawberry', 'lemon' ],
+...     weight: 733,
+...     gender: 'f',
+...     vampires: 40
+...   },
+...   {
+...     _id: ObjectId('68330e005b810f068d544cad'),
+...     name: 'Kenny',
+...     loves: [ 'grape', 'lemon' ],
+...     weight: 690,
+...     gender: 'm',
+...     vampires: 44
+...   });
+{ acknowledged: true, deletedCount: 1 }
+learn> db.unicorns.find();
+[
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca7'),
+    name: 'Horny',
+    loves: [ 'carrot', 'papaya' ],
+    weight: 600,
+    gender: 'm',
+    vampires: 73
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca8'),
+    name: 'Aurora',
+    loves: [ 'carrot', 'grape', 'sugar', 'lemon' ],
+    weight: 450,
+    gender: 'f',
+    vampires: 43,
+    habitat: DBRef('habitats', 'forest')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca9'),
+    name: 'Unicrom',
+    loves: [ 'energon', 'redbull' ],
+    weight: 984,
+    gender: 'm',
+    vampires: 192,
+    habitat: DBRef('habitats', 'mountain')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544caa'),
+    name: 'Roooooodles',
+    loves: [ 'apple' ],
+    weight: 575,
+    gender: 'm',
+    vampires: 109
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cab'),
+    name: 'Solnara',
+    loves: [ 'apple', 'carrot', 'chocolate' ],
+    weight: 550,
+    gender: 'f',
+    vampires: 80
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cac'),
+    name: 'Ayna',
+    loves: [ 'strawberry', 'lemon' ],
+    weight: 800,
+    gender: 'f',
+    vampires: 51
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cad'),
+    name: 'Kenny',
+    loves: [ 'grape', 'lemon' ],
+    weight: 690,
+    gender: 'm',
+    vampires: 49
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cae'),
+    name: 'Raleigh',
+    loves: [ 'apple', 'sugar', 'redbull', 'redbull' ],
+    weight: 421,
+    gender: 'm',
+    vampires: 12
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544caf'),
+    name: 'Leia',
+    loves: [ 'apple', 'watermelon' ],
+    weight: 601,
+    gender: 'f',
+    vampires: 33
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb0'),
+    name: 'Pilot',
+    loves: [ 'apple', 'watermelon', 'chocolate', 'chocolate' ],
+    weight: 650,
+    gender: 'm',
+    vampires: 64
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb1'),
+    name: 'Nimue',
+    loves: [ 'grape', 'carrot' ],
+    weight: 540,
+    gender: 'f',
+    habitat: DBRef('habitats', 'valley')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb2'),
+    name: 'Dunx',
+    loves: [ 'grape', 'watermelon' ],
+    weight: 704,
+    gender: 'm',
+    vampires: 175
+  },
+  {
+    _id: ObjectId('68330d72bdb7be45f2544cb6'),
+    name: 'Barny',
+    loves: [ 'grape' ],
+    weight: 340,
+    gender: 'm',
+    vampires: 10
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca8'),
+    name: 'Aurora',
+    loves: [ 'carrot', 'grape' ],
+    weight: 450,
+    gender: 'f',
+    vampires: 43
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca9'),
+    name: 'Unicrom',
+    loves: [ 'energon', 'redbull' ],
+    weight: 984,
+    gender: 'm',
+    vampires: 187
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544caa'),
+    name: 'Roooooodles',
+    loves: [ 'apple' ],
+    weight: 575,
+    gender: 'm',
+    vampires: 104
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cab'),
+    name: 'Solnara',
+    loves: [ 'apple', 'carrot', 'chocolate' ],
+    weight: 550,
+    gender: 'f',
+    vampires: 80
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cac'),
+    name: 'Ayna',
+    loves: [ 'strawberry', 'lemon' ],
+    weight: 733,
+    gender: 'f',
+    vampires: 40
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cad'),
+    name: 'Kenny',
+    loves: [ 'grape', 'lemon' ],
+    weight: 690,
+    gender: 'm',
+    vampires: 44
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cae'),
+    name: 'Raleigh',
+    loves: [ 'apple', 'sugar' ],
+    weight: 421,
+    gender: 'm',
+    vampires: 7
+  }
+]
+Type "it" for more
+learn>   db.unicorns.createIndex({name: 1}, {unique: true});
+MongoServerError[DuplicateKey]: Index build failed: 6ab6eea5-e7d7-4fd7-8c91-d8d368f054c6: Collection learn.unicorns ( 0c4d1c76-77f1-4118-af90-fffd39a43186 ) :: caused by :: E11000 duplicate key error collection: learn.unicorns index: name_1 dup key: { name: "Aurora" }
+learn> db.unicorns.deleteOne(  {
+...     _id: ObjectId('68330e005b810f068d544ca8'),
+...     name: 'Aurora',
+...     loves: [ 'carrot', 'grape' ],
+...     weight: 450,
+...     gender: 'f',
+...     vampires: 43
+...   });
+{ acknowledged: true, deletedCount: 1 }
+learn>   db.unicorns.createIndex({name: 1}, {unique: true});
+MongoServerError[DuplicateKey]: Index build failed: fa64bf3a-2730-4dc3-99fd-365f297711f8: Collection learn.unicorns ( 0c4d1c76-77f1-4118-af90-fffd39a43186 ) :: caused by :: E11000 duplicate key error collection: learn.unicorns index: name_1 dup key: { name: "Ayna" }
+learn> db.unicorns.deleteMany({});
+{ acknowledged: true, deletedCount: 24 }
+learn> db.unicorns.insertMany([{]
+Uncaught:
+SyntaxError: Unexpected token (1:25)
+
+> 1 | db.unicorns.insertMany([{]
+    |                          ^
+  2 |
+
+learn>     _id: ObjectId('68330d6fbdb7be45f2544ca7'),
+...     name: 'Horny',
+Uncaught:
+SyntaxError: Missing semicolon. (2:8)
+
+  1 |     _id: ObjectId('68330d6fbdb7be45f2544ca7'),
+> 2 |     name: 'Horny',
+    |         ^
+  3 |
+
+learn>     loves: [ 'carrot', 'papaya' ],
+...     weight: 600,
+Uncaught:
+SyntaxError: Missing semicolon. (2:10)
+
+  1 |     loves: [ 'carrot', 'papaya' ],
+> 2 |     weight: 600,
+    |           ^
+  3 |
+
+learn>     gender: 'm',
+...     vampires: 73
+Uncaught:
+SyntaxError: Missing semicolon. (2:12)
+
+  1 |     gender: 'm',
+> 2 |     vampires: 73
+    |             ^
+  3 |
+
+learn>   },
+Uncaught:
+SyntaxError: Unexpected token (1:2)
+
+> 1 |   },
+    |   ^
+  2 |
+
+learn>   {
+...     _id: ObjectId('68330d6fbdb7be45f2544ca8'),
+...     name: 'Aurora',
+...     loves: [ 'carrot', 'grape', 'sugar', 'lemon' ],
+...     weight: 450,
+...     gender: 'f',
+...     vampires: 43,
+...     habitat: DBRef('habitats', 'forest')
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544ca9'),
+...     name: 'Unicrom',
+...     loves: [ 'energon', 'redbull' ],
+...     weight: 984,
+...     gender: 'm',
+...     vampires: 192,
+...     habitat: DBRef('habitats', 'mountain')
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544caa'),
+...     name: 'Roooooodles',
+...     loves: [ 'apple' ],
+...     weight: 575,
+...     gender: 'm',
+...     vampires: 109
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cab'),
+...     name: 'Solnara',
+...     loves: [ 'apple', 'carrot', 'chocolate' ],
+...     weight: 550,
+...     gender: 'f',
+...     vampires: 80
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cac'),
+...     name: 'Ayna',
+...     loves: [ 'strawberry', 'lemon' ],
+...     weight: 800,
+...     gender: 'f',
+...     vampires: 51
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cad'),
+...     name: 'Kenny',
+...     loves: [ 'grape', 'lemon' ],
+...     weight: 690,
+...     gender: 'm',
+...     vampires: 49
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cae'),
+...     name: 'Raleigh',
+...     loves: [ 'apple', 'sugar', 'redbull', 'redbull' ],
+...     weight: 421,
+...     gender: 'm',
+...     vampires: 12
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544caf'),
+...     name: 'Leia',
+...     loves: [ 'apple', 'watermelon' ],
+...     weight: 601,
+...     gender: 'f',
+...     vampires: 33
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cb0'),
+...     name: 'Pilot',
+...     loves: [ 'apple', 'watermelon', 'chocolate', 'chocolate' ],
+...     weight: 650,
+...     gender: 'm',
+...     vampires: 64
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cb1'),
+...     name: 'Nimue',
+...     loves: [ 'grape', 'carrot' ],
+...     weight: 540,
+...     gender: 'f',
+...     habitat: DBRef('habitats', 'valley')
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cb2'),
+...     name: 'Dunx',
+...     loves: [ 'grape', 'watermelon' ],
+...     weight: 704,
+...     gender: 'm',
+...     vampires: 175
+...   },
+...   {
+...     _id: ObjectId('68330d72bdb7be45f2544cb6'),
+...     name: 'Barny',
+...     loves: [ 'grape' ],
+...     weight: 340,
+...     gender: 'm',
+...     vampires: 10
+...   },
+... 
+... 
+... )
+... ]
+Uncaught:
+SyntaxError: Missing semicolon. (3:8)
+
+  1 |   {
+  2 |     _id: ObjectId('68330d6fbdb7be45f2544ca8'),
+> 3 |     name: 'Aurora',
+    |         ^
+  4 |     loves: [ 'carrot', 'grape', 'sugar', 'lemon' ],
+  5 |     weight: 450,
+  6 |     gender: 'f',
+
+learn> db.unicorns.insertMany([{
+...     _id: ObjectId('68330d6fbdb7be45f2544ca7'),
+...     name: 'Horny',
+...     loves: [ 'carrot', 'papaya' ],
+...     weight: 600,
+...     gender: 'm',
+...     vampires: 73
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544ca8'),
+...     name: 'Aurora',
+...     loves: [ 'carrot', 'grape', 'sugar', 'lemon' ],
+...     weight: 450,
+...     gender: 'f',
+...     vampires: 43,
+...     habitat: DBRef('habitats', 'forest')
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544ca9'),
+...     name: 'Unicrom',
+...     loves: [ 'energon', 'redbull' ],
+...     weight: 984,
+...     gender: 'm',
+...     vampires: 192,
+...     habitat: DBRef('habitats', 'mountain')
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544caa'),
+...     name: 'Roooooodles',
+...     loves: [ 'apple' ],
+...     weight: 575,
+...     gender: 'm',
+...     vampires: 109
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cab'),
+...     name: 'Solnara',
+...     loves: [ 'apple', 'carrot', 'chocolate' ],
+...     weight: 550,
+...     gender: 'f',
+...     vampires: 80
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cac'),
+...     name: 'Ayna',
+...     loves: [ 'strawberry', 'lemon' ],
+...     weight: 800,
+...     gender: 'f',
+...     vampires: 51
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cad'),
+...     name: 'Kenny',
+...     loves: [ 'grape', 'lemon' ],
+...     weight: 690,
+...     gender: 'm',
+...     vampires: 49
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cae'),
+...     name: 'Raleigh',
+...     loves: [ 'apple', 'sugar', 'redbull', 'redbull' ],
+...     weight: 421,
+...     gender: 'm',
+...     vampires: 12
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544caf'),
+...     name: 'Leia',
+...     loves: [ 'apple', 'watermelon' ],
+...     weight: 601,
+...     gender: 'f',
+...     vampires: 33
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cb0'),
+...     name: 'Pilot',
+...     loves: [ 'apple', 'watermelon', 'chocolate', 'chocolate' ],
+...     weight: 650,
+...     gender: 'm',
+...     vampires: 64
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cb1'),
+...     name: 'Nimue',
+...     loves: [ 'grape', 'carrot' ],
+...     weight: 540,
+...     gender: 'f',
+...     habitat: DBRef('habitats', 'valley')
+...   },
+...   {
+...     _id: ObjectId('68330d6fbdb7be45f2544cb2'),
+...     name: 'Dunx',
+...     loves: [ 'grape', 'watermelon' ],
+...     weight: 704,
+...     gender: 'm',
+...     vampires: 175
+...   },
+...   {
+...     _id: ObjectId('68330d72bdb7be45f2544cb6'),
+...     name: 'Barny',
+...     loves: [ 'grape' ],
+...     weight: 340,
+...     gender: 'm',
+...     vampires: 10
+...   }]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('68330d6fbdb7be45f2544ca7'),
+    '1': ObjectId('68330d6fbdb7be45f2544ca8'),
+    '2': ObjectId('68330d6fbdb7be45f2544ca9'),
+    '3': ObjectId('68330d6fbdb7be45f2544caa'),
+    '4': ObjectId('68330d6fbdb7be45f2544cab'),
+    '5': ObjectId('68330d6fbdb7be45f2544cac'),
+    '6': ObjectId('68330d6fbdb7be45f2544cad'),
+    '7': ObjectId('68330d6fbdb7be45f2544cae'),
+    '8': ObjectId('68330d6fbdb7be45f2544caf'),
+    '9': ObjectId('68330d6fbdb7be45f2544cb0'),
+    '10': ObjectId('68330d6fbdb7be45f2544cb1'),
+    '11': ObjectId('68330d6fbdb7be45f2544cb2'),
+    '12': ObjectId('68330d72bdb7be45f2544cb6')
+  }
+}
+learn>   db.unicorns.createIndex({name: 1}, {unique: true});
+name_1
+learn> db.unicorns.getIndexes();
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { name: 1 }, name: 'name_1', unique: true }
+]
+learn> 

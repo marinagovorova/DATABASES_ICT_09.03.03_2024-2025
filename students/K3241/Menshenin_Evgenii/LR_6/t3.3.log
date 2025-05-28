@@ -1,0 +1,203 @@
+learn> db.unicorns.insertOne({name: 'Barny', loves: ['grape'], weight: 340, gender: 'm'});
+{
+  acknowledged: true,
+  insertedId: ObjectId('683311b85b810f068d544cb6')
+}
+learn> db.unicorns.find({name: 'Barny'});
+[
+  {
+    _id: ObjectId('68330d72bdb7be45f2544cb6'),
+    name: 'Barny',
+    loves: [ 'grape' ],
+    weight: 340,
+    gender: 'm',
+    vampires: 5
+  },
+  {
+    _id: ObjectId('683311b85b810f068d544cb6'),
+    name: 'Barny',
+    loves: [ 'grape' ],
+    weight: 340,
+    gender: 'm'
+  }
+]
+learn> db.unicorns.updateOne(
+...   {name: 'Ayna'}, 
+...   {$set: {weight: 800, vampires: 51}}
+... );
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+learn> db.unicorns.find({name: 'Ayna'});
+[
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cac'),
+    name: 'Ayna',
+    loves: [ 'strawberry', 'lemon' ],
+    weight: 800,
+    gender: 'f',
+    vampires: 51
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cac'),
+    name: 'Ayna',
+    loves: [ 'strawberry', 'lemon' ],
+    weight: 733,
+    gender: 'f',
+    vampires: 40
+  }
+]
+learn> db.unicorns.updateOne(
+...   {name: 'Raleigh'}, 
+...   {$push: {loves: 'redbull'}}
+... );
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+learn> db.unicorns.find({name: 'Raleigh'});
+[
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cae'),
+    name: 'Raleigh',
+    loves: [ 'apple', 'sugar', 'redbull', 'redbull' ],
+    weight: 421,
+    gender: 'm',
+    vampires: 7
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cae'),
+    name: 'Raleigh',
+    loves: [ 'apple', 'sugar' ],
+    weight: 421,
+    gender: 'm',
+    vampires: 2
+  }
+]
+learn> 
+
+learn> db.unicorns.updateMany(
+...   {gender: 'm'}, 
+...   {$inc: {vampires: 5}}
+... );
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 16,
+  modifiedCount: 16,
+  upsertedCount: 0
+}
+learn> db.unicorns.find({gender: 'm'}, {name: 1, vampires: 1, _id: 0});
+[
+  { name: 'Horny', vampires: 73 },
+  { name: 'Unicrom', vampires: 192 },
+  { name: 'Roooooodles', vampires: 109 },
+  { name: 'Kenny', vampires: 49 },
+  { name: 'Raleigh', vampires: 12 },
+  { name: 'Pilot', vampires: 64 },
+  { name: 'Dunx', vampires: 175 },
+  { name: 'Barny', vampires: 10 },
+  { name: 'Horny', vampires: 68 },
+  { name: 'Unicrom', vampires: 187 },
+  { name: 'Roooooodles', vampires: 104 },
+  { name: 'Kenny', vampires: 44 },
+  { name: 'Raleigh', vampires: 7 },
+  { name: 'Pilot', vampires: 59 },
+  { name: 'Dunx', vampires: 170 },
+  { name: 'Barny', vampires: 5 }
+]
+learn> db.towns.updateOne(
+...   {name: 'Portland'}, 
+...   {$unset: {'mayor.party': 1}}
+... );
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+learn> db.towns.find({name: 'Portland'});
+[
+  {
+    _id: ObjectId('683310f85b810f068d544cb5'),
+    name: 'Portland',
+    populatiuon: 528000,
+    last_sensus: ISODate('2009-07-20T00:00:00.000Z'),
+    famous_for: [ 'beer', 'food' ],
+    mayor: { name: 'Sam Adams' }
+  }
+]
+learn> 
+
+learn> db.unicorns.updateOne(
+...   {name: 'Pilot'}, 
+...   {$push: {loves: 'chocolate'}}
+... );
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+learn> db.unicorns.find({name: 'Pilot'});
+[
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb0'),
+    name: 'Pilot',
+    loves: [ 'apple', 'watermelon', 'chocolate', 'chocolate' ],
+    weight: 650,
+    gender: 'm',
+    vampires: 64
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cb0'),
+    name: 'Pilot',
+    loves: [ 'apple', 'watermelon' ],
+    weight: 650,
+    gender: 'm',
+    vampires: 59
+  }
+]
+learn> 
+
+learn> db.unicorns.updateOne(
+...   {name: 'Aurora'}, 
+...   {$addToSet: {loves: {$each: ['sugar', 'lemon']}}}
+... );
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+learn> db.unicorns.find({name: 'Aurora'});
+[
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca8'),
+    name: 'Aurora',
+    loves: [ 'carrot', 'grape', 'sugar', 'lemon' ],
+    weight: 450,
+    gender: 'f',
+    vampires: 43,
+    habitat: DBRef('habitats', 'forest')
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca8'),
+    name: 'Aurora',
+    loves: [ 'carrot', 'grape' ],
+    weight: 450,
+    gender: 'f',
+    vampires: 43
+  }
+]
+learn> 
