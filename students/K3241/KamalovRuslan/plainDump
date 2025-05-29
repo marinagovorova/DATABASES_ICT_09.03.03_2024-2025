@@ -1,0 +1,683 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 15.12 (Homebrew)
+-- Dumped by pg_dump version 17.0
+
+-- Started on 2025-05-19 01:55:28 MSK
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 6 (class 2615 OID 16392)
+-- Name: restaurant; Type: SCHEMA; Schema: -; Owner: littlegenss
+--
+
+CREATE SCHEMA restaurant;
+
+
+ALTER SCHEMA restaurant OWNER TO littlegenss;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 223 (class 1259 OID 16505)
+-- Name: chef_dishes; Type: TABLE; Schema: restaurant; Owner: postgres
+--
+
+CREATE TABLE restaurant.chef_dishes (
+    employee_id integer NOT NULL,
+    dish_id integer NOT NULL
+);
+
+
+ALTER TABLE restaurant.chef_dishes OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 16483)
+-- Name: dish_ingredients; Type: TABLE; Schema: restaurant; Owner: postgres
+--
+
+CREATE TABLE restaurant.dish_ingredients (
+    dish_id integer NOT NULL,
+    ingredient_id integer NOT NULL,
+    quantity numeric(10,2) NOT NULL
+);
+
+
+ALTER TABLE restaurant.dish_ingredients OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 16478)
+-- Name: dishes; Type: TABLE; Schema: restaurant; Owner: postgres
+--
+
+CREATE TABLE restaurant.dishes (
+    dish_id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    dish_type character varying(100) NOT NULL
+);
+
+
+ALTER TABLE restaurant.dishes OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 16510)
+-- Name: employee_archive; Type: TABLE; Schema: restaurant; Owner: postgres
+--
+
+CREATE TABLE restaurant.employee_archive (
+    position_id integer NOT NULL,
+    employee_id integer NOT NULL,
+    first_working_day timestamp without time zone,
+    last_working_day timestamp without time zone
+);
+
+
+ALTER TABLE restaurant.employee_archive OWNER TO postgres;
+
+--
+-- TOC entry 216 (class 1259 OID 16466)
+-- Name: employees; Type: TABLE; Schema: restaurant; Owner: postgres
+--
+
+CREATE TABLE restaurant.employees (
+    employee_id integer NOT NULL,
+    position_id integer NOT NULL,
+    full_name character varying(255) NOT NULL,
+    passport_data character varying(100) NOT NULL,
+    category character varying(50),
+    salary numeric(10,2) NOT NULL
+);
+
+
+ALTER TABLE restaurant.employees OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 16471)
+-- Name: ingredients; Type: TABLE; Schema: restaurant; Owner: postgres
+--
+
+CREATE TABLE restaurant.ingredients (
+    ingredient_id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    purchase_date timestamp without time zone NOT NULL,
+    purchase_volume numeric(10,2) NOT NULL,
+    stock_quantity numeric(10,2) NOT NULL,
+    minimum_stock numeric(10,2) NOT NULL,
+    expiration_date timestamp without time zone NOT NULL,
+    price_per_unit numeric(10,2) NOT NULL,
+    calories integer NOT NULL,
+    supplier character varying(255) NOT NULL
+);
+
+
+ALTER TABLE restaurant.ingredients OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16500)
+-- Name: order_details; Type: TABLE; Schema: restaurant; Owner: postgres
+--
+
+CREATE TABLE restaurant.order_details (
+    order_id integer NOT NULL,
+    dish_id integer NOT NULL,
+    quantity integer NOT NULL
+);
+
+
+ALTER TABLE restaurant.order_details OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 16493)
+-- Name: orders; Type: TABLE; Schema: restaurant; Owner: postgres
+--
+
+CREATE TABLE restaurant.orders (
+    order_id integer NOT NULL,
+    table_id integer NOT NULL,
+    comments text,
+    order_date timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE restaurant.orders OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 16461)
+-- Name: position; Type: TABLE; Schema: restaurant; Owner: postgres
+--
+
+CREATE TABLE restaurant."position" (
+    position_id integer NOT NULL,
+    "position" character varying(100) NOT NULL,
+    minimum_wage integer NOT NULL
+);
+
+
+ALTER TABLE restaurant."position" OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16488)
+-- Name: tables; Type: TABLE; Schema: restaurant; Owner: postgres
+--
+
+CREATE TABLE restaurant.tables (
+    table_id integer NOT NULL,
+    employee_id integer NOT NULL,
+    shift_date timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE restaurant.tables OWNER TO postgres;
+
+--
+-- TOC entry 3772 (class 0 OID 16505)
+-- Dependencies: 223
+-- Data for Name: chef_dishes; Type: TABLE DATA; Schema: restaurant; Owner: postgres
+--
+
+COPY restaurant.chef_dishes (employee_id, dish_id) FROM stdin;
+2	1
+2	2
+3	4
+\.
+
+
+--
+-- TOC entry 3768 (class 0 OID 16483)
+-- Dependencies: 219
+-- Data for Name: dish_ingredients; Type: TABLE DATA; Schema: restaurant; Owner: postgres
+--
+
+COPY restaurant.dish_ingredients (dish_id, ingredient_id, quantity) FROM stdin;
+1	1	0.50
+1	2	0.30
+2	3	2.00
+3	4	0.10
+4	5	0.05
+\.
+
+
+--
+-- TOC entry 3767 (class 0 OID 16478)
+-- Dependencies: 218
+-- Data for Name: dishes; Type: TABLE DATA; Schema: restaurant; Owner: postgres
+--
+
+COPY restaurant.dishes (dish_id, name, dish_type) FROM stdin;
+1	Борщ	Суп
+2	Стейк	Второе
+3	Салат "Цезарь"	Закуска
+4	Тирамису	Десерт
+5	Лимонад	Напиток
+\.
+
+
+--
+-- TOC entry 3773 (class 0 OID 16510)
+-- Dependencies: 224
+-- Data for Name: employee_archive; Type: TABLE DATA; Schema: restaurant; Owner: postgres
+--
+
+COPY restaurant.employee_archive (position_id, employee_id, first_working_day, last_working_day) FROM stdin;
+1	1	2024-01-10 00:00:00	2025-05-19 00:00:00
+2	2	2023-06-15 00:00:00	\N
+\.
+
+
+--
+-- TOC entry 3765 (class 0 OID 16466)
+-- Dependencies: 216
+-- Data for Name: employees; Type: TABLE DATA; Schema: restaurant; Owner: postgres
+--
+
+COPY restaurant.employees (employee_id, position_id, full_name, passport_data, category, salary) FROM stdin;
+1	1	Иванов Иван Иванович	1234 567890	Junior	32000.00
+2	2	Петров Петр Петрович	9876 543210	Senior	55000.00
+3	3	Сидорова Анна Михайловна	4567 890123	Manager	65000.00
+4	1	Кузнецова Елена Сергеевна	6543 210987	Middle	35000.00
+5	4	Смирнов Алексей Дмитриевич	3210 987654	Cleaner	27000.00
+\.
+
+
+--
+-- TOC entry 3766 (class 0 OID 16471)
+-- Dependencies: 217
+-- Data for Name: ingredients; Type: TABLE DATA; Schema: restaurant; Owner: postgres
+--
+
+COPY restaurant.ingredients (ingredient_id, name, purchase_date, purchase_volume, stock_quantity, minimum_stock, expiration_date, price_per_unit, calories, supplier) FROM stdin;
+1	Молоко	2025-05-01 00:00:00	10.50	8.20	5.00	2025-06-01 00:00:00	80.50	42	Ферма "Белая корова"
+2	Мука	2025-04-15 00:00:00	25.00	15.00	10.00	2025-10-15 00:00:00	30.00	364	ЗАО "Зернопродукт"
+3	Яйца	2025-05-10 00:00:00	50.00	30.00	20.00	2025-06-10 00:00:00	120.00	155	Птицефабрика "Солнечная"
+4	Сахар	2025-03-20 00:00:00	15.00	5.00	3.00	2025-09-20 00:00:00	50.00	387	ООО "Сладкий мир"
+5	Соль	2025-01-10 00:00:00	5.00	2.50	1.00	2026-01-10 00:00:00	20.00	0	Компания "Соль Земли"
+\.
+
+
+--
+-- TOC entry 3771 (class 0 OID 16500)
+-- Dependencies: 222
+-- Data for Name: order_details; Type: TABLE DATA; Schema: restaurant; Owner: postgres
+--
+
+COPY restaurant.order_details (order_id, dish_id, quantity) FROM stdin;
+1	1	2
+1	3	1
+2	2	1
+3	4	3
+\.
+
+
+--
+-- TOC entry 3770 (class 0 OID 16493)
+-- Dependencies: 221
+-- Data for Name: orders; Type: TABLE DATA; Schema: restaurant; Owner: postgres
+--
+
+COPY restaurant.orders (order_id, table_id, comments, order_date) FROM stdin;
+1	1	Острое не добавлять	2025-05-19 12:30:00
+2	2	Без глютена	2025-05-19 13:15:00
+3	3	\N	2025-05-19 19:00:00
+\.
+
+
+--
+-- TOC entry 3764 (class 0 OID 16461)
+-- Dependencies: 215
+-- Data for Name: position; Type: TABLE DATA; Schema: restaurant; Owner: postgres
+--
+
+COPY restaurant."position" (position_id, "position", minimum_wage) FROM stdin;
+1	Официант	30000
+2	Повар	50000
+3	Администратор	60000
+4	Уборщик	25000
+5	Менеджер	70000
+\.
+
+
+--
+-- TOC entry 3769 (class 0 OID 16488)
+-- Dependencies: 220
+-- Data for Name: tables; Type: TABLE DATA; Schema: restaurant; Owner: postgres
+--
+
+COPY restaurant.tables (table_id, employee_id, shift_date) FROM stdin;
+1	1	2025-05-19 12:00:00
+2	4	2025-05-19 12:00:00
+3	1	2025-05-19 18:00:00
+\.
+
+
+--
+-- TOC entry 3608 (class 2606 OID 16509)
+-- Name: chef_dishes CHEF_DISHES_pkey; Type: CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.chef_dishes
+    ADD CONSTRAINT "CHEF_DISHES_pkey" PRIMARY KEY (employee_id, dish_id);
+
+
+--
+-- TOC entry 3598 (class 2606 OID 16482)
+-- Name: dishes DISHES_pkey; Type: CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.dishes
+    ADD CONSTRAINT "DISHES_pkey" PRIMARY KEY (dish_id);
+
+
+--
+-- TOC entry 3600 (class 2606 OID 16487)
+-- Name: dish_ingredients DISH_INGREDIENTS_pkey; Type: CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.dish_ingredients
+    ADD CONSTRAINT "DISH_INGREDIENTS_pkey" PRIMARY KEY (ingredient_id, dish_id);
+
+
+--
+-- TOC entry 3594 (class 2606 OID 16470)
+-- Name: employees EMPLOYEES_pkey; Type: CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.employees
+    ADD CONSTRAINT "EMPLOYEES_pkey" PRIMARY KEY (employee_id);
+
+
+--
+-- TOC entry 3610 (class 2606 OID 16514)
+-- Name: employee_archive EMPLOYEE_ARCHIVE_pkey; Type: CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.employee_archive
+    ADD CONSTRAINT "EMPLOYEE_ARCHIVE_pkey" PRIMARY KEY (position_id, employee_id);
+
+
+--
+-- TOC entry 3596 (class 2606 OID 16477)
+-- Name: ingredients INGREDIENTS_pkey; Type: CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.ingredients
+    ADD CONSTRAINT "INGREDIENTS_pkey" PRIMARY KEY (ingredient_id);
+
+
+--
+-- TOC entry 3604 (class 2606 OID 16499)
+-- Name: orders ORDERS_pkey; Type: CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.orders
+    ADD CONSTRAINT "ORDERS_pkey" PRIMARY KEY (order_id);
+
+
+--
+-- TOC entry 3606 (class 2606 OID 16504)
+-- Name: order_details ORDER_DETAILS_pkey; Type: CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.order_details
+    ADD CONSTRAINT "ORDER_DETAILS_pkey" PRIMARY KEY (order_id, dish_id);
+
+
+--
+-- TOC entry 3592 (class 2606 OID 16465)
+-- Name: position POSITION_pkey; Type: CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant."position"
+    ADD CONSTRAINT "POSITION_pkey" PRIMARY KEY (position_id);
+
+
+--
+-- TOC entry 3602 (class 2606 OID 16492)
+-- Name: tables TABLES_pkey; Type: CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.tables
+    ADD CONSTRAINT "TABLES_pkey" PRIMARY KEY (table_id);
+
+
+--
+-- TOC entry 3578 (class 2606 OID 16606)
+-- Name: ingredients check_calories; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.ingredients
+    ADD CONSTRAINT check_calories CHECK ((calories >= 0)) NOT VALID;
+
+
+--
+-- TOC entry 3575 (class 2606 OID 16518)
+-- Name: employees check_category; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.employees
+    ADD CONSTRAINT check_category CHECK (((category)::text ~ '^[\x00-\x7F]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3588 (class 2606 OID 16530)
+-- Name: orders check_comments; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.orders
+    ADD CONSTRAINT check_comments CHECK ((comments ~ '^[A-Za-zА-Яа-яЁё\s-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3585 (class 2606 OID 16528)
+-- Name: dishes check_dish_type; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.dishes
+    ADD CONSTRAINT check_dish_type CHECK (((dish_type)::text = ANY ((ARRAY['Суп'::character varying, 'Второе'::character varying, 'Десерт'::character varying, 'Напиток'::character varying, 'Закуска'::character varying])::text[]))) NOT VALID;
+
+
+--
+-- TOC entry 3576 (class 2606 OID 16517)
+-- Name: employees check_full_name; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.employees
+    ADD CONSTRAINT check_full_name CHECK (((full_name)::text ~ '^[A-Za-zА-Яа-яЁё\s-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3579 (class 2606 OID 16523)
+-- Name: ingredients check_minimum_stock; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.ingredients
+    ADD CONSTRAINT check_minimum_stock CHECK ((minimum_stock >= (0)::numeric)) NOT VALID;
+
+
+--
+-- TOC entry 3573 (class 2606 OID 16516)
+-- Name: position check_minimum_wage; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant."position"
+    ADD CONSTRAINT check_minimum_wage CHECK ((minimum_wage > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3580 (class 2606 OID 16603)
+-- Name: ingredients check_name; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.ingredients
+    ADD CONSTRAINT check_name CHECK (((name)::text ~ '^[A-Za-zА-Яа-яЁё0-9\s-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3586 (class 2606 OID 16607)
+-- Name: dishes check_name; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.dishes
+    ADD CONSTRAINT check_name CHECK (((name)::text ~ '^[A-Za-zА-Яа-яЁё0-9\s"«»-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3574 (class 2606 OID 16515)
+-- Name: position check_postition; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant."position"
+    ADD CONSTRAINT check_postition CHECK ((("position")::text = ANY ((ARRAY['Официант'::character varying, 'Повар'::character varying, 'Администратор'::character varying, 'Уборщик'::character varying, 'Менеджер'::character varying])::text[]))) NOT VALID;
+
+
+--
+-- TOC entry 3581 (class 2606 OID 16524)
+-- Name: ingredients check_price_per_unit; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.ingredients
+    ADD CONSTRAINT check_price_per_unit CHECK ((price_per_unit > (0)::numeric)) NOT VALID;
+
+
+--
+-- TOC entry 3582 (class 2606 OID 16521)
+-- Name: ingredients check_purchase_volume; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.ingredients
+    ADD CONSTRAINT check_purchase_volume CHECK ((purchase_volume > (0)::numeric)) NOT VALID;
+
+
+--
+-- TOC entry 3587 (class 2606 OID 16529)
+-- Name: dish_ingredients check_quantity; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.dish_ingredients
+    ADD CONSTRAINT check_quantity CHECK ((quantity > (0)::numeric)) NOT VALID;
+
+
+--
+-- TOC entry 3589 (class 2606 OID 16531)
+-- Name: order_details check_quantity; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.order_details
+    ADD CONSTRAINT check_quantity CHECK ((quantity > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3577 (class 2606 OID 16519)
+-- Name: employees check_salary; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.employees
+    ADD CONSTRAINT check_salary CHECK ((salary > (0)::numeric)) NOT VALID;
+
+
+--
+-- TOC entry 3583 (class 2606 OID 16522)
+-- Name: ingredients check_stock_quantity; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.ingredients
+    ADD CONSTRAINT check_stock_quantity CHECK ((stock_quantity > (0)::numeric)) NOT VALID;
+
+
+--
+-- TOC entry 3584 (class 2606 OID 16605)
+-- Name: ingredients check_supplier; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.ingredients
+    ADD CONSTRAINT check_supplier CHECK (((supplier)::text ~ '^[A-Za-zА-Яа-яЁё0-9\s"«»-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3590 (class 2606 OID 16532)
+-- Name: employee_archive check_workings_day; Type: CHECK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE restaurant.employee_archive
+    ADD CONSTRAINT check_workings_day CHECK ((last_working_day >= first_working_day)) NOT VALID;
+
+
+--
+-- TOC entry 3612 (class 2606 OID 16553)
+-- Name: dish_ingredients fk_dish_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.dish_ingredients
+    ADD CONSTRAINT fk_dish_id FOREIGN KEY (dish_id) REFERENCES restaurant.dishes(dish_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+--
+-- TOC entry 3616 (class 2606 OID 16578)
+-- Name: order_details fk_dish_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.order_details
+    ADD CONSTRAINT fk_dish_id FOREIGN KEY (dish_id) REFERENCES restaurant.dishes(dish_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+--
+-- TOC entry 3618 (class 2606 OID 16588)
+-- Name: chef_dishes fk_dish_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.chef_dishes
+    ADD CONSTRAINT fk_dish_id FOREIGN KEY (dish_id) REFERENCES restaurant.dishes(dish_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+--
+-- TOC entry 3614 (class 2606 OID 16563)
+-- Name: tables fk_employee_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.tables
+    ADD CONSTRAINT fk_employee_id FOREIGN KEY (employee_id) REFERENCES restaurant.employees(employee_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+--
+-- TOC entry 3619 (class 2606 OID 16583)
+-- Name: chef_dishes fk_employee_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.chef_dishes
+    ADD CONSTRAINT fk_employee_id FOREIGN KEY (employee_id) REFERENCES restaurant.employees(employee_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+--
+-- TOC entry 3620 (class 2606 OID 16598)
+-- Name: employee_archive fk_employee_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.employee_archive
+    ADD CONSTRAINT fk_employee_id FOREIGN KEY (employee_id) REFERENCES restaurant.employees(employee_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+--
+-- TOC entry 3613 (class 2606 OID 16558)
+-- Name: dish_ingredients fk_ingredient_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.dish_ingredients
+    ADD CONSTRAINT fk_ingredient_id FOREIGN KEY (ingredient_id) REFERENCES restaurant.ingredients(ingredient_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+--
+-- TOC entry 3617 (class 2606 OID 16573)
+-- Name: order_details fk_order_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.order_details
+    ADD CONSTRAINT fk_order_id FOREIGN KEY (order_id) REFERENCES restaurant.orders(order_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+--
+-- TOC entry 3611 (class 2606 OID 16533)
+-- Name: employees fk_position_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.employees
+    ADD CONSTRAINT fk_position_id FOREIGN KEY (position_id) REFERENCES restaurant."position"(position_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+--
+-- TOC entry 3621 (class 2606 OID 16593)
+-- Name: employee_archive fk_position_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.employee_archive
+    ADD CONSTRAINT fk_position_id FOREIGN KEY (position_id) REFERENCES restaurant."position"(position_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+--
+-- TOC entry 3615 (class 2606 OID 16568)
+-- Name: orders fk_table_id; Type: FK CONSTRAINT; Schema: restaurant; Owner: postgres
+--
+
+ALTER TABLE ONLY restaurant.orders
+    ADD CONSTRAINT fk_table_id FOREIGN KEY (table_id) REFERENCES restaurant.tables(table_id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
+
+
+-- Completed on 2025-05-19 01:55:28 MSK
+
+--
+-- PostgreSQL database dump complete
+--
+
