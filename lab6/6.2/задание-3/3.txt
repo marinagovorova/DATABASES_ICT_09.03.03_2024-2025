@@ -1,0 +1,166 @@
+learn> db.towns.insertMany([
+...   {
+...     name: "Punxsutawney",
+...     population: 6200,
+...     last_sensus: ISODate("2008-01-31"),
+...     famous_for: [""],
+...     mayor: { name: "Jim Wehrle" }
+...   },
+...   {
+...     name: "New York",
+...     population: 22200000,
+...     last_sensus: ISODate("2009-07-31"),
+...     famous_for: ["status of liberty", "food"],
+...     mayor: { name: "Michael Bloomberg", party: "I" }
+...   },
+...   {
+...     name: "Portland",
+...     population: 528000,
+...     last_sensus: ISODate("2009-07-20"),
+...     famous_for: ["beer", "food"],
+...     mayor: { name: "Sam Adams", party: "D" }
+...   }
+... ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('68420a29ba856dd51450eba1'),
+    '1': ObjectId('68420a29ba856dd51450eba2'),
+    '2': ObjectId('68420a29ba856dd51450eba3')
+  }
+}
+learn> db.towns.find(
+...   { "mayor.party": "I" },
+...   { name: 1, mayor: 1, _id: 0 }
+... )
+...
+[
+  {
+    name: 'New York',
+    mayor: { name: 'Michael Bloomberg', party: 'I' }
+  }
+]
+learn> db.towns.find(
+...   { "mayor.party": { $exists: false } },
+...   { name: 1, mayor: 1, _id: 0 }
+... )
+...
+[ { name: 'Punxsutawney', mayor: { name: 'Jim Wehrle' } } ]
+learn> fn = function() { return this.gender === 'm' }
+[Function: fn]
+learn> var cursor = db.unicorns.find({ gender: 'm' }).sort({ name: 1 }).limit(2)
+... cursor.forEach(function(u) { print(u.name) })
+...
+Dunx
+Horny
+
+learn> db.unicorns.find({ gender: 'f', weight: { $gte: 500, $lte: 600 } }).count()
+2
+learn> db.unicorns.distinct("loves")
+[
+  'apple',      'carrot',
+  'chocolate',  'energon',
+  'grape',      'lemon',
+  'papaya',     'redbull',
+  'strawberry', 'sugar',
+  'watermelon'
+]
+learn> db.unicorns.aggregate([
+...   { $group: { _id: "$gender", count: { $sum: 1 } } }
+... ])
+...
+[ { _id: 'm', count: 7 }, { _id: 'f', count: 5 } ]
+learn> db.unicorns.save({
+...   name: 'Barny',
+...   loves: ['grape'],
+...   weight: 340,
+...   gender: 'm'
+... })
+...
+TypeError: db.unicorns.save is not a function
+learn> db.unicorns.replaceOne(
+...   { name: 'Barny' },
+...   {
+...     name: 'Barny',
+...     loves: ['grape'],
+...     weight: 340,
+...     gender: 'm'
+...   },
+...   { upsert: true }
+... )
+...
+{
+  acknowledged: true,
+  insertedId: ObjectId('68420cb0668b8101bcd77fdc'),
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 1
+}
+learn> db.unicorns.update(
+...   { name: 'Ayna', gender: 'f' },
+...   { $set: { weight: 800, vampires: 51 } }
+... )
+DeprecationWarning: Collection.update() is deprecated. Use updateOne, updateMany, or bulkWrite.
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+learn> db.unicorns.update(
+...   { name: 'Raleigh', gender: 'm' },
+...   { $push: { loves: 'redbull' } }
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+learn> db.unicorns.update(
+...   { gender: 'm' },
+...   { $inc: { vampires: 5 } },
+...   { multi: true }
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 8,
+  modifiedCount: 8,
+  upsertedCount: 0
+}
+learn> db.towns.update(
+...   { name: 'Portland' },
+...   { $unset: { 'mayor.party': 1 } }
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+learn> db.unicorns.update(
+...   { name: 'Pilot' },
+...   { $push: { loves: 'chocolate' } }
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+learn> db.unicorns.update(
+...   { name: 'Aurora' },
+...   { $addToSet: { loves: { $each: ['sugar', 'lemon'] } } }
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}

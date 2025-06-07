@@ -1,0 +1,281 @@
+learn> db.habitats.find()
+[
+  {
+    _id: 'forest',
+    name: 'Forest Zone',
+    description: 'Densely wooded habitat'
+  },
+  {
+    _id: 'mountain',
+    name: 'Mountain Zone',
+    description: 'High altitude rocky habitat'
+  },
+  {
+    _id: 'valley',
+    name: 'Valley Zone',
+    description: 'Lush green valley habitat'
+  }
+]
+learn> db.unicorns.createIndex({ name: 1 }, { unique: true })
+name_1
+learn> db.unicorns.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { name: 1 }, name: 'name_1', unique: true }
+]
+learn> db.unicorns.dropIndexes()
+{
+  nIndexesWas: 2,
+  msg: 'non-_id indexes dropped for collection',
+  ok: 1
+}
+learn> db.unicorns.dropIndex("_id_")
+MongoServerError[InvalidOptions]: cannot drop _id index
+learn> for (i = 0; i < 100000; i++) {
+...   db.numbers.insert({ value: i });
+... }
+DeprecationWarning: Collection.insert() is deprecated. Use insertOne, insertMany, or bulkWrite.
+
+
+
+
+Stopping execution...
+learn>
+
+>
+
+>
+
+>
+
+>
+
+learn> db.numbers.find().sort({ value: -1 }).limit(4);
+[
+  { _id: ObjectId('684358dac7d68ee886518db5'), value: 41550 },
+  { _id: ObjectId('684358dac7d68ee886518db4'), value: 41549 },
+  { _id: ObjectId('684358dac7d68ee886518db3'), value: 41548 },
+  { _id: ObjectId('684358dac7d68ee886518db2'), value: 41547 }
+]
+learn> db.numbers.explain("executionStats").find().sort({ value: -1 }).limit(4);
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'learn.numbers',
+    parsedQuery: {},
+    indexFilterSet: false,
+    queryHash: 'BA27D965',
+    planCacheKey: '7A892B81',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'SORT',
+      sortPattern: { value: -1 },
+      memLimit: 104857600,
+      limitAmount: 4,
+      type: 'simple',
+      inputStage: { stage: 'COLLSCAN', direction: 'forward' }
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 4,
+    executionTimeMillis: 39,
+    totalKeysExamined: 0,
+    totalDocsExamined: 41551,
+    executionStages: {
+      isCached: false,
+      stage: 'SORT',
+      nReturned: 4,
+      executionTimeMillisEstimate: 30,
+      works: 41557,
+      advanced: 4,
+      needTime: 41552,
+      needYield: 0,
+      saveState: 1,
+      restoreState: 1,
+      isEOF: 1,
+      sortPattern: { value: -1 },
+      memLimit: 104857600,
+      limitAmount: 4,
+      type: 'simple',
+      totalDataSizeSorted: 260,
+      usedDisk: false,
+      spills: 0,
+      spilledDataStorageSize: 0,
+      inputStage: {
+        stage: 'COLLSCAN',
+        nReturned: 41551,
+        executionTimeMillisEstimate: 0,
+        works: 41552,
+        advanced: 41551,
+        needTime: 0,
+        needYield: 0,
+        saveState: 1,
+        restoreState: 1,
+        isEOF: 1,
+        direction: 'forward',
+        docsExamined: 41551
+      }
+    }
+  },
+  command: {
+    find: 'numbers',
+    filter: {},
+    sort: { value: -1 },
+    limit: 4,
+    '$db': 'learn'
+  },
+  serverInfo: {
+    host: 'DESKTOP-KI0N969',
+    port: 27017,
+    version: '8.0.1',
+    gitVersion: 'fcbe67d668fff5a370e2d87b9b1f74bc11bb7b94'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 104857600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 104857600,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1
+}
+learn> db.numbers.createIndex({ value: 1 });
+value_1
+learn> db.numbers.explain("executionStats").find().sort({ value: -1 }).limit(4);
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'learn.numbers',
+    parsedQuery: {},
+    indexFilterSet: false,
+    queryHash: 'BA27D965',
+    planCacheKey: '7A892B81',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: {
+      isCached: false,
+      stage: 'LIMIT',
+      limitAmount: 4,
+      inputStage: {
+        stage: 'FETCH',
+        inputStage: {
+          stage: 'IXSCAN',
+          keyPattern: { value: 1 },
+          indexName: 'value_1',
+          isMultiKey: false,
+          multiKeyPaths: { value: [] },
+          isUnique: false,
+          isSparse: false,
+          isPartial: false,
+          indexVersion: 2,
+          direction: 'backward',
+          indexBounds: { value: [ '[MaxKey, MinKey]' ] }
+        }
+      }
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 4,
+    executionTimeMillis: 1,
+    totalKeysExamined: 4,
+    totalDocsExamined: 4,
+    executionStages: {
+      isCached: false,
+      stage: 'LIMIT',
+      nReturned: 4,
+      executionTimeMillisEstimate: 0,
+      works: 5,
+      advanced: 4,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      limitAmount: 4,
+      inputStage: {
+        stage: 'FETCH',
+        nReturned: 4,
+        executionTimeMillisEstimate: 0,
+        works: 4,
+        advanced: 4,
+        needTime: 0,
+        needYield: 0,
+        saveState: 0,
+        restoreState: 0,
+        isEOF: 0,
+        docsExamined: 4,
+        alreadyHasObj: 0,
+        inputStage: {
+          stage: 'IXSCAN',
+          nReturned: 4,
+          executionTimeMillisEstimate: 0,
+          works: 4,
+          advanced: 4,
+          needTime: 0,
+          needYield: 0,
+          saveState: 0,
+          restoreState: 0,
+          isEOF: 0,
+          keyPattern: { value: 1 },
+          indexName: 'value_1',
+          isMultiKey: false,
+          multiKeyPaths: { value: [] },
+          isUnique: false,
+          isSparse: false,
+          isPartial: false,
+          indexVersion: 2,
+          direction: 'backward',
+          indexBounds: { value: [ '[MaxKey, MinKey]' ] },
+          keysExamined: 4,
+          seeks: 1,
+          dupsTested: 0,
+          dupsDropped: 0
+        }
+      }
+    }
+  },
+  command: {
+    find: 'numbers',
+    filter: {},
+    sort: { value: -1 },
+    limit: 4,
+    '$db': 'learn'
+  },
+  serverInfo: {
+    host: 'DESKTOP-KI0N969',
+    port: 27017,
+    version: '8.0.1',
+    gitVersion: 'fcbe67d668fff5a370e2d87b9b1f74bc11bb7b94'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 104857600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 104857600,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1
+}
+learn>
