@@ -1,0 +1,2569 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.0
+
+-- Started on 2025-06-19 21:56:44 MSK
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 6 (class 2615 OID 33317)
+-- Name: library; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA library;
+
+
+ALTER SCHEMA library OWNER TO postgres;
+
+--
+-- TOC entry 254 (class 1255 OID 33766)
+-- Name: add_new_book(date, text, text, text, integer, text, text, text, text, text); Type: PROCEDURE; Schema: library; Owner: postgres
+--
+
+CREATE PROCEDURE library.add_new_book(IN _year_of_issue date, IN _compiler_publication text, IN _lang text, IN _name_pub text, IN _vol integer, IN _translator text, IN _type_publ text, IN _reg_know text, IN _name_publication text, IN _auth_publ text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    INSERT INTO books(year_of_issue, compiler_publication, language_translation, name_publisher, volume_number, translator, type_publication, region_knowledge, name_publication, author_publication)
+    VALUES(_year_of_issue, _compiler_publication, _lang, _name_pub, _vol, _translator, _type_publ, _reg_know, _name_publication, _auth_publ);
+END;
+$$;
+
+
+ALTER PROCEDURE library.add_new_book(IN _year_of_issue date, IN _compiler_publication text, IN _lang text, IN _name_pub text, IN _vol integer, IN _translator text, IN _type_publ text, IN _reg_know text, IN _name_publication text, IN _auth_publ text) OWNER TO postgres;
+
+--
+-- TOC entry 255 (class 1255 OID 33767)
+-- Name: add_new_book(date, text, text, text, text, integer, text, text, text, text, text); Type: PROCEDURE; Schema: library; Owner: postgres
+--
+
+CREATE PROCEDURE library.add_new_book(IN _year_of_issue date, IN _compiler_publication text, IN _place_publication text, IN _language_translation text, IN _name_publisher text, IN _volume_number integer, IN _translator text, IN _type_publication text, IN _region_knowledge text, IN _name_publication text, IN _author_publication text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    INSERT INTO books (
+        year_of_issue, compiler_publication, place_publication,
+        language_translation, name_publisher, volume_number,
+        translator, type_publication, region_knowledge,
+        name_publication, author_publication
+    )
+    VALUES (
+        _year_of_issue, _compiler_publication, _place_publication,
+        _language_translation, _name_publisher, _volume_number,
+        _translator, _type_publication, _region_knowledge,
+        _name_publication, _author_publication
+    );
+END;
+$$;
+
+
+ALTER PROCEDURE library.add_new_book(IN _year_of_issue date, IN _compiler_publication text, IN _place_publication text, IN _language_translation text, IN _name_publisher text, IN _volume_number integer, IN _translator text, IN _type_publication text, IN _region_knowledge text, IN _name_publication text, IN _author_publication text) OWNER TO postgres;
+
+--
+-- TOC entry 270 (class 1255 OID 33770)
+-- Name: add_new_reader(integer, text, text, text, text, text, text); Type: PROCEDURE; Schema: library; Owner: postgres
+--
+
+CREATE PROCEDURE library.add_new_reader(IN _library_card integer, IN _full_name text, IN _passport_data text, IN _address text, IN _email text, IN _telephone text, IN _education text)
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    exists_count INT;
+BEGIN
+    SELECT COUNT(*) INTO exists_count
+    FROM reader
+    WHERE library_card = _library_card
+       OR passport_data = _passport_data;
+
+    IF exists_count > 0 THEN
+        RAISE NOTICE 'Читатель уже существует';
+    ELSE
+        INSERT INTO reader (
+            library_card, full_name, passport_data,
+            address, email, telephone_number, education
+        )
+        VALUES (
+            _library_card, _full_name, _passport_data,
+            _address, _email, _telephone, _education
+        );
+        RAISE NOTICE 'Читатель успешно добавлен.';
+    END IF;
+END;
+$$;
+
+
+ALTER PROCEDURE library.add_new_reader(IN _library_card integer, IN _full_name text, IN _passport_data text, IN _address text, IN _email text, IN _telephone text, IN _education text) OWNER TO postgres;
+
+--
+-- TOC entry 272 (class 1255 OID 33772)
+-- Name: auto_clear_fine(); Type: FUNCTION; Schema: library; Owner: postgres
+--
+
+CREATE FUNCTION library.auto_clear_fine() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF NEW.return_date IS NOT NULL AND NEW.return_date <= NEW.date_of_issue + INTERVAL '10 days' THEN
+        UPDATE book_distribution
+        SET fine = 0
+        WHERE id_distrubution = NEW.id_distrubution;
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION library.auto_clear_fine() OWNER TO postgres;
+
+--
+-- TOC entry 271 (class 1255 OID 33771)
+-- Name: check_copies_by_title(text); Type: PROCEDURE; Schema: library; Owner: postgres
+--
+
+CREATE PROCEDURE library.check_copies_by_title(IN book_name text)
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    copy_count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO copy_count
+    FROM copies_of_books cb
+    JOIN books b ON cb.book_id = b.book_id
+    WHERE b.name_publication = book_name;
+
+    RAISE NOTICE 'Количество экземпляров книги "%": %', book_name, copy_count;
+END;
+$$;
+
+
+ALTER PROCEDURE library.check_copies_by_title(IN book_name text) OWNER TO postgres;
+
+--
+-- TOC entry 273 (class 1255 OID 33774)
+-- Name: check_fine_limit(); Type: FUNCTION; Schema: library; Owner: postgres
+--
+
+CREATE FUNCTION library.check_fine_limit() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF NEW.fine > 1000 THEN
+        RAISE EXCEPTION 'Штраф не может превышать 1000 руб.';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION library.check_fine_limit() OWNER TO postgres;
+
+--
+-- TOC entry 278 (class 1255 OID 33784)
+-- Name: default_type_publication(); Type: FUNCTION; Schema: library; Owner: postgres
+--
+
+CREATE FUNCTION library.default_type_publication() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF NEW.type_publication IS NULL OR TRIM(NEW.type_publication) = '' THEN
+        NEW.type_publication := 'прочее';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION library.default_type_publication() OWNER TO postgres;
+
+--
+-- TOC entry 277 (class 1255 OID 33782)
+-- Name: limit_books_on_hand(); Type: FUNCTION; Schema: library; Owner: postgres
+--
+
+CREATE FUNCTION library.limit_books_on_hand() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    active_books_count INT;
+BEGIN
+    SELECT COUNT(*) INTO active_books_count
+    FROM book_distribution
+    WHERE library_card = NEW.library_card
+      AND return_date IS NULL;
+
+    IF active_books_count > 3 THEN
+        RAISE EXCEPTION 'Читатель уже держит 3 книги. Больше нельзя.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION library.limit_books_on_hand() OWNER TO postgres;
+
+--
+-- TOC entry 276 (class 1255 OID 33780)
+-- Name: prevent_book_delete_if_copies_exist(); Type: FUNCTION; Schema: library; Owner: postgres
+--
+
+CREATE FUNCTION library.prevent_book_delete_if_copies_exist() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM copies_of_books
+        WHERE book_id = OLD.book_id
+    ) THEN
+        RAISE EXCEPTION 'Нельзя удалить книгу: на неё существуют экземпляры.';
+    END IF;
+    RETURN OLD;
+END;
+$$;
+
+
+ALTER FUNCTION library.prevent_book_delete_if_copies_exist() OWNER TO postgres;
+
+--
+-- TOC entry 275 (class 1255 OID 33778)
+-- Name: prevent_book_without_name(); Type: FUNCTION; Schema: library; Owner: postgres
+--
+
+CREATE FUNCTION library.prevent_book_without_name() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF NEW.name_publication IS NULL OR TRIM(NEW.name_publication) = '' THEN
+        RAISE EXCEPTION 'Название книги не может быть пустым.';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION library.prevent_book_without_name() OWNER TO postgres;
+
+--
+-- TOC entry 258 (class 1255 OID 33793)
+-- Name: prevent_issue_if_no_passport(); Type: FUNCTION; Schema: library; Owner: postgres
+--
+
+CREATE FUNCTION library.prevent_issue_if_no_passport() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    passport TEXT;
+BEGIN
+    SELECT passport_data INTO passport
+    FROM reader
+    WHERE library_card = NEW.library_card;
+
+    IF passport IS NULL OR TRIM(passport) = '' THEN
+        RAISE EXCEPTION 'Читатель не может получить книгу без паспортных данных.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION library.prevent_issue_if_no_passport() OWNER TO postgres;
+
+--
+-- TOC entry 274 (class 1255 OID 33776)
+-- Name: prevent_reader_delete(); Type: FUNCTION; Schema: library; Owner: postgres
+--
+
+CREATE FUNCTION library.prevent_reader_delete() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM book_distribution
+        WHERE library_card = OLD.library_card AND return_date IS NULL
+    ) THEN
+        RAISE EXCEPTION 'Нельзя удалить читателя с невозвращёнными книгами.';
+    END IF;
+    RETURN OLD;
+END;
+$$;
+
+
+ALTER FUNCTION library.prevent_reader_delete() OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 230 (class 1259 OID 33383)
+-- Name: invoice_from_supplier; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.invoice_from_supplier (
+    invoice_number integer NOT NULL,
+    full_name character varying(150) NOT NULL,
+    date_of_registration date NOT NULL
+);
+
+
+ALTER TABLE library.invoice_from_supplier OWNER TO postgres;
+
+--
+-- TOC entry 3838 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: TABLE invoice_from_supplier; Type: COMMENT; Schema: library; Owner: postgres
+--
+
+COMMENT ON TABLE library.invoice_from_supplier IS 'Накладная от поставщика
+';
+
+
+--
+-- TOC entry 246 (class 1259 OID 33590)
+-- Name: Invoice from supplier_Invoice number_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.invoice_from_supplier ALTER COLUMN invoice_number ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library."Invoice from supplier_Invoice number_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 232 (class 1259 OID 33393)
+-- Name: act_donor; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.act_donor (
+    donor_act integer NOT NULL,
+    address character varying(150),
+    telephone character varying(150),
+    email character varying(100),
+    full_name character varying(50),
+    registration_date date NOT NULL,
+    employee_id integer NOT NULL
+);
+
+
+ALTER TABLE library.act_donor OWNER TO postgres;
+
+--
+-- TOC entry 247 (class 1259 OID 33594)
+-- Name: act_donor_donor_act_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.act_donor ALTER COLUMN donor_act ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.act_donor_donor_act_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 228 (class 1259 OID 33373)
+-- Name: act_from_supplier; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.act_from_supplier (
+    act_number_supplier integer NOT NULL,
+    date_compilation date NOT NULL,
+    employee_id integer NOT NULL
+);
+
+
+ALTER TABLE library.act_from_supplier OWNER TO postgres;
+
+--
+-- TOC entry 244 (class 1259 OID 33587)
+-- Name: act_from_supplier_act_number_supplier_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.act_from_supplier ALTER COLUMN act_number_supplier ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.act_from_supplier_act_number_supplier_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 234 (class 1259 OID 33403)
+-- Name: act_reader; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.act_reader (
+    reader_act integer NOT NULL,
+    employee_id integer NOT NULL
+);
+
+
+ALTER TABLE library.act_reader OWNER TO postgres;
+
+--
+-- TOC entry 249 (class 1259 OID 33601)
+-- Name: act_reader_reader_act_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.act_reader ALTER COLUMN reader_act ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.act_reader_reader_act_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 224 (class 1259 OID 33353)
+-- Name: act_write_off; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.act_write_off (
+    id_act_write_off integer NOT NULL,
+    new_cost integer,
+    direction_publication character varying(100) NOT NULL
+);
+
+
+ALTER TABLE library.act_write_off OWNER TO postgres;
+
+--
+-- TOC entry 240 (class 1259 OID 33575)
+-- Name: act_write-off_id_act_write-off_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.act_write_off ALTER COLUMN id_act_write_off ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library."act_write-off_id_act_write-off_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 221 (class 1259 OID 33336)
+-- Name: book_distribution; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.book_distribution (
+    id_distrubution integer NOT NULL,
+    inventory_number integer NOT NULL,
+    date_of_issue date NOT NULL,
+    library_card integer NOT NULL,
+    fine integer,
+    return_date date
+);
+
+
+ALTER TABLE library.book_distribution OWNER TO postgres;
+
+--
+-- TOC entry 238 (class 1259 OID 33567)
+-- Name: book_distribution_id_distrubution_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.book_distribution ALTER COLUMN id_distrubution ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.book_distribution_id_distrubution_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 219 (class 1259 OID 33323)
+-- Name: books; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.books (
+    book_id integer NOT NULL,
+    year_of_issue date NOT NULL,
+    compiler_publication character varying(150) NOT NULL,
+    place_publication character varying(150) NOT NULL,
+    language_translation character varying(150) NOT NULL,
+    name_publisher character varying(100) NOT NULL,
+    volume_number integer DEFAULT 1,
+    translator character varying(150),
+    type_publication character varying(100) NOT NULL,
+    region_knowledge character varying(100) NOT NULL,
+    name_publication character varying(150) NOT NULL,
+    author_publication character varying(150) NOT NULL
+);
+
+
+ALTER TABLE library.books OWNER TO postgres;
+
+--
+-- TOC entry 235 (class 1259 OID 33513)
+-- Name: books_book_id_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books ALTER COLUMN book_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.books_book_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 229 (class 1259 OID 33378)
+-- Name: composition_books_delivery; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.composition_books_delivery (
+    id_composition integer NOT NULL,
+    book_id integer NOT NULL,
+    act_number_supplier integer NOT NULL,
+    invoice_number integer NOT NULL
+);
+
+
+ALTER TABLE library.composition_books_delivery OWNER TO postgres;
+
+--
+-- TOC entry 245 (class 1259 OID 33589)
+-- Name: composition_books_delivery_id_composition_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.composition_books_delivery ALTER COLUMN id_composition ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.composition_books_delivery_id_composition_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 233 (class 1259 OID 33398)
+-- Name: composition_books_reader; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.composition_books_reader (
+    composition_id integer NOT NULL,
+    reader_act integer NOT NULL,
+    book_id integer NOT NULL
+);
+
+
+ALTER TABLE library.composition_books_reader OWNER TO postgres;
+
+--
+-- TOC entry 248 (class 1259 OID 33600)
+-- Name: composition_books_reader_composition_id_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.composition_books_reader ALTER COLUMN composition_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.composition_books_reader_composition_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 231 (class 1259 OID 33388)
+-- Name: composition_of_books; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.composition_of_books (
+    id_composition integer NOT NULL,
+    book_id integer NOT NULL,
+    donor_act integer NOT NULL
+);
+
+
+ALTER TABLE library.composition_of_books OWNER TO postgres;
+
+--
+-- TOC entry 250 (class 1259 OID 33603)
+-- Name: composition_of_books_id_composition_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.composition_of_books ALTER COLUMN id_composition ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.composition_of_books_id_composition_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 218 (class 1259 OID 33318)
+-- Name: copies_of_books; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.copies_of_books (
+    price integer NOT NULL,
+    inventory_number integer NOT NULL,
+    library_cipher character varying(100) NOT NULL,
+    storage_id integer NOT NULL,
+    reader_act integer,
+    book_id integer NOT NULL,
+    dealer_act integer,
+    donor_act integer
+);
+
+
+ALTER TABLE library.copies_of_books OWNER TO postgres;
+
+--
+-- TOC entry 236 (class 1259 OID 33562)
+-- Name: copies_of_books_inventory_number_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.copies_of_books ALTER COLUMN inventory_number ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.copies_of_books_inventory_number_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 252 (class 1259 OID 33755)
+-- Name: debtors; Type: VIEW; Schema: library; Owner: postgres
+--
+
+CREATE VIEW library.debtors AS
+SELECT
+    NULL::integer AS library_card,
+    NULL::character varying(150) AS full_name,
+    NULL::character varying(100) AS passport_data,
+    NULL::character varying(100) AS address,
+    NULL::character varying(100) AS email,
+    NULL::character varying(50) AS telephone_number,
+    NULL::character varying(50) AS education;
+
+
+ALTER VIEW library.debtors OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 33348)
+-- Name: disposal_documents; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.disposal_documents (
+    id_disposal integer NOT NULL,
+    inventory_number integer NOT NULL,
+    id_employee integer NOT NULL,
+    id_act_write_off integer NOT NULL
+);
+
+
+ALTER TABLE library.disposal_documents OWNER TO postgres;
+
+--
+-- TOC entry 239 (class 1259 OID 33574)
+-- Name: disposal_documents_id_disposal_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.disposal_documents ALTER COLUMN id_disposal ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.disposal_documents_id_disposal_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 227 (class 1259 OID 33368)
+-- Name: employee; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.employee (
+    employee_id integer NOT NULL,
+    full_name character varying(150) NOT NULL
+);
+
+
+ALTER TABLE library.employee OWNER TO postgres;
+
+--
+-- TOC entry 243 (class 1259 OID 33585)
+-- Name: employee_employee_id_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.employee ALTER COLUMN employee_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME library.employee_employee_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 226 (class 1259 OID 33363)
+-- Name: history_job; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.history_job (
+    id integer NOT NULL,
+    quantity_rates integer NOT NULL,
+    beginning_date date NOT NULL,
+    end_date date,
+    id_job_title integer NOT NULL,
+    employee_id integer NOT NULL
+);
+
+
+ALTER TABLE library.history_job OWNER TO postgres;
+
+--
+-- TOC entry 242 (class 1259 OID 33583)
+-- Name: history_job_id_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.history_job ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.history_job_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 225 (class 1259 OID 33358)
+-- Name: job_title; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.job_title (
+    id_job_title integer NOT NULL,
+    price_rates integer NOT NULL,
+    name_job_title character varying(150) NOT NULL
+);
+
+
+ALTER TABLE library.job_title OWNER TO postgres;
+
+--
+-- TOC entry 241 (class 1259 OID 33580)
+-- Name: job_title_id_job_title_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.job_title ALTER COLUMN id_job_title ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.job_title_id_job_title_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 253 (class 1259 OID 33786)
+-- Name: popular_books; Type: VIEW; Schema: library; Owner: postgres
+--
+
+CREATE VIEW library.popular_books AS
+ SELECT books.name_publication,
+    count(*) AS counter
+   FROM ((library.books books
+     JOIN library.copies_of_books copies ON ((copies.book_id = books.book_id)))
+     JOIN library.book_distribution bd ON ((bd.inventory_number = copies.inventory_number)))
+  WHERE (bd.return_date IS NULL)
+  GROUP BY books.name_publication
+  ORDER BY (count(*)) DESC
+ LIMIT 5;
+
+
+ALTER VIEW library.popular_books OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 33341)
+-- Name: reader; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.reader (
+    library_card integer NOT NULL,
+    full_name character varying(150) NOT NULL,
+    passport_data character varying(100) NOT NULL,
+    address character varying(100) NOT NULL,
+    email character varying(100) NOT NULL,
+    telephone_number character varying(50) NOT NULL,
+    education character varying(50) DEFAULT 'Нет'::character varying,
+    CONSTRAINT chk_education CHECK (((education)::text = ANY ((ARRAY['Среднее'::character varying, 'Среднее специальное'::character varying, 'Высшее'::character varying, 'Нет'::character varying])::text[])))
+);
+
+
+ALTER TABLE library.reader OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 33331)
+-- Name: storage_location; Type: TABLE; Schema: library; Owner: postgres
+--
+
+CREATE TABLE library.storage_location (
+    storage_id integer NOT NULL,
+    shelf_number integer NOT NULL,
+    rack_number integer NOT NULL,
+    room_number integer NOT NULL
+);
+
+
+ALTER TABLE library.storage_location OWNER TO postgres;
+
+--
+-- TOC entry 237 (class 1259 OID 33565)
+-- Name: storage_location_storage_id_seq; Type: SEQUENCE; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.storage_location ALTER COLUMN storage_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME library.storage_location_storage_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 3814 (class 0 OID 33393)
+-- Dependencies: 232
+-- Data for Name: act_donor; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.act_donor (donor_act, address, telephone, email, full_name, registration_date, employee_id) FROM stdin;
+2	с. Новокузнецк, наб. Заливная, д. 1, 982532	+7 855 587 9946	isaevljubomir@zao.org	Светлана Семеновна Агафонова	2021-09-15	35
+3	п. Нижнекамск, пер. Николаева, д. 545, 362595	+7 035 025 74 38	terentevprov@gmail.com	Екатерина Мироновна Некрасова	2022-12-24	34
+6	ст. Междуреченский, ул. 1 Мая, д. 1 к. 5/5, 278596	8 216 276 7874	vadim_98@gmail.com	Прохоров Всеволод Августович	2019-12-10	4
+7	д. Северодвинск, алл. Олега Кошевого, д. 439, 664543	8 (930) 770-3075	praskovja_2009@zao.net	Кузьмин Филимон Валерьянович	2018-03-21	5
+1	с. Надым, пр. Мирный, д. 8, 139940	8 632 618 62 92	bazhen1980@yahoo.com	Осипова Юлия Алексеевна	2019-12-05	31
+4	п. Махачкала, пер. Белорусский, д. 1 стр. 632, 855724	8 (956) 822-51-51	potapovinnokenti@npo.net	Веселов Ираклий Владиленович	2023-08-13	13
+5	с. Ясный (Оренб.), ш. Нижнее, д. 5/4, 251921	88136295093	fedoseevostromir@ooo.net	Лидия Геннадиевна Комиссарова	2015-09-06	35
+8	с. Анадырь, бул. Монтажников, д. 26 к. 8/1, 319921	8 137 020 1945	petuhovazoja@yandex.ru	Твердислав Егорович Стрелков	2023-02-04	35
+9	клх Киров (Вятка), наб. Астраханская, д. 643 стр. 3/6, 307240	+7 (331) 837-3977	vikenti1971@npo.org	Козлова Юлия Филипповна	2019-10-23	30
+10	д. Майкоп, бул. Орджоникидзе, д. 960 стр. 6, 965697	+7 (451) 351-5873	gremislavkirillov@voentorg.edu	Горшкова Лариса Рудольфовна	2022-06-17	27
+11	г. Пермь, ул. Ленина, д. 12, 614000	+7 342 123 45 67	ivanovpetr@medmail.ru	Иванов Пётр Николаевич	2025-05-28	4
+\.
+
+
+--
+-- TOC entry 3810 (class 0 OID 33373)
+-- Dependencies: 228
+-- Data for Name: act_from_supplier; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.act_from_supplier (act_number_supplier, date_compilation, employee_id) FROM stdin;
+1	2018-07-17	33
+2	2022-09-03	35
+3	2019-12-05	19
+4	2022-02-04	3
+5	2018-01-16	1
+6	2019-02-09	36
+7	2019-12-21	25
+8	2018-08-15	31
+9	2019-07-20	24
+10	2018-10-21	40
+11	2019-05-31	10
+12	2023-04-18	18
+13	2023-03-05	17
+14	2018-10-14	6
+15	2021-09-04	29
+16	2022-08-08	23
+17	2023-01-03	21
+18	2021-10-26	32
+19	2018-09-20	13
+20	2021-09-03	37
+\.
+
+
+--
+-- TOC entry 3816 (class 0 OID 33403)
+-- Dependencies: 234
+-- Data for Name: act_reader; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.act_reader (reader_act, employee_id) FROM stdin;
+1	3
+2	5
+3	7
+4	9
+5	11
+6	13
+7	15
+\.
+
+
+--
+-- TOC entry 3806 (class 0 OID 33353)
+-- Dependencies: 224
+-- Data for Name: act_write_off; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.act_write_off (id_act_write_off, new_cost, direction_publication) FROM stdin;
+1	120	Утилизация из-за повреждения
+2	50	Списание по устареванию
+3	30	Передача на переработку
+4	10	Потеря, подтвержденная актом
+5	0	Выбытие безвозвратно
+\.
+
+
+--
+-- TOC entry 3803 (class 0 OID 33336)
+-- Dependencies: 221
+-- Data for Name: book_distribution; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.book_distribution (id_distrubution, inventory_number, date_of_issue, library_card, fine, return_date) FROM stdin;
+20	16	2025-05-07	1005	60	\N
+21	1	2024-05-01	1005	120	\N
+23	3	2024-03-05	1005	60	\N
+25	5	2024-01-15	1005	30	\N
+26	6	2024-04-02	1005	50	\N
+27	7	2024-03-12	1005	70	\N
+28	8	2024-02-20	1005	100	\N
+29	13	2024-01-10	1005	40	\N
+30	10	2024-05-05	1005	110	\N
+31	71	2025-05-20	2022	0	\N
+32	73	2025-05-20	2008	0	\N
+1	14	2025-04-22	1001	0	2025-04-25
+9	33	2025-03-18	2003	0	2025-03-22
+10	20	2025-03-25	2048	0	2025-03-28
+17	42	2025-04-08	1009	0	2025-04-12
+18	47	2025-03-10	1007	0	2025-03-15
+19	48	2025-03-20	2031	0	2025-03-25
+3	31	2025-04-23	2027	0	2025-04-25
+4	46	2025-03-31	2036	0	2025-04-02
+12	5	2025-05-27	2041	0	\N
+14	9	2025-05-26	1004	0	\N
+2	40	2025-04-12	1006	100	2025-04-25
+5	18	2025-05-06	2004	100	2025-05-19
+6	49	2025-05-10	2045	100	2025-05-22
+7	27	2025-03-11	2024	50	2025-03-22
+8	26	2025-03-17	2039	100	2025-03-29
+11	13	2025-03-17	2037	100	2025-03-29
+13	38	2025-03-07	2022	50	2025-03-18
+16	7	2025-03-22	2008	100	2025-04-02
+22	2	2024-04-10	1005	300	\N
+24	4	2024-02-01	1005	300	\N
+15	4	2025-05-24	2043	0	\N
+33	2	2025-05-28	1005	0	\N
+\.
+
+
+--
+-- TOC entry 3801 (class 0 OID 33323)
+-- Dependencies: 219
+-- Data for Name: books; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.books (book_id, year_of_issue, compiler_publication, place_publication, language_translation, name_publisher, volume_number, translator, type_publication, region_knowledge, name_publication, author_publication) FROM stdin;
+3	2019-09-20	Новиков А.А.	Казань	немецкий	Просвещение	1	\N	сборник	философия	Классическая философия	Романов П.Л.
+5	2018-03-05	Кузнецова И.В.	Новосибирск	итальянский	Издательский дом	3	\N	сборник	искусствоведение	История архитектуры	Фёдоров А.И.
+6	2023-07-14	Романова Л.П.	Ростов-на-Дону	латинский	Южное издательство	1	Кириллов Е.О.	учебник	медицина	Основы анатомии	Михайлов С.А.
+7	2017-11-11	Егоров П.Д.	Владивосток	японский	Дальний Восток	2	\N	монография	востоковедение	Япония: культура и язык	Токарев Д.С.
+8	2016-06-18	Алексеева И.С.	Пермь	испанский	Урал-Пресс	1	\N	сборник	лингвистика	Сравнительное языкознание	Ильин А.Г.
+10	2015-08-30	Никитина Т.Ю.	Омск	польский	Сибирское	4	Соловьёв Н.Д.	монография	социология	Общество и структура	Васильев Е.И.
+11	2012-01-01	Петров П.П.	Томск	Японский	Гуманитарное знание	3	\N	Сборник статей	Социология	Государство и власть	Кузнецов Д.Д.
+19	2024-01-01	Петров П.П.	Москва	Немецкий	Наука	2	\N	Учебник	Философия	Теория систем	Петров П.П.
+22	2018-01-01	Орлов С.С.	Томск	Немецкий	Питер	4	Кузнецов Д.Д.	Монография	Философия	Право и общество	Сидоров А.А.
+24	2014-01-01	Петров П.П.	Екатеринбург	Немецкий	Эксмо	1	Орлов С.С.	Учебное пособие	Социология	Право и общество	Сидоров А.А.
+25	2018-01-01	Петров П.П.	Томск	Французский	Наука	4	\N	Монография	Социология	Государство и власть	Белов И.И.
+27	2016-01-01	Белов И.И.	Челябинск	Испанский	Наука	5	\N	Учебник	История	Государство и власть	Белов И.И.
+28	2011-01-01	Иванов И.И.	Москва	Китайский	Наука	2	Орлов С.С.	Сборник статей	Политология	Теория систем	Сидоров А.А.
+30	2002-01-01	Кузнецов Д.Д.	Челябинск	Китайский	Просвещение	5	\N	Монография	Экономика	Философия сознания	Кузнецов Д.Д.
+31	2016-01-01	Петров П.П.	Екатеринбург	Английский	Просвещение	4	Кузнецов Д.Д.	Монография	Политология	Философия сознания	Иванов И.И.
+33	2023-01-01	Петров П.П.	Казань	Немецкий	Наука	2	Кузнецов Д.Д.	Монография	Политология	Философия сознания	Кузнецов Д.Д.
+39	1993-01-01	Иванов И.И.	Екатеринбург	Французский	АСТ	5	Сидоров А.А.	Сборник статей	Социология	Мировая экономика	Сидоров А.А.
+40	1992-01-01	Белов И.И.	Томск	Китайский	Питер	5	Сидоров А.А.	Монография	Философия	История Европы	Иванов И.И.
+42	1995-01-01	Петров П.П.	Екатеринбург	Японский	Питер	5	\N	Сборник статей	Экономика	Философия сознания	Иванов И.И.
+43	2019-01-01	Иванов И.И.	Томск	Немецкий	Просвещение	2	Петров П.П.	Сборник статей	История	Теория систем	Сидоров А.А.
+44	2022-01-01	Петров П.П.	Москва	Английский	Гуманитарное знание	3	Орлов С.С.	Учебник	Социология	Государство и власть	Петров П.П.
+45	2023-01-01	Белов И.И.	Санкт-Петербург	Французский	Наука	2	\N	Учебное пособие	Экономика	Мировая экономика	Орлов С.С.
+52	2013-01-01	Орлов С.С.	Новосибирск	Японский	Эксмо	4	\N	Сборник статей	История	Государство и власть	Кузнецов Д.Д.
+54	1991-01-01	Кузнецов Д.Д.	Екатеринбург	Немецкий	Наука	1	Сидоров А.А.	Монография	Экономика	Теория систем	Орлов С.С.
+55	1999-01-01	Петров П.П.	Томск	Итальянский	Питер	1	\N	Учебное пособие	Социология	Мировая экономика	Иванов И.И.
+58	2001-01-01	Сидоров А.А.	Москва	Итальянский	Питер	3	Сидоров А.А.	Монография	Право	История Европы	Петров П.П.
+60	1996-01-01	Иванов И.И.	Новосибирск	Японский	Наука	4	\N	Монография	История	Право и общество	Белов И.И.
+61	2022-01-01	Сидоров А.А.	Санкт-Петербург	Итальянский	Эксмо	5	Кузнецов Д.Д.	Учебник	Политология	Право и общество	Иванов И.И.
+62	2001-01-01	Белов И.И.	Екатеринбург	Итальянский	Гуманитарное знание	5	\N	Учебное пособие	Философия	История Европы	Петров П.П.
+64	2001-01-01	Петров П.П.	Екатеринбург	Итальянский	Эксмо	2	Орлов С.С.	Учебное пособие	Социология	Философия сознания	Сидоров А.А.
+66	2004-01-01	Петров П.П.	Томск	Немецкий	Питер	4	Орлов С.С.	Учебник	Философия	Право и общество	Орлов С.С.
+67	1992-01-01	Иванов И.И.	Новосибирск	Немецкий	Гуманитарное знание	1	Иванов И.И.	Учебное пособие	Политология	Философия сознания	Кузнецов Д.Д.
+69	2016-01-01	Иванов И.И.	Санкт-Петербург	Немецкий	Питер	5	\N	Сборник статей	Право	Теория систем	Кузнецов Д.Д.
+70	2008-01-01	Орлов С.С.	Томск	Английский	Питер	4	\N	Учебное пособие	Право	История Европы	Иванов И.И.
+72	2003-01-01	Петров П.П.	Москва	Японский	Просвещение	2	\N	Учебное пособие	Философия	Мировая экономика	Кузнецов Д.Д.
+74	2012-01-01	Кузнецов Д.Д.	Екатеринбург	Китайский	Гуманитарное знание	5	Петров П.П.	Сборник статей	История	Теория систем	Белов И.И.
+75	1995-01-01	Сидоров А.А.	Челябинск	Английский	Гуманитарное знание	4	\N	Монография	Социология	История Европы	Сидоров А.А.
+76	1991-01-01	Белов И.И.	Новосибирск	Немецкий	Просвещение	5	Сидоров А.А.	Учебник	Право	Теория систем	Иванов И.И.
+77	2002-01-01	Белов И.И.	Новосибирск	Японский	Просвещение	2	Орлов С.С.	Учебник	Экономика	Философия сознания	Петров П.П.
+80	2000-01-01	Сидоров А.А.	Челябинск	Японский	Питер	5	\N	Сборник статей	Право	Мировая экономика	Иванов И.И.
+84	1996-01-01	Иванов И.И.	Челябинск	Испанский	Гуманитарное знание	3	\N	Сборник статей	История	Теория систем	Белов И.И.
+85	1994-01-01	Кузнецов Д.Д.	Томск	Французский	АСТ	1	\N	Сборник статей	Право	История Европы	Кузнецов Д.Д.
+86	2008-01-01	Иванов И.И.	Москва	Китайский	Просвещение	1	\N	Сборник статей	Политология	Право и общество	Орлов С.С.
+90	1993-01-01	Иванов И.И.	Челябинск	Английский	Наука	1	Орлов С.С.	Учебное пособие	Философия	Государство и власть	Сидоров А.А.
+95	1993-01-01	Орлов С.С.	Екатеринбург	Английский	Гуманитарное знание	1	Иванов И.И.	Учебник	Политология	Философия сознания	Сидоров А.А.
+96	2010-01-01	Сидоров А.А.	Екатеринбург	Испанский	Просвещение	5	\N	Учебное пособие	История	Философия сознания	Петров П.П.
+98	1995-01-01	Белов И.И.	Санкт-Петербург	Испанский	АСТ	1	\N	Сборник статей	Право	Философия сознания	Орлов С.С.
+99	2011-01-01	Иванов И.И.	Москва	Японский	Просвещение	2	\N	Учебное пособие	Экономика	Философия сознания	Иванов И.И.
+101	2023-10-01	Иванов П.П.	Москва	английский	Питер	1	\N	учебник	программирование	Изучаем C# с нуля	Смирнов А.Б.
+102	2022-08-15	Сидоров А.А.	Санкт-Петербург	русский	БХВ-Петербург	2	\N	монография	программирование	Продвинутый C# и .NET	Кузнецова И.В.
+105	2025-05-28	Петров В.В.	Москва	русский	Просвещение	1	\N	монография	философия	Смысл жизни	Сидоров А.А.
+\.
+
+
+--
+-- TOC entry 3811 (class 0 OID 33378)
+-- Dependencies: 229
+-- Data for Name: composition_books_delivery; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.composition_books_delivery (id_composition, book_id, act_number_supplier, invoice_number) FROM stdin;
+1	86	1	1
+2	10	2	2
+3	43	3	3
+4	8	4	4
+5	60	5	5
+6	69	6	6
+7	67	7	7
+8	30	8	8
+9	11	9	9
+10	98	10	10
+11	84	11	11
+12	19	12	12
+13	33	13	13
+14	95	14	14
+15	5	15	15
+16	66	16	16
+17	54	17	17
+18	22	18	18
+19	27	19	19
+20	19	20	20
+21	45	1	1
+22	85	2	2
+23	43	3	3
+24	99	4	4
+25	52	5	5
+26	96	6	6
+27	44	7	7
+28	55	8	8
+29	54	9	9
+30	85	10	10
+\.
+
+
+--
+-- TOC entry 3815 (class 0 OID 33398)
+-- Dependencies: 233
+-- Data for Name: composition_books_reader; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.composition_books_reader (composition_id, reader_act, book_id) FROM stdin;
+1	5	42
+2	2	70
+3	1	80
+4	7	7
+5	3	40
+6	7	6
+7	1	24
+8	2	61
+9	6	76
+10	1	66
+11	5	77
+12	7	61
+13	2	62
+14	7	72
+15	5	42
+16	7	39
+17	6	25
+18	6	98
+19	6	80
+20	7	64
+\.
+
+
+--
+-- TOC entry 3813 (class 0 OID 33388)
+-- Dependencies: 231
+-- Data for Name: composition_of_books; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.composition_of_books (id_composition, book_id, donor_act) FROM stdin;
+1	7	1
+2	58	1
+3	45	2
+4	28	2
+5	7	3
+6	40	3
+7	84	4
+8	96	4
+9	69	5
+10	33	5
+11	74	6
+12	61	6
+13	60	7
+14	90	7
+15	67	8
+16	54	8
+17	31	9
+18	75	9
+19	3	10
+20	72	10
+21	102	11
+22	101	11
+23	102	11
+24	101	11
+\.
+
+
+--
+-- TOC entry 3800 (class 0 OID 33318)
+-- Dependencies: 218
+-- Data for Name: copies_of_books; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.copies_of_books (price, inventory_number, library_cipher, storage_id, reader_act, book_id, dealer_act, donor_act) FROM stdin;
+842	1	BK1384	35	\N	55	8	\N
+696	2	BK6934	76	\N	66	16	\N
+471	3	BK7393	31	\N	99	4	\N
+612	4	BK9923	51	\N	22	18	\N
+611	5	BK7830	83	\N	11	9	\N
+898	6	BK3458	133	\N	98	10	\N
+370	7	BK8745	67	\N	54	9	\N
+1181	8	BK9416	130	\N	52	5	\N
+330	9	BK3776	167	\N	33	13	\N
+393	10	BK8211	50	\N	86	1	\N
+1012	11	BK7487	133	\N	60	5	\N
+488	12	BK5074	68	\N	54	17	\N
+1136	13	BK7503	8	\N	69	6	\N
+629	14	BK6307	49	\N	95	14	\N
+513	15	BK4122	9	\N	19	12	\N
+431	16	BK9445	19	\N	43	3	\N
+717	17	BK6432	101	\N	10	2	\N
+473	18	BK6366	148	\N	43	3	\N
+597	19	BK3768	33	\N	96	6	\N
+472	20	BK9538	149	\N	8	4	\N
+1092	21	BK5964	123	\N	85	2	\N
+426	22	BK6664	168	\N	44	7	\N
+861	23	BK6863	83	\N	27	19	\N
+708	24	BK7933	72	\N	85	10	\N
+677	25	BK2303	68	\N	45	1	\N
+697	26	BK7457	155	\N	30	8	\N
+1030	27	BK1689	60	\N	84	11	\N
+473	28	BK5588	98	\N	5	15	\N
+336	29	BK8162	117	\N	19	20	\N
+506	30	BK7606	9	\N	67	7	\N
+619	31	IIU-507	164	\N	7	\N	1
+1410	32	amb-393	49	\N	58	\N	1
+712	33	zQR-440	11	\N	45	\N	2
+119	34	jfV-665	92	\N	28	\N	2
+980	35	Gaf-137	152	\N	7	\N	3
+937	36	HsH-378	56	\N	40	\N	3
+1675	37	Oct-595	8	\N	84	\N	4
+1749	38	gQs-353	105	\N	96	\N	4
+1779	39	YLn-355	153	\N	69	\N	5
+1301	40	ETJ-118	62	\N	33	\N	5
+199	41	WVm-210	110	\N	74	\N	6
+1874	42	bew-356	73	\N	61	\N	6
+884	43	Seh-935	101	\N	60	\N	7
+1878	44	Bbw-903	1	\N	90	\N	7
+702	45	AkW-239	44	\N	67	\N	8
+881	46	jCf-322	83	\N	54	\N	8
+229	47	oqr-567	90	\N	31	\N	9
+607	48	xFR-454	148	\N	75	\N	9
+641	49	dLt-668	180	\N	3	\N	10
+1448	50	Gri-111	162	\N	72	\N	10
+1000	71	INV2025005	3	\N	101	\N	11
+1000	72	INV2025006	4	\N	101	\N	11
+1400	73	INV2025007	5	\N	102	\N	11
+1400	74	INV2025008	6	\N	102	\N	11
+662	51	ББК-533	105	7	6	\N	\N
+629	52	ББК-659	2	7	7	\N	\N
+1073	53	ББК-265	177	1	24	\N	\N
+1087	54	ББК-442	161	6	25	\N	\N
+1015	55	ББК-426	51	7	39	\N	\N
+1093	56	ББК-822	184	3	40	\N	\N
+727	57	ББК-838	141	5	42	\N	\N
+481	58	ББК-360	128	5	42	\N	\N
+590	59	ББК-341	196	2	61	\N	\N
+1150	60	ББК-623	124	7	61	\N	\N
+528	61	ББК-343	189	2	62	\N	\N
+1037	62	ББК-204	76	7	64	\N	\N
+565	63	ББК-525	9	1	66	\N	\N
+752	64	ББК-135	196	2	70	\N	\N
+579	65	ББК-627	146	7	72	\N	\N
+1150	66	ББК-452	160	6	76	\N	\N
+691	67	ББК-437	13	5	77	\N	\N
+520	68	ББК-400	41	1	80	\N	\N
+1087	69	ББК-143	69	6	80	\N	\N
+461	70	ББК-625	185	6	98	\N	\N
+\.
+
+
+--
+-- TOC entry 3805 (class 0 OID 33348)
+-- Dependencies: 223
+-- Data for Name: disposal_documents; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.disposal_documents (id_disposal, inventory_number, id_employee, id_act_write_off) FROM stdin;
+1	41	5	1
+2	47	22	2
+3	35	30	3
+4	9	15	4
+5	38	1	5
+\.
+
+
+--
+-- TOC entry 3809 (class 0 OID 33368)
+-- Dependencies: 227
+-- Data for Name: employee; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.employee (employee_id, full_name) FROM stdin;
+1	Людмила Николаевна Щукина
+2	Михайлов Филипп Дмитриевич
+3	Симонова Пелагея Ефимовна
+4	Крюкова Татьяна Егоровна
+5	Татьяна Евгеньевна Зуева
+6	Вячеслав Устинович Алексеев
+7	Гордеев Серафим Зиновьевич
+8	Коновалов Якуб Ефимович
+9	Николаева Ия Семеновна
+10	Панфилов Мечислав Юлианович
+11	Бирюкова Раиса Макаровна
+12	Фролова Маргарита Захаровна
+13	София Феликсовна Ситникова
+14	Автоном Григорьевич Брагин
+15	Софрон Феликсович Некрасов
+16	Фёкла Леонидовна Мухина
+17	Авдей Бенедиктович Рожков
+18	Герасим Валерьевич Лаврентьев
+19	Милий Демидович Журавлев
+20	Ларионов Виссарион Ермолаевич
+21	Гурьев Корнил Арсенович
+22	Таисия Тимофеевна Соболева
+23	Родионов Капитон Власович
+24	Таисия Натановна Беляева
+25	Мария Рудольфовна Бобылева
+26	Максимова София Яковлевна
+27	Поликарп Захарьевич Беляев
+28	Харитонов Потап Ефстафьевич
+29	Юлия Тимофеевна Калинина
+30	Коновалов Назар Викторович
+31	Горбунов Михаил Анисимович
+32	Евдокимов Варлаам Владиславович
+33	Мухина Валерия Степановна
+34	Данила Бориславович Лихачев
+35	Эмилия Архиповна Брагина
+36	Орлова Ксения Матвеевна
+37	Мишина Нинель Святославовна
+38	Анжела Ниловна Лыткина
+39	Галина Матвеевна Галкина
+40	Эммануил Феликсович Щукин
+\.
+
+
+--
+-- TOC entry 3808 (class 0 OID 33363)
+-- Dependencies: 226
+-- Data for Name: history_job; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.history_job (id, quantity_rates, beginning_date, end_date, id_job_title, employee_id) FROM stdin;
+1	3	2018-08-19	2020-12-27	20	13
+2	1	2016-04-03	2018-07-18	18	10
+3	3	2020-10-01	2021-08-10	19	39
+4	3	2018-07-04	2020-02-08	1	17
+5	2	2019-07-29	2021-10-04	16	30
+6	1	2017-03-12	2018-07-08	3	29
+7	2	2022-04-03	2023-08-12	8	15
+8	2	2017-04-26	\N	16	35
+9	2	2019-12-01	2021-01-22	9	23
+10	2	2016-05-13	2019-01-27	17	32
+11	3	2016-02-25	2017-07-15	6	28
+12	1	2018-06-06	2019-10-10	4	34
+13	2	2020-07-25	2022-05-18	11	21
+14	1	2021-09-17	\N	6	26
+15	1	2019-08-29	2020-07-17	3	23
+16	1	2021-07-08	2022-05-31	1	37
+17	2	2019-09-16	\N	1	26
+18	2	2018-09-24	2020-10-14	15	5
+19	2	2017-03-06	\N	14	8
+20	2	2016-04-22	2018-05-05	20	36
+21	1	2019-07-20	2020-11-25	11	39
+22	2	2017-03-16	\N	4	26
+23	3	2019-07-22	\N	11	18
+24	2	2018-08-17	\N	10	1
+25	2	2018-01-30	\N	16	3
+26	2	2016-05-06	\N	11	34
+27	1	2018-10-26	\N	14	3
+28	1	2022-03-30	\N	5	1
+29	2	2017-05-02	2018-07-20	10	10
+30	1	2019-11-28	2022-03-25	1	12
+31	2	2020-11-15	2022-08-28	15	20
+32	3	2020-09-12	2022-07-10	20	40
+33	1	2022-03-24	\N	15	25
+34	1	2018-11-16	\N	18	11
+35	2	2016-05-23	2018-07-01	18	28
+36	3	2019-02-16	2021-03-10	19	27
+37	2	2021-10-29	\N	5	2
+38	3	2022-04-30	2023-09-06	14	32
+39	1	2017-02-20	2018-04-01	14	25
+40	2	2021-06-11	2022-10-19	14	21
+41	1	2017-07-13	\N	6	34
+42	1	2021-08-02	2023-08-07	20	33
+43	2	2017-10-07	2020-05-12	2	35
+44	1	2016-05-06	2018-01-22	13	25
+45	1	2022-01-03	2023-09-18	9	24
+46	3	2020-08-10	\N	7	12
+47	2	2021-03-22	2023-08-16	11	18
+48	1	2019-02-20	2020-05-25	20	17
+49	2	2016-01-15	2017-12-08	15	33
+50	2	2020-01-07	2022-05-10	20	19
+\.
+
+
+--
+-- TOC entry 3812 (class 0 OID 33383)
+-- Dependencies: 230
+-- Data for Name: invoice_from_supplier; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.invoice_from_supplier (invoice_number, full_name, date_of_registration) FROM stdin;
+1	ООО "Книжный Мир"	2024-01-15
+2	ЗАО "Букинист"	2024-02-10
+3	ИП Смирнова Л.П.	2024-03-03
+4	ООО "Альфа-Букс"	2024-03-20
+5	АО "Читай-город"	2024-04-05
+6	ИП Кузнецов И.О.	2024-04-12
+7	ООО "БукТрейд"	2024-04-25
+8	ИП Новикова Е.С.	2024-05-01
+9	ЗАО "ЛитРес"	2024-05-10
+10	ИП Романов Н.Н.	2024-05-18
+11	ООО "Книга+"	2024-05-25
+12	АО "Просвещение"	2024-06-01
+13	ИП Воробьёв А.С.	2024-06-07
+14	ООО "Книжный Дом"	2024-06-15
+15	ЗАО "Учебник"	2024-06-22
+16	ИП Баранова А.Д.	2024-06-29
+17	ООО "РосКнига"	2024-07-05
+18	ИП Сидоров В.П.	2024-07-12
+19	АО "Лабиринт"	2024-07-18
+20	ООО "Новые Книги"	2024-07-25
+\.
+
+
+--
+-- TOC entry 3807 (class 0 OID 33358)
+-- Dependencies: 225
+-- Data for Name: job_title; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.job_title (id_job_title, price_rates, name_job_title) FROM stdin;
+1	45000	Библиотекарь
+2	52000	Хранитель фондов
+3	60000	Архивариус
+4	70000	Заведующий отделом
+5	38000	Оператор сканирования
+6	47000	Методист
+7	49000	Консультант читального зала
+8	51000	Библиограф
+9	53000	Техник-архивист
+10	55000	Оператор выдачи
+11	58000	Куратор фонда
+12	60000	Инженер-электроник
+13	62000	Хранитель редких книг
+14	64000	Заведующий хранилищем
+15	66000	Администратор базы данных
+16	68000	Аналитик данных
+17	70000	Руководитель отдела обслуживания
+18	72000	Инспектор по безопасности
+19	75000	Редактор метаданных
+20	78000	Главный библиотекарь
+\.
+
+
+--
+-- TOC entry 3804 (class 0 OID 33341)
+-- Dependencies: 222
+-- Data for Name: reader; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.reader (library_card, full_name, passport_data, address, email, telephone_number, education) FROM stdin;
+1001	Иванов Алексей Петрович	4012 567890	г. Москва, ул. Ленина, д. 10	ivanov@mail.ru	+7-900-123-45-67	Высшее
+1002	Сидорова Мария Андреевна	4510 123456	г. Санкт-Петербург, пр. Мира, д. 5	sidmar@mail.ru	+7-901-654-32-10	Нет
+1003	Петров Николай Иванович	1212 345678	г. Казань, ул. Баумана, д. 3	petrov.nick@gmail.com	+7-905-222-33-44	Среднее
+1004	Кузнецова Ирина Юрьевна	4001 876543	г. Новосибирск, ул. Челюскинцев, д. 15	kuzirina@yandex.ru	+7-902-100-20-30	Высшее
+1005	Смирнов Артём Валерьевич	3200 654321	г. Екатеринбург, ул. Победы, д. 7	artsmir@mail.ru	+7-904-888-77-66	Высшее
+1006	Алексеева Дарья Сергеевна	5005 987654	г. Ростов-на-Дону, ул. Садовая, д. 20	alex.dasha@mail.ru	+7-903-333-44-55	Нет
+1007	Орлов Михаил Геннадьевич	4700 334455	г. Пермь, ул. Ленина, д. 4	orlov.mike@gmail.com	+7-906-111-22-33	Среднее
+1008	Тихонова Ольга Николаевна	3900 112233	г. Омск, ул. Лобкова, д. 6	olga.tih@mail.ru	+7-910-555-66-77	Среднее
+1009	Егорова Елена Павловна	4404 221133	г. Самара, ул. Молодёжная, д. 18	egorova.elena@mail.ru	+7-909-777-88-99	Высшее
+1010	Морозов Павел Анатольевич	4600 778899	г. Тула, ул. Комсомольская, д. 9	pmorozov@gmail.com	+7-908-123-45-00	Среднее специальное
+2001	Соколова Раиса Харитоновна	2949 754687	с. Верхний Тагил, наб. Павлова, д. 1/8 к. 670, 469030	gostomislkulagin@rambler.ru	+7 941 906-57-53	Высшее
+2002	Белова Василиса Робертовна	6505 331763	с. Хатанга, бул. Партизанский, д. 87 к. 7, 696325	merkushevpahom@yandex.ru	+7 925 189-73-90	Высшее
+2003	Дарья Эдуардовна Матвеева	9915 165181	ст. Оленегорск (Якут.), пер. Минина, д. 3/4, 655123	borisershov@rambler.ru	+7 908 571-75-65	Высшее
+2004	Мстислав Виленович Мартынов	5463 707812	клх Нефтеюганск, пер. Абрикосовый, д. 861, 337400	minaavdeev@rambler.ru	+7 959 983-26-62	Высшее
+2005	Оксана Ефимовна Федотова	9520 892999	д. Верхотурье, ул. Маркса Карла, д. 1/4 к. 689, 230889	kuznetsovermil@hotmail.com	+7 926 778-83-81	Нет
+2006	Таисия Станиславовна Кулакова	5924 590145	д. Псебай, пр. Гражданский, д. 4, 466535	qnikitina@hotmail.com	+7 940 731-21-81	Среднее
+2007	Егорова Тамара Максимовна	1546 383931	клх Лабинск, наб. Звездная, д. 861 стр. 7/1, 941215	agge_40@ao.edu	+7 934 769-71-85	Нет
+2008	Шубин Илья Даниилович	6448 144142	г. Макаров, пр. Тенистый, д. 71 стр. 18, 324429	krjabov@hotmail.com	+7 918 862-13-92	Нет
+2009	Носков Светозар Дмитриевич	8950 695326	ст. Ноглики, бул. Социалистический, д. 83, 844596	gorde1971@hotmail.com	+7 907 117-72-20	Нет
+2010	Елена Георгиевна Попова	9474 853311	клх Батайск, ш. Глинки, д. 12 к. 228, 584442	orest_71@gordeev.com	+7 919 625-37-99	Высшее
+2011	Светозар Зиновьевич Игнатьев	2832 477185	к. Красновишерск, пр. Тупиковый, д. 503 к. 8/4, 133810	isakovafekla@yandex.ru	+7 968 645-96-48	Среднее специальное
+2012	Герасимова Валерия Эльдаровна	3981 705171	с. Шаховская, ш. Космическое, д. 34 к. 6, 830277	serafimmishin@hotmail.com	+7 989 486-13-85	Среднее
+2013	Егорова Варвара Болеславовна	9602 952021	д. Териберка, бул. Верхний, д. 6, 789670	emishina@mail.ru	+7 941 991-94-54	Среднее специальное
+2014	Лукина Любовь Семеновна	5260 172208	ст. Касимов, наб. Глинки, д. 366 стр. 9/1, 843945	jshubina@npo.edu	+7 957 738-82-72	Нет
+2015	Наумова Раиса Афанасьевна	6087 938156	к. Череповец, алл. Семашко, д. 601 к. 607, 912908	kirillovsvetozar@rambler.ru	+7 999 291-99-98	Нет
+2016	тов. Воробьев Денис Федосьевич	2431 882560	ст. Фатеж, пер. Пугачева, д. 8/4, 700602	kondrati_1997@yandex.ru	+7 976 957-28-97	Среднее специальное
+2017	Маслова Иванна Валериевна	7622 849945	п. Белокуриха, ул. Торговая, д. 5, 901354	silinaksenija@oao.info	+7 938 137-67-95	Среднее специальное
+2018	Михайлова Раиса Леонидовна	5998 743176	п. Жиганск, алл. Труда, д. 5 к. 81, 876603	mitofan_1978@seleznev.org	+7 925 217-36-75	Среднее специальное
+2019	Веселов Наркис Федосьевич	2225 580034	ст. Оймякон, пер. Суворова, д. 539 стр. 237, 271601	silvestr_1993@rambler.ru	+7 954 556-91-26	Нет
+2020	Агата Леонидовна Андреева	5297 874170	г. Пушкин, ш. Заречное, д. 8, 611293	kostinaevgenija@yahoo.com	+7 903 705-13-42	Нет
+2021	Спартак Игоревич Калинин	2965 275534	ст. Сусуман, наб. Волгоградская, д. 32, 308727	narkis_58@npo.info	+7 956 322-48-33	Среднее
+2022	Галина Геннадьевна Савельева	8964 837520	г. Соболево, ул. Парижской Коммуны, д. 74 к. 77, 427830	dorofeevsofon@ooo.biz	+7 922 868-42-79	Среднее
+2023	Пелагея Валентиновна Елисеева	2941 353319	с. Кетченеры, алл. Урицкого, д. 3 к. 3/6, 008927	bronislav2022@mail.ru	+7 950 550-18-28	Нет
+2024	Кудрявцева Иванна Александровна	2113 684025	с. Якша, пер. Тенистый, д. 341 к. 61, 110810	lobanovazinaida@npo.ru	+7 907 564-22-23	Среднее специальное
+2025	Клавдия Валентиновна Королева	6190 500356	клх Усмань, пер. Восточный, д. 47, 629053	kotovafaina@ip.com	+7 959 666-93-49	Среднее специальное
+2026	Анастасия Романовна Новикова	1779 494771	клх Сибай, алл. Павлика Морозова, д. 647 к. 621, 182155	venediktvlasov@yandex.ru	+7 947 997-88-29	Среднее
+2027	Сергей Елисеевич Сафонов	4110 741160	д. Ухта, бул. Ольховый, д. 3/1 стр. 3/6, 146919	eleonora2019@ooo.info	+7 975 945-19-66	Нет
+2028	Аксенова Любовь Вениаминовна	9308 501367	п. Ишим, наб. Заводская, д. 2 стр. 2, 967101	beljaevaninel@yahoo.com	+7 928 407-68-91	Среднее
+2029	Павел Игоревич Панфилов	7343 414737	клх Салехард, ш. Партизанское, д. 55 к. 50, 830809	jakov_06@ashinski.net	+7 924 457-79-35	Среднее
+2030	Кононова Элеонора Геннадиевна	5305 696811	клх Невинномысск, бул. Братский, д. 39, 378994	lobanovazinaida@rambler.ru	+7 982 778-90-49	Высшее
+2031	Терентий Чеславович Кириллов	1456 449140	ст. Оса, бул. Баумана, д. 5, 824143	varfolome2001@ao.net	+7 994 229-25-74	Высшее
+2032	Брагина Ангелина Вадимовна	7096 894719	ст. Карачаевск, наб. О.Кошевого, д. 267 стр. 319, 120591	orest1980@vladimirov.edu	+7 991 723-13-89	Высшее
+2033	Константин Федосьевич Русаков	3442 450481	клх Таштагол, бул. Сибирский, д. 76 стр. 981, 850764	poljakovladislav@oao.edu	+7 913 688-76-61	Среднее специальное
+2034	Фортунат Теймуразович Шашков	1127 608337	ст. Дубна, пер. Верхний, д. 4 к. 726, 536321	varvara2001@yahoo.com	+7 981 460-91-29	Нет
+2035	Назарова Ираида Леонидовна	1255 277450	клх Сортавала, пер. Геологический, д. 28 к. 3/8, 794345	krilovernest@oao.org	+7 985 494-44-84	Нет
+2036	Фаина Болеславовна Антонова	3569 807673	клх Калач-на-Дону, алл. Нагорная, д. 51 к. 252, 134238	longin_95@hotmail.com	+7 934 794-21-70	Нет
+2037	Анжела Тимофеевна Анисимова	5875 345645	с. Дзержинск, бул. Привокзальный, д. 7/2, 745168	omelnikov@vebrf.biz	+7 921 420-91-97	Нет
+2038	Лавр Всеволодович Блинов	2923 197693	г. Ербогачен, бул. Вольный, д. 3, 008353	solomon_75@rambler.ru	+7 906 306-25-22	Высшее
+2039	Фокин Нифонт Яковлевич	9847 650578	ст. Махачкала, пер. Рыбацкий, д. 5 стр. 49, 719093	borislavovchinnikov@rambler.ru	+7 922 856-39-49	Среднее специальное
+2040	Фокина Агафья Артемовна	1856 674874	ст. Нижнеудинск, алл. Заводская, д. 28 стр. 5, 297673	evpraksija_2014@ip.edu	+7 997 867-76-21	Среднее специальное
+2041	Нина Тарасовна Захарова	5392 699076	г. Мценск, алл. Братская, д. 6, 685429	jaropolkbeljakov@zao.org	+7 964 278-67-90	Высшее
+2042	Тихонова Евгения Михайловна	9206 503845	к. Гремячинск (Перм.), алл. Прохладная, д. 141, 031452	adam_1978@rao.com	+7 972 910-42-18	Среднее специальное
+2043	Кузьма Аксёнович Тимофеев	6456 352423	г. Куртамыш, наб. Специалистов, д. 1/2 стр. 17, 704355	sofija1985@naumova.com	+7 966 638-79-52	Высшее
+2044	Филатов Радислав Гордеевич	4404 583749	к. Псков, ш. Кузнецова, д. 8/9, 535844	mihalovernst@mail.ru	+7 930 669-31-25	Нет
+2045	Рябов Радислав Антонович	9881 832260	г. Лысьва, ул. Серафимовича, д. 3/7 к. 9, 853262	ignatevevgraf@ip.net	+7 979 848-87-99	Высшее
+2046	Тимофей Феофанович Вишняков	6480 444364	п. Слюдянка, алл. Магистральная, д. 42 стр. 1, 424038	matveevporfiri@oao.biz	+7 907 388-68-95	Нет
+2047	Татьяна Тимуровна Ефимова	8426 491130	г. Сасово, бул. Песочный, д. 547 к. 1, 537137	muhinaalla@gmail.com	+7 943 687-69-33	Нет
+2048	Аким Исидорович Ефимов	4054 570636	г. Каменск-Шахтинский, пер. Красина, д. 74 к. 3, 689677	vorobevnikanor@markova.info	+7 939 255-78-52	Среднее
+2049	Цветков Филарет Ильич	7900 889042	с. Усть-Калманка, бул. Коминтерна, д. 325 стр. 8, 746407	bespalovamarfa@mail.ru	+7 962 345-33-89	Высшее
+2050	Ефимов Ираклий Артемьевич	1053 389173	ст. Верхний Уфалей, ш. Олимпийское, д. 291 стр. 278, 887596	emmanuil69@henkel.net	+7 931 427-47-42	Среднее
+4010	Анна Сергеевна Морозова	5500 112233	г. Пермь, ул. Свободы, д. 3	morozova.a@mail.ru	+7-905-111-22-33	Высшее
+\.
+
+
+--
+-- TOC entry 3802 (class 0 OID 33331)
+-- Dependencies: 220
+-- Data for Name: storage_location; Type: TABLE DATA; Schema: library; Owner: postgres
+--
+
+COPY library.storage_location (storage_id, shelf_number, rack_number, room_number) FROM stdin;
+1	11	3	2
+2	16	8	5
+3	19	5	1
+4	11	2	5
+5	13	8	2
+6	5	4	5
+7	13	9	2
+8	19	5	4
+9	1	6	5
+10	8	5	5
+11	17	8	3
+12	8	4	1
+13	17	4	2
+14	2	8	1
+15	14	6	4
+16	16	5	4
+17	6	4	2
+18	16	9	1
+19	18	7	5
+20	1	7	2
+21	16	7	4
+22	3	5	1
+23	11	8	5
+24	20	4	5
+25	7	7	2
+26	14	2	2
+27	18	7	4
+28	1	5	4
+29	11	10	3
+30	7	7	5
+31	3	6	3
+32	10	7	1
+33	10	9	3
+34	20	10	1
+35	14	9	5
+36	15	4	3
+37	19	1	2
+38	3	7	3
+39	12	10	5
+40	5	6	3
+41	14	1	3
+42	18	6	3
+43	9	1	5
+44	11	6	2
+45	9	8	2
+46	18	8	2
+47	15	9	5
+48	12	5	4
+49	7	7	1
+50	4	2	1
+51	20	7	4
+52	3	9	2
+53	14	9	1
+54	18	4	3
+55	12	6	3
+56	18	1	4
+57	5	6	3
+58	15	8	5
+59	14	2	2
+60	13	8	3
+61	4	10	2
+62	8	10	5
+63	6	2	4
+64	11	6	1
+65	8	6	3
+66	9	3	3
+67	3	8	4
+68	13	3	2
+69	5	3	2
+70	2	4	1
+71	9	2	2
+72	1	7	1
+73	9	10	1
+74	16	1	2
+75	17	9	5
+76	18	6	1
+77	4	5	2
+78	4	10	3
+79	3	4	4
+80	20	5	2
+81	5	7	4
+82	18	4	5
+83	6	7	2
+84	3	2	1
+85	18	3	3
+86	19	5	3
+87	20	2	5
+88	7	2	4
+89	9	6	4
+90	5	2	3
+91	9	8	4
+92	7	7	5
+93	14	5	1
+94	4	9	1
+95	5	1	1
+96	2	10	3
+97	11	6	2
+98	9	8	2
+99	5	6	1
+100	8	4	5
+101	11	3	1
+102	6	7	5
+103	15	4	4
+104	7	9	1
+105	5	5	4
+106	13	5	2
+107	20	10	2
+108	20	1	3
+109	17	1	3
+110	16	8	1
+111	16	10	5
+112	18	4	5
+113	2	5	5
+114	5	4	5
+115	6	6	3
+116	18	6	2
+117	3	3	2
+118	1	8	1
+119	20	6	5
+120	3	2	4
+121	3	3	2
+122	20	6	3
+123	12	8	1
+124	14	2	1
+125	4	5	5
+126	8	2	1
+127	3	8	3
+128	17	3	4
+129	14	6	3
+130	5	8	5
+131	20	6	5
+132	19	7	2
+133	17	7	2
+134	16	2	2
+135	16	3	3
+136	18	10	3
+137	10	10	3
+138	7	2	5
+139	6	3	5
+140	3	10	1
+141	10	6	2
+142	4	5	2
+143	12	7	1
+144	16	1	4
+145	14	8	2
+146	4	8	2
+147	11	1	1
+148	20	1	1
+149	4	1	4
+150	7	7	3
+151	4	10	5
+152	16	2	4
+153	17	4	1
+154	7	7	3
+155	10	2	3
+156	14	3	4
+157	10	3	2
+158	2	7	4
+159	14	7	1
+160	9	5	2
+161	9	8	3
+162	4	9	5
+163	2	10	4
+164	20	4	3
+165	12	2	3
+166	11	7	5
+167	3	5	4
+168	18	2	2
+169	19	9	4
+170	15	10	3
+171	13	5	5
+172	8	6	5
+173	10	10	4
+174	3	9	1
+175	11	3	2
+176	15	7	2
+177	20	3	2
+178	19	1	1
+179	17	10	3
+180	10	2	4
+181	6	3	1
+182	13	1	2
+183	6	4	1
+184	16	6	4
+185	12	2	3
+186	20	4	1
+187	1	9	3
+188	18	4	2
+189	7	4	4
+190	13	2	3
+191	1	5	4
+192	14	6	4
+193	14	10	3
+194	14	3	1
+195	13	3	1
+196	18	5	3
+197	19	3	1
+198	18	4	2
+199	3	9	4
+200	3	1	5
+\.
+
+
+--
+-- TOC entry 3839 (class 0 OID 0)
+-- Dependencies: 246
+-- Name: Invoice from supplier_Invoice number_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library."Invoice from supplier_Invoice number_seq"', 20, true);
+
+
+--
+-- TOC entry 3840 (class 0 OID 0)
+-- Dependencies: 247
+-- Name: act_donor_donor_act_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.act_donor_donor_act_seq', 47, true);
+
+
+--
+-- TOC entry 3841 (class 0 OID 0)
+-- Dependencies: 244
+-- Name: act_from_supplier_act_number_supplier_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.act_from_supplier_act_number_supplier_seq', 1, false);
+
+
+--
+-- TOC entry 3842 (class 0 OID 0)
+-- Dependencies: 249
+-- Name: act_reader_reader_act_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.act_reader_reader_act_seq', 7, true);
+
+
+--
+-- TOC entry 3843 (class 0 OID 0)
+-- Dependencies: 240
+-- Name: act_write-off_id_act_write-off_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library."act_write-off_id_act_write-off_seq"', 5, true);
+
+
+--
+-- TOC entry 3844 (class 0 OID 0)
+-- Dependencies: 238
+-- Name: book_distribution_id_distrubution_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.book_distribution_id_distrubution_seq', 33, true);
+
+
+--
+-- TOC entry 3845 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: books_book_id_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.books_book_id_seq', 105, true);
+
+
+--
+-- TOC entry 3846 (class 0 OID 0)
+-- Dependencies: 245
+-- Name: composition_books_delivery_id_composition_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.composition_books_delivery_id_composition_seq', 1, false);
+
+
+--
+-- TOC entry 3847 (class 0 OID 0)
+-- Dependencies: 248
+-- Name: composition_books_reader_composition_id_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.composition_books_reader_composition_id_seq', 20, true);
+
+
+--
+-- TOC entry 3848 (class 0 OID 0)
+-- Dependencies: 250
+-- Name: composition_of_books_id_composition_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.composition_of_books_id_composition_seq', 1, true);
+
+
+--
+-- TOC entry 3849 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: copies_of_books_inventory_number_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.copies_of_books_inventory_number_seq', 75, true);
+
+
+--
+-- TOC entry 3850 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: disposal_documents_id_disposal_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.disposal_documents_id_disposal_seq', 5, true);
+
+
+--
+-- TOC entry 3851 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: employee_employee_id_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.employee_employee_id_seq', 40, true);
+
+
+--
+-- TOC entry 3852 (class 0 OID 0)
+-- Dependencies: 242
+-- Name: history_job_id_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.history_job_id_seq', 50, true);
+
+
+--
+-- TOC entry 3853 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: job_title_id_job_title_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.job_title_id_job_title_seq', 22, true);
+
+
+--
+-- TOC entry 3854 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: storage_location_storage_id_seq; Type: SEQUENCE SET; Schema: library; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library.storage_location_storage_id_seq', 200, true);
+
+
+--
+-- TOC entry 3587 (class 2606 OID 33322)
+-- Name: copies_of_books Copies_of_books_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.copies_of_books
+    ADD CONSTRAINT "Copies_of_books_pkey" PRIMARY KEY (inventory_number);
+
+
+--
+-- TOC entry 3613 (class 2606 OID 33387)
+-- Name: invoice_from_supplier Invoice from supplier_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.invoice_from_supplier
+    ADD CONSTRAINT "Invoice from supplier_pkey" PRIMARY KEY (invoice_number);
+
+
+--
+-- TOC entry 3617 (class 2606 OID 33397)
+-- Name: act_donor act_donor_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.act_donor
+    ADD CONSTRAINT act_donor_pkey PRIMARY KEY (donor_act);
+
+
+--
+-- TOC entry 3609 (class 2606 OID 33377)
+-- Name: act_from_supplier act_from_supplier_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.act_from_supplier
+    ADD CONSTRAINT act_from_supplier_pkey PRIMARY KEY (act_number_supplier);
+
+
+--
+-- TOC entry 3621 (class 2606 OID 33407)
+-- Name: act_reader act_reader_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.act_reader
+    ADD CONSTRAINT act_reader_pkey PRIMARY KEY (reader_act);
+
+
+--
+-- TOC entry 3601 (class 2606 OID 33357)
+-- Name: act_write_off act_write-off_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.act_write_off
+    ADD CONSTRAINT "act_write-off_pkey" PRIMARY KEY (id_act_write_off);
+
+
+--
+-- TOC entry 3571 (class 2606 OID 33698)
+-- Name: reader address; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.reader
+    ADD CONSTRAINT address CHECK (((address)::text ~ '^[A-Za-zА-Яа-яЁё0-9 .,"()/-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3582 (class 2606 OID 33708)
+-- Name: act_donor address; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.act_donor
+    ADD CONSTRAINT address CHECK (((address)::text ~ '^[A-Za-zА-Яа-яЁё0-9 ,.\-\/()]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3559 (class 2606 OID 33524)
+-- Name: books author_publication; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books
+    ADD CONSTRAINT author_publication CHECK (((author_publication)::text ~ '^[A-Za-zА-Яа-яЁё ,.!?;:"''-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3593 (class 2606 OID 33340)
+-- Name: book_distribution book distribution_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.book_distribution
+    ADD CONSTRAINT "book distribution_pkey" PRIMARY KEY (id_distrubution);
+
+
+--
+-- TOC entry 3611 (class 2606 OID 33382)
+-- Name: composition_books_delivery books_delivery_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.composition_books_delivery
+    ADD CONSTRAINT books_delivery_pkey PRIMARY KEY (id_composition);
+
+
+--
+-- TOC entry 3589 (class 2606 OID 33330)
+-- Name: books books_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.books
+    ADD CONSTRAINT books_pkey PRIMARY KEY (book_id);
+
+
+--
+-- TOC entry 3557 (class 2606 OID 33635)
+-- Name: copies_of_books cipher; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.copies_of_books
+    ADD CONSTRAINT cipher CHECK (((library_cipher)::text ~ '^[A-Za-zА-Яа-яЁё0-9/\-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3560 (class 2606 OID 33516)
+-- Name: books comp_publ; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books
+    ADD CONSTRAINT comp_publ CHECK (((compiler_publication)::text ~ '^[A-Za-zА-Яа-яЁё ,.!?;:"''-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3619 (class 2606 OID 33402)
+-- Name: composition_books_reader composition_books_reader_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.composition_books_reader
+    ADD CONSTRAINT composition_books_reader_pkey PRIMARY KEY (composition_id);
+
+
+--
+-- TOC entry 3615 (class 2606 OID 33392)
+-- Name: composition_of_books composition_of_books_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.composition_of_books
+    ADD CONSTRAINT composition_of_books_pkey PRIMARY KEY (id_composition);
+
+
+--
+-- TOC entry 3599 (class 2606 OID 33352)
+-- Name: disposal_documents disposal_documents_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.disposal_documents
+    ADD CONSTRAINT disposal_documents_pkey PRIMARY KEY (id_disposal);
+
+
+--
+-- TOC entry 3583 (class 2606 OID 33632)
+-- Name: act_donor email; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.act_donor
+    ADD CONSTRAINT email CHECK (((email)::text ~ '^[A-Za-zА-Яа-яЁё0-9@._\-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3607 (class 2606 OID 33372)
+-- Name: employee employee_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.employee
+    ADD CONSTRAINT employee_pkey PRIMARY KEY (employee_id);
+
+
+--
+-- TOC entry 3580 (class 2606 OID 33607)
+-- Name: employee full_name; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.employee
+    ADD CONSTRAINT full_name CHECK (((full_name)::text ~ '^[A-Za-zА-Яа-яЁё\- ]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3584 (class 2606 OID 33630)
+-- Name: act_donor full_name; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.act_donor
+    ADD CONSTRAINT full_name CHECK (((full_name)::text ~ '^[A-Za-zА-Яа-яЁё .\-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3573 (class 2606 OID 33699)
+-- Name: reader full_name; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.reader
+    ADD CONSTRAINT full_name CHECK (((full_name)::text ~ '^[A-Za-zА-Яа-яЁё0-9 ''"`.,-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3581 (class 2606 OID 33711)
+-- Name: invoice_from_supplier full_name; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.invoice_from_supplier
+    ADD CONSTRAINT full_name CHECK (((full_name)::text ~ '^[A-Za-zА-Яа-яЁё .,!?;""+\-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3605 (class 2606 OID 33367)
+-- Name: history_job history_job_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.history_job
+    ADD CONSTRAINT history_job_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3603 (class 2606 OID 33362)
+-- Name: job_title job_title_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.job_title
+    ADD CONSTRAINT job_title_pkey PRIMARY KEY (id_job_title);
+
+
+--
+-- TOC entry 3561 (class 2606 OID 33518)
+-- Name: books language_translation; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books
+    ADD CONSTRAINT language_translation CHECK (((language_translation)::text ~ '^[A-Za-zА-Яа-яЁё ,.!?;:"''-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3562 (class 2606 OID 33736)
+-- Name: books name_publ; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books
+    ADD CONSTRAINT name_publ CHECK (((name_publication)::text ~ '^[A-Za-zА-Яа-яЁё ,.!?;:"''\-# ]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3563 (class 2606 OID 33519)
+-- Name: books name_publisher; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books
+    ADD CONSTRAINT name_publisher CHECK (((name_publisher)::text ~ '^[A-Za-zА-Яа-яЁё ,.!?;:"''-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3577 (class 2606 OID 33604)
+-- Name: job_title name_title; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.job_title
+    ADD CONSTRAINT name_title CHECK (((name_job_title)::text ~ '^[A-Za-zА-Яа-яЁё0-9 .,!?;:"''\- ]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3574 (class 2606 OID 33611)
+-- Name: reader passport; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.reader
+    ADD CONSTRAINT passport CHECK (((passport_data)::text ~ '^[A-Za-zА-Яа-яЁё0-9 ]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3564 (class 2606 OID 33517)
+-- Name: books place_publ; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books
+    ADD CONSTRAINT place_publ CHECK (((place_publication)::text ~ '^[A-Za-zА-Яа-яЁё ,.!?;:"''-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3558 (class 2606 OID 33563)
+-- Name: copies_of_books positive; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.copies_of_books
+    ADD CONSTRAINT positive CHECK ((price > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3578 (class 2606 OID 33581)
+-- Name: job_title positive; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.job_title
+    ADD CONSTRAINT positive CHECK ((price_rates > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3570 (class 2606 OID 33718)
+-- Name: book_distribution positive; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.book_distribution
+    ADD CONSTRAINT positive CHECK ((fine >= 0)) NOT VALID;
+
+
+--
+-- TOC entry 3569 (class 2606 OID 33566)
+-- Name: storage_location positive ; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.storage_location
+    ADD CONSTRAINT "positive " CHECK (((shelf_number > 0) AND (rack_number > 0) AND (room_number > 0))) NOT VALID;
+
+
+--
+-- TOC entry 3565 (class 2606 OID 33515)
+-- Name: books positive_quantity; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books
+    ADD CONSTRAINT positive_quantity CHECK ((volume_number > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3576 (class 2606 OID 33617)
+-- Name: act_write_off publication; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.act_write_off
+    ADD CONSTRAINT publication CHECK (((direction_publication)::text ~ '^[A-Za-zА-Яа-яЁё0-9 .,!?;:"''\-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3579 (class 2606 OID 33584)
+-- Name: history_job quantity_rates; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.history_job
+    ADD CONSTRAINT quantity_rates CHECK ((quantity_rates > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3597 (class 2606 OID 33347)
+-- Name: reader reader_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.reader
+    ADD CONSTRAINT reader_pkey PRIMARY KEY (library_card);
+
+
+--
+-- TOC entry 3566 (class 2606 OID 33522)
+-- Name: books region_knowledge ; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books
+    ADD CONSTRAINT "region_knowledge " CHECK (((region_knowledge)::text ~ '^[A-Za-zА-Яа-яЁё ,.!?;:"''-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3591 (class 2606 OID 33335)
+-- Name: storage_location storage location_pkey; Type: CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.storage_location
+    ADD CONSTRAINT "storage location_pkey" PRIMARY KEY (storage_id);
+
+
+--
+-- TOC entry 3575 (class 2606 OID 33612)
+-- Name: reader telephone; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.reader
+    ADD CONSTRAINT telephone CHECK (((telephone_number)::text ~ '^\+?[0-9 \-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3585 (class 2606 OID 33707)
+-- Name: act_donor telephone; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.act_donor
+    ADD CONSTRAINT telephone CHECK (((telephone)::text ~ '^\+?[0-9 \- ()]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3567 (class 2606 OID 33520)
+-- Name: books translator; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books
+    ADD CONSTRAINT translator CHECK (((translator)::text ~ '^[A-Za-zА-Яа-яЁё ,.!?;:"''-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3568 (class 2606 OID 33521)
+-- Name: books type_publ; Type: CHECK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE library.books
+    ADD CONSTRAINT type_publ CHECK (((type_publication)::text ~ '^[A-Za-zА-Яа-яЁё ,.!?;:"''-]*$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3594 (class 1259 OID 33765)
+-- Name: idx_distribution_card_fine; Type: INDEX; Schema: library; Owner: postgres
+--
+
+CREATE INDEX idx_distribution_card_fine ON library.book_distribution USING btree (library_card, fine);
+
+
+--
+-- TOC entry 3595 (class 1259 OID 33764)
+-- Name: idx_reader_library_card; Type: INDEX; Schema: library; Owner: postgres
+--
+
+CREATE INDEX idx_reader_library_card ON library.reader USING btree (library_card);
+
+
+--
+-- TOC entry 3798 (class 2618 OID 33758)
+-- Name: debtors _RETURN; Type: RULE; Schema: library; Owner: postgres
+--
+
+CREATE OR REPLACE VIEW library.debtors AS
+ SELECT reader.library_card,
+    reader.full_name,
+    reader.passport_data,
+    reader.address,
+    reader.email,
+    reader.telephone_number,
+    reader.education
+   FROM (library.reader reader
+     JOIN library.book_distribution bd ON ((reader.library_card = bd.library_card)))
+  WHERE (((CURRENT_DATE - bd.date_of_issue) > 10) AND (bd.return_date IS NULL))
+  GROUP BY reader.library_card;
+
+
+--
+-- TOC entry 3647 (class 2620 OID 33773)
+-- Name: book_distribution trg_auto_clear_fine; Type: TRIGGER; Schema: library; Owner: postgres
+--
+
+CREATE TRIGGER trg_auto_clear_fine AFTER UPDATE ON library.book_distribution FOR EACH ROW EXECUTE FUNCTION library.auto_clear_fine();
+
+
+--
+-- TOC entry 3648 (class 2620 OID 33775)
+-- Name: book_distribution trg_check_fine_limit; Type: TRIGGER; Schema: library; Owner: postgres
+--
+
+CREATE TRIGGER trg_check_fine_limit BEFORE INSERT OR UPDATE ON library.book_distribution FOR EACH ROW EXECUTE FUNCTION library.check_fine_limit();
+
+
+--
+-- TOC entry 3644 (class 2620 OID 33785)
+-- Name: books trg_default_type_publication; Type: TRIGGER; Schema: library; Owner: postgres
+--
+
+CREATE TRIGGER trg_default_type_publication BEFORE INSERT ON library.books FOR EACH ROW EXECUTE FUNCTION library.default_type_publication();
+
+
+--
+-- TOC entry 3649 (class 2620 OID 33783)
+-- Name: book_distribution trg_limit_books_on_hand; Type: TRIGGER; Schema: library; Owner: postgres
+--
+
+CREATE TRIGGER trg_limit_books_on_hand BEFORE INSERT ON library.book_distribution FOR EACH ROW EXECUTE FUNCTION library.limit_books_on_hand();
+
+
+--
+-- TOC entry 3645 (class 2620 OID 33781)
+-- Name: books trg_prevent_book_delete; Type: TRIGGER; Schema: library; Owner: postgres
+--
+
+CREATE TRIGGER trg_prevent_book_delete BEFORE DELETE ON library.books FOR EACH ROW EXECUTE FUNCTION library.prevent_book_delete_if_copies_exist();
+
+
+--
+-- TOC entry 3646 (class 2620 OID 33779)
+-- Name: books trg_prevent_book_without_name; Type: TRIGGER; Schema: library; Owner: postgres
+--
+
+CREATE TRIGGER trg_prevent_book_without_name BEFORE INSERT ON library.books FOR EACH ROW EXECUTE FUNCTION library.prevent_book_without_name();
+
+
+--
+-- TOC entry 3650 (class 2620 OID 33794)
+-- Name: book_distribution trg_prevent_issue_if_no_passport; Type: TRIGGER; Schema: library; Owner: postgres
+--
+
+CREATE TRIGGER trg_prevent_issue_if_no_passport BEFORE INSERT ON library.book_distribution FOR EACH ROW EXECUTE FUNCTION library.prevent_issue_if_no_passport();
+
+
+--
+-- TOC entry 3651 (class 2620 OID 33777)
+-- Name: reader trg_prevent_reader_delete; Type: TRIGGER; Schema: library; Owner: postgres
+--
+
+CREATE TRIGGER trg_prevent_reader_delete BEFORE DELETE ON library.reader FOR EACH ROW EXECUTE FUNCTION library.prevent_reader_delete();
+
+
+--
+-- TOC entry 3622 (class 2606 OID 33413)
+-- Name: copies_of_books book_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.copies_of_books
+    ADD CONSTRAINT book_fk FOREIGN KEY (book_id) REFERENCES library.books(book_id) NOT VALID;
+
+
+--
+-- TOC entry 3635 (class 2606 OID 33468)
+-- Name: composition_books_delivery book_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.composition_books_delivery
+    ADD CONSTRAINT book_fk FOREIGN KEY (book_id) REFERENCES library.books(book_id) NOT VALID;
+
+
+--
+-- TOC entry 3638 (class 2606 OID 33483)
+-- Name: composition_of_books book_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.composition_of_books
+    ADD CONSTRAINT book_fk FOREIGN KEY (book_id) REFERENCES library.books(book_id) NOT VALID;
+
+
+--
+-- TOC entry 3641 (class 2606 OID 33503)
+-- Name: composition_books_reader book_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.composition_books_reader
+    ADD CONSTRAINT book_fk FOREIGN KEY (book_id) REFERENCES library.books(book_id) NOT VALID;
+
+
+--
+-- TOC entry 3639 (class 2606 OID 33488)
+-- Name: composition_of_books donor_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.composition_of_books
+    ADD CONSTRAINT donor_fk FOREIGN KEY (donor_act) REFERENCES library.act_donor(donor_act) NOT VALID;
+
+
+--
+-- TOC entry 3623 (class 2606 OID 33636)
+-- Name: copies_of_books donor_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.copies_of_books
+    ADD CONSTRAINT donor_fk FOREIGN KEY (donor_act) REFERENCES library.act_donor(donor_act) NOT VALID;
+
+
+--
+-- TOC entry 3629 (class 2606 OID 33443)
+-- Name: disposal_documents employee_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.disposal_documents
+    ADD CONSTRAINT employee_fk FOREIGN KEY (id_employee) REFERENCES library.employee(employee_id) NOT VALID;
+
+
+--
+-- TOC entry 3632 (class 2606 OID 33458)
+-- Name: history_job employee_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.history_job
+    ADD CONSTRAINT employee_fk FOREIGN KEY (employee_id) REFERENCES library.employee(employee_id) NOT VALID;
+
+
+--
+-- TOC entry 3634 (class 2606 OID 33463)
+-- Name: act_from_supplier employee_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.act_from_supplier
+    ADD CONSTRAINT employee_fk FOREIGN KEY (employee_id) REFERENCES library.employee(employee_id) NOT VALID;
+
+
+--
+-- TOC entry 3640 (class 2606 OID 33493)
+-- Name: act_donor employee_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.act_donor
+    ADD CONSTRAINT employee_fk FOREIGN KEY (employee_id) REFERENCES library.employee(employee_id) NOT VALID;
+
+
+--
+-- TOC entry 3643 (class 2606 OID 33508)
+-- Name: act_reader employee_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.act_reader
+    ADD CONSTRAINT employee_fk FOREIGN KEY (employee_id) REFERENCES library.employee(employee_id) NOT VALID;
+
+
+--
+-- TOC entry 3627 (class 2606 OID 33433)
+-- Name: book_distribution inventory_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.book_distribution
+    ADD CONSTRAINT inventory_fk FOREIGN KEY (inventory_number) REFERENCES library.copies_of_books(inventory_number) NOT VALID;
+
+
+--
+-- TOC entry 3630 (class 2606 OID 33438)
+-- Name: disposal_documents inventory_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.disposal_documents
+    ADD CONSTRAINT inventory_fk FOREIGN KEY (inventory_number) REFERENCES library.copies_of_books(inventory_number) NOT VALID;
+
+
+--
+-- TOC entry 3636 (class 2606 OID 33478)
+-- Name: composition_books_delivery invoice_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.composition_books_delivery
+    ADD CONSTRAINT invoice_fk FOREIGN KEY (invoice_number) REFERENCES library.invoice_from_supplier(invoice_number) NOT VALID;
+
+
+--
+-- TOC entry 3633 (class 2606 OID 33453)
+-- Name: history_job job_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.history_job
+    ADD CONSTRAINT job_fk FOREIGN KEY (id_job_title) REFERENCES library.job_title(id_job_title) NOT VALID;
+
+
+--
+-- TOC entry 3628 (class 2606 OID 33428)
+-- Name: book_distribution reader; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.book_distribution
+    ADD CONSTRAINT reader FOREIGN KEY (library_card) REFERENCES library.reader(library_card) NOT VALID;
+
+
+--
+-- TOC entry 3855 (class 0 OID 0)
+-- Dependencies: 3628
+-- Name: CONSTRAINT reader ON book_distribution; Type: COMMENT; Schema: library; Owner: postgres
+--
+
+COMMENT ON CONSTRAINT reader ON library.book_distribution IS 'Читательский билет';
+
+
+--
+-- TOC entry 3642 (class 2606 OID 33498)
+-- Name: composition_books_reader reader_act_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.composition_books_reader
+    ADD CONSTRAINT reader_act_fk FOREIGN KEY (reader_act) REFERENCES library.act_reader(reader_act) NOT VALID;
+
+
+--
+-- TOC entry 3624 (class 2606 OID 33418)
+-- Name: copies_of_books reader_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.copies_of_books
+    ADD CONSTRAINT reader_fk FOREIGN KEY (reader_act) REFERENCES library.act_reader(reader_act) NOT VALID;
+
+
+--
+-- TOC entry 3625 (class 2606 OID 33408)
+-- Name: copies_of_books storage_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.copies_of_books
+    ADD CONSTRAINT storage_fk FOREIGN KEY (storage_id) REFERENCES library.storage_location(storage_id) NOT VALID;
+
+
+--
+-- TOC entry 3626 (class 2606 OID 33423)
+-- Name: copies_of_books supplier_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.copies_of_books
+    ADD CONSTRAINT supplier_fk FOREIGN KEY (dealer_act) REFERENCES library.act_from_supplier(act_number_supplier) NOT VALID;
+
+
+--
+-- TOC entry 3637 (class 2606 OID 33473)
+-- Name: composition_books_delivery supplier_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.composition_books_delivery
+    ADD CONSTRAINT supplier_fk FOREIGN KEY (act_number_supplier) REFERENCES library.act_from_supplier(act_number_supplier) NOT VALID;
+
+
+--
+-- TOC entry 3631 (class 2606 OID 33448)
+-- Name: disposal_documents write-off_fk; Type: FK CONSTRAINT; Schema: library; Owner: postgres
+--
+
+ALTER TABLE ONLY library.disposal_documents
+    ADD CONSTRAINT "write-off_fk" FOREIGN KEY (id_act_write_off) REFERENCES library.act_write_off(id_act_write_off) NOT VALID;
+
+
+-- Completed on 2025-06-19 21:56:44 MSK
+
+--
+-- PostgreSQL database dump complete
+--
+
