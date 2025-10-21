@@ -169,9 +169,9 @@ RAMUS [здесь](https://drive.google.com/drive/folders/1hBK-TaCIPwG-Dmq94XyIV
 
 Модель БД в нотации IDEF1X выполняется в Erwin Data Modeler (или аналоге). 
 
-Старая версия доступна [здесь]().
+Старая версия доступна в чате по дисциплине.
 
-Пример и объяснение того, как сделать модель данных в нотации IDEF1X, можно посмотреть [здесь]()
+Пример и объяснение того, как сделать модель данных в нотации IDEF1X, можно посмотреть [здесь](https://disk.yandex.ru/d/4hZFLOI2tWhkxg/1%20%D1%81%D0%B5%D0%BC%D0%B5%D1%81%D1%82%D1%80/%D0%9A%D0%BE%D0%BD%D1%81%D1%83%D0%BB%D1%8C%D1%82%D0%B0%D1%86%D0%B8%D1%8F%2006.11.2024.mp4)
 
 Дополнительный лабораторный практикум по Erwin Data Modeler [здесь](https://docs.google.com/document/d/102y02E9dIAetd1EeEaIKH4au0HrbGTch/edit?usp=drive_link&ouid=112553411084970929730&rtpof=true&sd=true)
 
