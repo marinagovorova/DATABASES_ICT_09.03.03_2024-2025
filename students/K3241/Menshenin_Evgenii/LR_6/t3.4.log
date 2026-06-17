@@ -1,0 +1,96 @@
+learn> db.towns.deleteMany({});
+{ acknowledged: true, deletedCount: 3 }
+learn> db.towns.insertMany([
+...   {
+...     name: "Punxsutawney", 
+...     popujatiuon: 6200, 
+...     last_sensus: ISODate("2008-01-31"), 
+...     famous_for: ["phil the groundhog"], 
+...     mayor: {
+...       name: "Jim Wehrle" 
+...     }
+...   },
+...   {
+...     name: "New York", 
+...     popujatiuon: 22200000, 
+...     last_sensus: ISODate("2009-07-31"), 
+...     famous_for: ["status of liberty", "food"], 
+...     mayor: {
+...       name: "Michael Bloomberg", 
+...       party: "I"
+...     }
+...   },
+...   {
+...     name: "Portland", 
+...     popujatiuon: 528000, 
+...     last_sensus: ISODate("2009-07-20"), 
+...     famous_for: ["beer", "food"], 
+...     mayor: {
+...       name: "Sam Adams", 
+...       party: "D"
+...     }
+...   }
+... ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6833127e5b810f068d544cb7'),
+    '1': ObjectId('6833127e5b810f068d544cb8'),
+    '2': ObjectId('6833127e5b810f068d544cb9')
+  }
+}
+learn> db.towns.find();
+[
+  {
+    _id: ObjectId('6833127e5b810f068d544cb7'),
+    name: 'Punxsutawney',
+    popujatiuon: 6200,
+    last_sensus: ISODate('2008-01-31T00:00:00.000Z'),
+    famous_for: [ 'phil the groundhog' ],
+    mayor: { name: 'Jim Wehrle' }
+  },
+  {
+    _id: ObjectId('6833127e5b810f068d544cb8'),
+    name: 'New York',
+    popujatiuon: 22200000,
+    last_sensus: ISODate('2009-07-31T00:00:00.000Z'),
+    famous_for: [ 'status of liberty', 'food' ],
+    mayor: { name: 'Michael Bloomberg', party: 'I' }
+  },
+  {
+    _id: ObjectId('6833127e5b810f068d544cb9'),
+    name: 'Portland',
+    popujatiuon: 528000,
+    last_sensus: ISODate('2009-07-20T00:00:00.000Z'),
+    famous_for: [ 'beer', 'food' ],
+    mayor: { name: 'Sam Adams', party: 'D' }
+  }
+]
+learn> db.towns.deleteMany({"mayor.party": {$exists: false}});
+{ acknowledged: true, deletedCount: 1 }
+learn> 
+
+learn> db.towns.find();
+[
+  {
+    _id: ObjectId('6833127e5b810f068d544cb8'),
+    name: 'New York',
+    popujatiuon: 22200000,
+    last_sensus: ISODate('2009-07-31T00:00:00.000Z'),
+    famous_for: [ 'status of liberty', 'food' ],
+    mayor: { name: 'Michael Bloomberg', party: 'I' }
+  },
+  {
+    _id: ObjectId('6833127e5b810f068d544cb9'),
+    name: 'Portland',
+    popujatiuon: 528000,
+    last_sensus: ISODate('2009-07-20T00:00:00.000Z'),
+    famous_for: [ 'beer', 'food' ],
+    mayor: { name: 'Sam Adams', party: 'D' }
+  }
+]
+learn> db.towns.deleteMany({});
+{ acknowledged: true, deletedCount: 2 }
+learn> db.getCollectionNames();
+[ 'unicorns', 'towns', 'numbers', 'habitats' ]
+learn> 

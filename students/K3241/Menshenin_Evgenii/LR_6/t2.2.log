@@ -1,0 +1,261 @@
+learn> db.unicorns.find({gender: 'f'}).sort({name: 1}).limit(3);
+[
+  {
+    _id: ObjectId('68330e005b810f068d544ca8'),
+    name: 'Aurora',
+    loves: [ 'carrot', 'grape' ],
+    weight: 450,
+    gender: 'f',
+    vampires: 43
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca8'),
+    name: 'Aurora',
+    loves: [ 'carrot', 'grape', 'sugar', 'lemon' ],
+    weight: 450,
+    gender: 'f',
+    vampires: 43,
+    habitat: DBRef('habitats', 'forest')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cac'),
+    name: 'Ayna',
+    loves: [ 'strawberry', 'lemon' ],
+    weight: 800,
+    gender: 'f',
+    vampires: 51
+  }
+]
+learn> db.unicorns.findOne({gender: 'f', loves: 'carrot'});
+{
+  _id: ObjectId('68330d6fbdb7be45f2544ca8'),
+  name: 'Aurora',
+  loves: [ 'carrot', 'grape', 'sugar', 'lemon' ],
+  weight: 450,
+  gender: 'f',
+  vampires: 43,
+  habitat: DBRef('habitats', 'forest')
+}
+learn> db.unicorns.find({gender: 'f', loves: 'carrot'}).limit(1);
+[
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544ca8'),
+    name: 'Aurora',
+    loves: [ 'carrot', 'grape', 'sugar', 'lemon' ],
+    weight: 450,
+    gender: 'f',
+    vampires: 43,
+    habitat: DBRef('habitats', 'forest')
+  }
+]
+learn> db.unicorns.find({gender: 'm'}, {loves: 0, gender: 0, _id: 0});
+[
+  { name: 'Horny', weight: 600, vampires: 68 },
+  {
+    name: 'Unicrom',
+    weight: 984,
+    vampires: 187,
+    habitat: DBRef('habitats', 'mountain')
+  },
+  { name: 'Roooooodles', weight: 575, vampires: 104 },
+  { name: 'Kenny', weight: 690, vampires: 44 },
+  { name: 'Raleigh', weight: 421, vampires: 7 },
+  { name: 'Pilot', weight: 650, vampires: 59 },
+  { name: 'Dunx', weight: 704, vampires: 170 },
+  { name: 'Barny', weight: 340, vampires: 5 },
+  { name: 'Horny', weight: 600, vampires: 63 },
+  { name: 'Unicrom', weight: 984, vampires: 182 },
+  { name: 'Roooooodles', weight: 575, vampires: 99 },
+  { name: 'Kenny', weight: 690, vampires: 39 },
+  { name: 'Raleigh', weight: 421, vampires: 2 },
+  { name: 'Pilot', weight: 650, vampires: 54 },
+  { name: 'Dunx', weight: 704, vampires: 165 }
+]
+learn> db.unicorns.find().sort({$natural: -1});
+[
+  {
+    _id: ObjectId('68330e075b810f068d544cb2'),
+    name: 'Dunx',
+    loves: [ 'grape', 'watermelon' ],
+    weight: 704,
+    gender: 'm',
+    vampires: 165
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cb1'),
+    name: 'Nimue',
+    loves: [ 'grape', 'carrot' ],
+    weight: 540,
+    gender: 'f'
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cb0'),
+    name: 'Pilot',
+    loves: [ 'apple', 'watermelon' ],
+    weight: 650,
+    gender: 'm',
+    vampires: 54
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544caf'),
+    name: 'Leia',
+    loves: [ 'apple', 'watermelon' ],
+    weight: 601,
+    gender: 'f',
+    vampires: 33
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cae'),
+    name: 'Raleigh',
+    loves: [ 'apple', 'sugar' ],
+    weight: 421,
+    gender: 'm',
+    vampires: 2
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cad'),
+    name: 'Kenny',
+    loves: [ 'grape', 'lemon' ],
+    weight: 690,
+    gender: 'm',
+    vampires: 39
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cac'),
+    name: 'Ayna',
+    loves: [ 'strawberry', 'lemon' ],
+    weight: 733,
+    gender: 'f',
+    vampires: 40
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544cab'),
+    name: 'Solnara',
+    loves: [ 'apple', 'carrot', 'chocolate' ],
+    weight: 550,
+    gender: 'f',
+    vampires: 80
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544caa'),
+    name: 'Roooooodles',
+    loves: [ 'apple' ],
+    weight: 575,
+    gender: 'm',
+    vampires: 99
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca9'),
+    name: 'Unicrom',
+    loves: [ 'energon', 'redbull' ],
+    weight: 984,
+    gender: 'm',
+    vampires: 182
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca8'),
+    name: 'Aurora',
+    loves: [ 'carrot', 'grape' ],
+    weight: 450,
+    gender: 'f',
+    vampires: 43
+  },
+  {
+    _id: ObjectId('68330e005b810f068d544ca7'),
+    name: 'Horny',
+    loves: [ 'carrot', 'papaya' ],
+    weight: 600,
+    gender: 'm',
+    vampires: 63
+  },
+  {
+    _id: ObjectId('68330d72bdb7be45f2544cb6'),
+    name: 'Barny',
+    loves: [ 'grape' ],
+    weight: 340,
+    gender: 'm',
+    vampires: 5
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb2'),
+    name: 'Dunx',
+    loves: [ 'grape', 'watermelon' ],
+    weight: 704,
+    gender: 'm',
+    vampires: 170
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb1'),
+    name: 'Nimue',
+    loves: [ 'grape', 'carrot' ],
+    weight: 540,
+    gender: 'f',
+    habitat: DBRef('habitats', 'valley')
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cb0'),
+    name: 'Pilot',
+    loves: [ 'apple', 'watermelon', 'chocolate' ],
+    weight: 650,
+    gender: 'm',
+    vampires: 59
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544caf'),
+    name: 'Leia',
+    loves: [ 'apple', 'watermelon' ],
+    weight: 601,
+    gender: 'f',
+    vampires: 33
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cae'),
+    name: 'Raleigh',
+    loves: [ 'apple', 'sugar', 'redbull' ],
+    weight: 421,
+    gender: 'm',
+    vampires: 7
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cad'),
+    name: 'Kenny',
+    loves: [ 'grape', 'lemon' ],
+    weight: 690,
+    gender: 'm',
+    vampires: 44
+  },
+  {
+    _id: ObjectId('68330d6fbdb7be45f2544cac'),
+    name: 'Ayna',
+    loves: [ 'strawberry', 'lemon' ],
+    weight: 800,
+    gender: 'f',
+    vampires: 51
+  }
+]
+Type "it" for more
+learn> db.unicorns.find({}, {name: 1, loves: {$slice: 1}, _id: 0});
+[
+  { name: 'Horny', loves: [ 'carrot' ] },
+  { name: 'Aurora', loves: [ 'carrot' ] },
+  { name: 'Unicrom', loves: [ 'energon' ] },
+  { name: 'Roooooodles', loves: [ 'apple' ] },
+  { name: 'Solnara', loves: [ 'apple' ] },
+  { name: 'Ayna', loves: [ 'strawberry' ] },
+  { name: 'Kenny', loves: [ 'grape' ] },
+  { name: 'Raleigh', loves: [ 'apple' ] },
+  { name: 'Leia', loves: [ 'apple' ] },
+  { name: 'Pilot', loves: [ 'apple' ] },
+  { name: 'Nimue', loves: [ 'grape' ] },
+  { name: 'Dunx', loves: [ 'grape' ] },
+  { name: 'Barny', loves: [ 'grape' ] },
+  { name: 'Horny', loves: [ 'carrot' ] },
+  { name: 'Aurora', loves: [ 'carrot' ] },
+  { name: 'Unicrom', loves: [ 'energon' ] },
+  { name: 'Roooooodles', loves: [ 'apple' ] },
+  { name: 'Solnara', loves: [ 'apple' ] },
+  { name: 'Ayna', loves: [ 'strawberry' ] },
+  { name: 'Kenny', loves: [ 'grape' ] }
+]
+Type "it" for more
+learn> 

@@ -1,0 +1,5 @@
+learn>   db.unicorns.dropIndex("name_1");
+{ nIndexesWas: 2, ok: 1 }
+learn>   db.unicorns.dropIndex("_id_");
+MongoServerError[InvalidOptions]: cannot drop _id index
+learn> 

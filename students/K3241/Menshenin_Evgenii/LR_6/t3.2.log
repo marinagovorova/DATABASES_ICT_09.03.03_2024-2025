@@ -1,0 +1,23 @@
+learn> print(db.unicorns.find({gender: 'f', weight: {$gte: 500, $lte: 600}}).count());
+4
+
+learn> print(db.unicorns.distinct("loves"));
+[
+  'apple',      'carrot',
+  'chocolate',  'energon',
+  'grape',      'lemon',
+  'papaya',     'redbull',
+  'strawberry', 'sugar',
+  'watermelon'
+]
+
+learn> db.unicorns.aggregate([
+...   {
+...     $group: {
+...       _id: "$gender",
+...       count: {$sum: 1}
+...     }
+...   }
+... ]);
+[ { _id: 'm', count: 15 }, { _id: 'f', count: 10 } ]
+learn> 
