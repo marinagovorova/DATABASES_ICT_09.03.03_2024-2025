@@ -1,0 +1,1612 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 15.12 (Homebrew)
+-- Dumped by pg_dump version 17.0
+
+-- Started on 2025-05-19 15:24:37 MSK
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 219 (class 1259 OID 16449)
+-- Name: BookOfHotel; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."BookOfHotel" (
+    id_book integer NOT NULL,
+    book_status character varying(14)[] NOT NULL,
+    date_start date NOT NULL,
+    date_end date NOT NULL,
+    id_client integer NOT NULL,
+    id_staff integer NOT NULL,
+    id_type integer NOT NULL,
+    additional_conveniences integer[],
+    price numeric(9,2) NOT NULL,
+    payed numeric(9,2) NOT NULL,
+    type_of_payment character varying(8)[] NOT NULL
+);
+
+
+ALTER TABLE public."BookOfHotel" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 223 (class 1259 OID 16482)
+-- Name: CheckIn; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."CheckIn" (
+    id_check_in integer NOT NULL,
+    date_check_in date NOT NULL,
+    date_check_out date NOT NULL,
+    id_client integer NOT NULL,
+    id_room integer NOT NULL,
+    id_staff integer NOT NULL,
+    id_book integer NOT NULL
+);
+
+
+ALTER TABLE public."CheckIn" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 224 (class 1259 OID 16487)
+-- Name: CleaningTime; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."CleaningTime" (
+    id_cleaning integer NOT NULL,
+    id_room integer NOT NULL,
+    id_staff integer NOT NULL,
+    cleaning_time time(0) without time zone NOT NULL,
+    date date NOT NULL,
+    cleaning_status character varying(8)[] NOT NULL
+);
+
+
+ALTER TABLE public."CleaningTime" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 220 (class 1259 OID 16456)
+-- Name: Client; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."Client" (
+    id_client integer NOT NULL,
+    name character varying(30)[] NOT NULL,
+    surname character varying(30)[] NOT NULL,
+    fathers_name character varying(30)[],
+    home_adress character varying(150)[] NOT NULL,
+    mobile_number character varying(20)[] NOT NULL,
+    email character varying(30)[] NOT NULL
+);
+
+
+ALTER TABLE public."Client" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 222 (class 1259 OID 16475)
+-- Name: ContractNumber; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."ContractNumber" (
+    contract_number integer NOT NULL,
+    beginning_of_contract date NOT NULL,
+    end_of_contract date NOT NULL,
+    number_of_job_days integer NOT NULL,
+    type_of_contract character varying(10)[] NOT NULL,
+    conditions character varying(150)[]
+);
+
+
+ALTER TABLE public."ContractNumber" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 217 (class 1259 OID 16435)
+-- Name: Convenience; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."Convenience" (
+    id_convenience integer NOT NULL,
+    name character varying(30)[] NOT NULL,
+    description character varying(150)[]
+);
+
+
+ALTER TABLE public."Convenience" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 3849 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: TABLE "Convenience"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON TABLE public."Convenience" IS 'Add convenience table';
+
+
+--
+-- TOC entry 218 (class 1259 OID 16442)
+-- Name: DiscountOnTypeOfRoom; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."DiscountOnTypeOfRoom" (
+    id_discount integer NOT NULL,
+    name character varying(30)[] NOT NULL,
+    description character varying(150)[],
+    percent_of_discount numeric(5,2) NOT NULL,
+    date_start_of_discount date NOT NULL,
+    date_end_of_discount date NOT NULL,
+    type_of_rooms integer[] NOT NULL
+);
+
+
+ALTER TABLE public."DiscountOnTypeOfRoom" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 215 (class 1259 OID 16390)
+-- Name: Hotel; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."Hotel" (
+    id_hotel integer NOT NULL,
+    city character varying(30)[] NOT NULL,
+    name character varying(30)[] NOT NULL,
+    num_of_rooms integer NOT NULL,
+    adress character varying(50)[] NOT NULL
+);
+
+
+ALTER TABLE public."Hotel" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 214 (class 1259 OID 16389)
+-- Name: Hotel_id_hotel_seq; Type: SEQUENCE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE SEQUENCE public."Hotel_id_hotel_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Hotel_id_hotel_seq" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 3850 (class 0 OID 0)
+-- Dependencies: 214
+-- Name: Hotel_id_hotel_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kovalevgleb
+--
+
+ALTER SEQUENCE public."Hotel_id_hotel_seq" OWNED BY public."Hotel".id_hotel;
+
+
+--
+-- TOC entry 216 (class 1259 OID 16409)
+-- Name: RoomInHotel; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."RoomInHotel" (
+    id_number integer NOT NULL,
+    id_hotel integer NOT NULL,
+    id_type integer NOT NULL,
+    room_number integer NOT NULL,
+    places_number integer NOT NULL,
+    status character varying(8)[] NOT NULL
+);
+
+
+ALTER TABLE public."RoomInHotel" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 3851 (class 0 OID 0)
+-- Dependencies: 216
+-- Name: TABLE "RoomInHotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON TABLE public."RoomInHotel" IS 'Creating table room from hotel';
+
+
+--
+-- TOC entry 221 (class 1259 OID 16468)
+-- Name: Staff; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."Staff" (
+    id_staff integer NOT NULL,
+    contract_number integer NOT NULL,
+    full_name character varying(150)[] NOT NULL,
+    job_title character varying(30)[] NOT NULL
+);
+
+
+ALTER TABLE public."Staff" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 225 (class 1259 OID 16495)
+-- Name: TypeOfRoom; Type: TABLE; Schema: public; Owner: kovalevgleb
+--
+
+CREATE TABLE public."TypeOfRoom" (
+    id_type integer NOT NULL,
+    name character varying(30)[] NOT NULL,
+    num_of_rooms integer NOT NULL,
+    num_of_places integer NOT NULL,
+    conveniences integer[],
+    base_price integer NOT NULL,
+    num_of_free_rooms integer NOT NULL
+);
+
+
+ALTER TABLE public."TypeOfRoom" OWNER TO kovalevgleb;
+
+--
+-- TOC entry 3577 (class 2604 OID 16393)
+-- Name: Hotel id_hotel; Type: DEFAULT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."Hotel" ALTER COLUMN id_hotel SET DEFAULT nextval('public."Hotel_id_hotel_seq"'::regclass);
+
+
+--
+-- TOC entry 3837 (class 0 OID 16449)
+-- Dependencies: 219
+-- Data for Name: BookOfHotel; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."BookOfHotel" (id_book, book_status, date_start, date_end, id_client, id_staff, id_type, additional_conveniences, price, payed, type_of_payment) FROM stdin;
+1	{Забронирован}	2025-05-10	2025-05-15	1	1	2	{1,2}	15000.00	5000.00	{Карта}
+2	{Заселен}	2025-06-01	2025-06-05	2	5	1	{3}	8000.00	8000.00	{Наличные}
+3	{Выселен}	2025-03-20	2025-03-25	3	5	3	{1}	25000.00	25000.00	{СБП}
+4	{"Ожидает оплату"}	2025-07-10	2025-07-12	4	1	1	{2,3}	9000.00	0.00	{Карта}
+5	{Отменен}	2025-08-01	2025-08-03	5	1	2	\N	12000.00	0.00	{Наличные}
+\.
+
+
+--
+-- TOC entry 3841 (class 0 OID 16482)
+-- Dependencies: 223
+-- Data for Name: CheckIn; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."CheckIn" (id_check_in, date_check_in, date_check_out, id_client, id_room, id_staff, id_book) FROM stdin;
+1	2025-05-10	2025-05-15	1	1	1	1
+2	2025-06-01	2025-06-05	2	2	5	2
+3	2025-07-12	2025-07-20	3	3	5	3
+\.
+
+
+--
+-- TOC entry 3842 (class 0 OID 16487)
+-- Dependencies: 224
+-- Data for Name: CleaningTime; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."CleaningTime" (id_cleaning, id_room, id_staff, cleaning_time, date, cleaning_status) FROM stdin;
+1	1	2	09:00:00	2025-05-10	{Убран}
+2	2	2	10:30:00	2025-05-10	{Убран}
+3	3	2	14:00:00	2025-05-11	{Убран}
+4	4	2	16:45:00	2025-05-12	{Убран}
+5	5	2	08:15:00	2025-05-12	{Убран}
+\.
+
+
+--
+-- TOC entry 3838 (class 0 OID 16456)
+-- Dependencies: 220
+-- Data for Name: Client; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."Client" (id_client, name, surname, fathers_name, home_adress, mobile_number, email) FROM stdin;
+1	{Иван}	{Петров}	{Сергеевич}	{"г Москва ул Арбат д 10"}	{+79161234567}	{ivan.petrov@mail.ru}
+2	{Мария}	{Иванова}	{Алексеевна}	{"г Санкт-Петербург пр Невский д 25"}	{+79261234567}	{m.ivanova@example.com}
+3	{Александр}	{Смирнов}	{Игоревич}	{"г Казань ул Баумана д 5"}	{+79371234567}	{smirnov.alex@mail.ru}
+4	{Ольга}	{Кузнецова}	{Владимировна}	{"г Екатеринбург ул Ленина д 8"}	{+79501234567}	{olga_kuz@example.com}
+5	{Дмитрий}	{Соколов}	{Михайлович}	{"г Новосибирск ул Красный проспект д 15"}	{+79051234567}	{d.sokolov@domain.ru}
+\.
+
+
+--
+-- TOC entry 3840 (class 0 OID 16475)
+-- Dependencies: 222
+-- Data for Name: ContractNumber; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."ContractNumber" (contract_number, beginning_of_contract, end_of_contract, number_of_job_days, type_of_contract, conditions) FROM stdin;
+1001	2025-01-15	2025-12-15	22	{Постоянный}	{"Полная занятость"}
+1002	2025-03-01	2025-08-31	15	{Сезонный}	{"Работа на летний период"}
+1003	2025-02-01	2025-12-01	20	{Постоянный}	{"Работа в техническом отделе"}
+1004	2025-04-10	2025-10-10	18	{Сезонный}	{"Охрана территории"}
+1005	2025-01-20	2025-11-20	25	{Постоянный}	{"Сменный график"}
+\.
+
+
+--
+-- TOC entry 3835 (class 0 OID 16435)
+-- Dependencies: 217
+-- Data for Name: Convenience; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."Convenience" (id_convenience, name, description) FROM stdin;
+1	{Кондиционер}	{"Поддерживает комфортную температуру в комнате"}
+2	{Телевизор}	{"Цифровое телевидение и потоковые сервисы"}
+3	{Мини-бар}	{"Ассортимент напитков и закусок"}
+4	{Сейф}	{"Для хранения ценных вещей"}
+5	{"Бесплатный Wi-Fi"}	{"Высокоскоростной доступ в интернет"}
+6	{Джакузи}	{"Гидромассажная ванна для расслабления"}
+\.
+
+
+--
+-- TOC entry 3836 (class 0 OID 16442)
+-- Dependencies: 218
+-- Data for Name: DiscountOnTypeOfRoom; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."DiscountOnTypeOfRoom" (id_discount, name, description, percent_of_discount, date_start_of_discount, date_end_of_discount, type_of_rooms) FROM stdin;
+1	{"Весенняя акция"}	{"Скидка на все номера в марте"}	15.00	2025-03-01	2025-03-31	{1,2,3}
+2	{"Летнее предложение"}	{"Скидка на номера с кондиционером"}	20.00	2025-06-01	2025-08-31	{2,3}
+3	{"Новогодняя скидка"}	{"Специальное предложение на праздники"}	25.00	2025-12-20	2025-12-31	{1,2}
+4	{"Осенний релакс"}	{"Скидка на джакузи-номера"}	18.50	2025-10-01	2025-10-31	{3}
+\.
+
+
+--
+-- TOC entry 3833 (class 0 OID 16390)
+-- Dependencies: 215
+-- Data for Name: Hotel; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."Hotel" (id_hotel, city, name, num_of_rooms, adress) FROM stdin;
+4	{Санкт-Петербург}	{"Отель Невский"}	80	{"Невский проспект"}
+5	{Казань}	{Татарстан}	150	{"ул Баумана"}
+6	{Новосибирск}	{Сибирь}	95	{"Красный проспект"}
+7	{Екатеринбург}	{Урал}	70	{"ул Ленина"}
+\.
+
+
+--
+-- TOC entry 3834 (class 0 OID 16409)
+-- Dependencies: 216
+-- Data for Name: RoomInHotel; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."RoomInHotel" (id_number, id_hotel, id_type, room_number, places_number, status) FROM stdin;
+1	4	2	101	2	{Свободен}
+2	4	1	102	1	{Занят}
+3	5	3	201	3	{Свободен}
+4	5	2	202	2	{Занят}
+5	6	1	301	1	{Свободен}
+\.
+
+
+--
+-- TOC entry 3839 (class 0 OID 16468)
+-- Dependencies: 221
+-- Data for Name: Staff; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."Staff" (id_staff, contract_number, full_name, job_title) FROM stdin;
+1	1001	{"Иванов Иван Иванович"}	{Администратор}
+2	1002	{"Петрова Мария Сергеевна"}	{Уборщик}
+3	1003	{"Сидоров Алексей Петрович"}	{Техник}
+4	1004	{"Кузнецова Ольга Владимировна"}	{Охранник}
+5	1005	{"Смирнов Дмитрий Александрович"}	{Администратор}
+\.
+
+
+--
+-- TOC entry 3843 (class 0 OID 16495)
+-- Dependencies: 225
+-- Data for Name: TypeOfRoom; Type: TABLE DATA; Schema: public; Owner: kovalevgleb
+--
+
+COPY public."TypeOfRoom" (id_type, name, num_of_rooms, num_of_places, conveniences, base_price, num_of_free_rooms) FROM stdin;
+1	{Одноместный}	20	1	{1,2,3}	3000	10
+2	{Двухместный}	30	2	{1,2,4,5}	5000	15
+3	{Люкс}	10	3	{1,2,3,4,5,6}	9000	4
+\.
+
+
+--
+-- TOC entry 3852 (class 0 OID 0)
+-- Dependencies: 214
+-- Name: Hotel_id_hotel_seq; Type: SEQUENCE SET; Schema: public; Owner: kovalevgleb
+--
+
+SELECT pg_catalog.setval('public."Hotel_id_hotel_seq"', 7, true);
+
+
+--
+-- TOC entry 3641 (class 2606 OID 16455)
+-- Name: BookOfHotel BookOfHotel_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."BookOfHotel"
+    ADD CONSTRAINT "BookOfHotel_pkey" PRIMARY KEY (id_book);
+
+
+--
+-- TOC entry 3661 (class 2606 OID 16486)
+-- Name: CheckIn CheckIn_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CheckIn"
+    ADD CONSTRAINT "CheckIn_pkey" PRIMARY KEY (id_check_in);
+
+
+--
+-- TOC entry 3578 (class 2606 OID 16398)
+-- Name: Hotel City_check; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Hotel"
+    ADD CONSTRAINT "City_check" CHECK ((array_to_string(city, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3853 (class 0 OID 0)
+-- Dependencies: 3578
+-- Name: CONSTRAINT "City_check" ON "Hotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT "City_check" ON public."Hotel" IS 'checking if city is in right form';
+
+
+--
+-- TOC entry 3667 (class 2606 OID 16493)
+-- Name: CleaningTime CleaningTime_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CleaningTime"
+    ADD CONSTRAINT "CleaningTime_pkey" PRIMARY KEY (id_cleaning);
+
+
+--
+-- TOC entry 3648 (class 2606 OID 16462)
+-- Name: Client Client_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."Client"
+    ADD CONSTRAINT "Client_pkey" PRIMARY KEY (id_client);
+
+
+--
+-- TOC entry 3657 (class 2606 OID 16481)
+-- Name: ContractNumber ContractNumber_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."ContractNumber"
+    ADD CONSTRAINT "ContractNumber_pkey" PRIMARY KEY (contract_number);
+
+
+--
+-- TOC entry 3633 (class 2606 OID 16441)
+-- Name: Convenience Convenience_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."Convenience"
+    ADD CONSTRAINT "Convenience_pkey" PRIMARY KEY (id_convenience);
+
+
+--
+-- TOC entry 3637 (class 2606 OID 16448)
+-- Name: DiscountOnTypeOfRoom DiscountOnTypeOfRoom_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."DiscountOnTypeOfRoom"
+    ADD CONSTRAINT "DiscountOnTypeOfRoom_pkey" PRIMARY KEY (id_discount);
+
+
+--
+-- TOC entry 3621 (class 2606 OID 16397)
+-- Name: Hotel Hotel_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."Hotel"
+    ADD CONSTRAINT "Hotel_pkey" PRIMARY KEY (id_hotel);
+
+
+--
+-- TOC entry 3625 (class 2606 OID 16415)
+-- Name: RoomInHotel RoomInHotel_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."RoomInHotel"
+    ADD CONSTRAINT "RoomInHotel_pkey" PRIMARY KEY (id_number);
+
+
+--
+-- TOC entry 3652 (class 2606 OID 16474)
+-- Name: Staff Staff_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."Staff"
+    ADD CONSTRAINT "Staff_pkey" PRIMARY KEY (id_staff);
+
+
+--
+-- TOC entry 3673 (class 2606 OID 16501)
+-- Name: TypeOfRoom TypeOfRoom_pkey; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."TypeOfRoom"
+    ADD CONSTRAINT "TypeOfRoom_pkey" PRIMARY KEY (id_type);
+
+
+--
+-- TOC entry 3579 (class 2606 OID 16401)
+-- Name: Hotel check_adress; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Hotel"
+    ADD CONSTRAINT check_adress CHECK ((array_to_string(adress, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3854 (class 0 OID 0)
+-- Dependencies: 3579
+-- Name: CONSTRAINT check_adress ON "Hotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_adress ON public."Hotel" IS 'Chicking if adress is valid';
+
+
+--
+-- TOC entry 3598 (class 2606 OID 16631)
+-- Name: Client check_adress; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Client"
+    ADD CONSTRAINT check_adress CHECK ((array_to_string(home_adress, ''::text) ~ '^[А-Яа-яЁё0-9\s\-,\.]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3855 (class 0 OID 0)
+-- Dependencies: 3598
+-- Name: CONSTRAINT check_adress ON "Client"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_adress ON public."Client" IS 'Checking if adress is valid';
+
+
+--
+-- TOC entry 3615 (class 2606 OID 16513)
+-- Name: TypeOfRoom check_base_price; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."TypeOfRoom"
+    ADD CONSTRAINT check_base_price CHECK ((base_price > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3606 (class 2606 OID 16561)
+-- Name: ContractNumber check_begin; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."ContractNumber"
+    ADD CONSTRAINT check_begin CHECK (((beginning_of_contract >= '2025-01-01'::date) AND (beginning_of_contract <= '2025-12-31'::date))) NOT VALID;
+
+
+--
+-- TOC entry 3856 (class 0 OID 0)
+-- Dependencies: 3606
+-- Name: CONSTRAINT check_begin ON "ContractNumber"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_begin ON public."ContractNumber" IS 'Checking if begin is valid';
+
+
+--
+-- TOC entry 3611 (class 2606 OID 16567)
+-- Name: CheckIn check_check_in; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."CheckIn"
+    ADD CONSTRAINT check_check_in CHECK (((date_check_in >= '2025-01-01'::date) AND (date_check_in <= '2025-12-31'::date))) NOT VALID;
+
+
+--
+-- TOC entry 3857 (class 0 OID 0)
+-- Dependencies: 3611
+-- Name: CONSTRAINT check_check_in ON "CheckIn"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_check_in ON public."CheckIn" IS 'Checking if check in is valid';
+
+
+--
+-- TOC entry 3612 (class 2606 OID 16568)
+-- Name: CheckIn check_check_out; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."CheckIn"
+    ADD CONSTRAINT check_check_out CHECK (((date_check_out >= '2025-01-01'::date) AND (date_check_out <= '2025-12-31'::date) AND (date_check_in <= date_check_out))) NOT VALID;
+
+
+--
+-- TOC entry 3858 (class 0 OID 0)
+-- Dependencies: 3612
+-- Name: CONSTRAINT check_check_out ON "CheckIn"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_check_out ON public."CheckIn" IS 'Checking if check out is valid ';
+
+
+--
+-- TOC entry 3607 (class 2606 OID 16566)
+-- Name: ContractNumber check_conditions; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."ContractNumber"
+    ADD CONSTRAINT check_conditions CHECK ((array_to_string(conditions, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3859 (class 0 OID 0)
+-- Dependencies: 3607
+-- Name: CONSTRAINT check_conditions ON "ContractNumber"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_conditions ON public."ContractNumber" IS 'Checking if conditions is valid';
+
+
+--
+-- TOC entry 3613 (class 2606 OID 16601)
+-- Name: CleaningTime check_date; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."CleaningTime"
+    ADD CONSTRAINT check_date CHECK (((date >= '2025-01-01'::date) AND (date <= '2025-12-31'::date))) NOT VALID;
+
+
+--
+-- TOC entry 3860 (class 0 OID 0)
+-- Dependencies: 3613
+-- Name: CONSTRAINT check_date ON "CleaningTime"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_date ON public."CleaningTime" IS 'Checking if date is valid';
+
+
+--
+-- TOC entry 3585 (class 2606 OID 16516)
+-- Name: Convenience check_description; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Convenience"
+    ADD CONSTRAINT check_description CHECK ((array_to_string(description, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3861 (class 0 OID 0)
+-- Dependencies: 3585
+-- Name: CONSTRAINT check_description ON "Convenience"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_description ON public."Convenience" IS 'Checking if description is valid';
+
+
+--
+-- TOC entry 3587 (class 2606 OID 16518)
+-- Name: DiscountOnTypeOfRoom check_description; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."DiscountOnTypeOfRoom"
+    ADD CONSTRAINT check_description CHECK ((array_to_string(description, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3862 (class 0 OID 0)
+-- Dependencies: 3587
+-- Name: CONSTRAINT check_description ON "DiscountOnTypeOfRoom"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_description ON public."DiscountOnTypeOfRoom" IS 'Checking if description is valid';
+
+
+--
+-- TOC entry 3599 (class 2606 OID 16552)
+-- Name: Client check_email; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Client"
+    ADD CONSTRAINT check_email CHECK ((array_to_string(email, ''::text) ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3863 (class 0 OID 0)
+-- Dependencies: 3599
+-- Name: CONSTRAINT check_email ON "Client"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_email ON public."Client" IS 'Checking if email is valid';
+
+
+--
+-- TOC entry 3588 (class 2606 OID 16521)
+-- Name: DiscountOnTypeOfRoom check_end; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."DiscountOnTypeOfRoom"
+    ADD CONSTRAINT check_end CHECK (((date_end_of_discount >= '2025-01-01'::date) AND (date_end_of_discount <= '2025-12-31'::date))) NOT VALID;
+
+
+--
+-- TOC entry 3864 (class 0 OID 0)
+-- Dependencies: 3588
+-- Name: CONSTRAINT check_end ON "DiscountOnTypeOfRoom"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_end ON public."DiscountOnTypeOfRoom" IS 'Checking if end date is valid';
+
+
+--
+-- TOC entry 3592 (class 2606 OID 16524)
+-- Name: BookOfHotel check_end; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."BookOfHotel"
+    ADD CONSTRAINT check_end CHECK (((date_end >= '2025-01-01'::date) AND (date_end <= '2025-12-31'::date) AND (date_end >= date_start))) NOT VALID;
+
+
+--
+-- TOC entry 3865 (class 0 OID 0)
+-- Dependencies: 3592
+-- Name: CONSTRAINT check_end ON "BookOfHotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_end ON public."BookOfHotel" IS 'Checking if end is valid';
+
+
+--
+-- TOC entry 3608 (class 2606 OID 16562)
+-- Name: ContractNumber check_end; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."ContractNumber"
+    ADD CONSTRAINT check_end CHECK (((end_of_contract >= '2025-01-01'::date) AND (end_of_contract <= '2025-12-31'::date) AND (beginning_of_contract <= end_of_contract))) NOT VALID;
+
+
+--
+-- TOC entry 3866 (class 0 OID 0)
+-- Dependencies: 3608
+-- Name: CONSTRAINT check_end ON "ContractNumber"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_end ON public."ContractNumber" IS 'Checking if end is valid';
+
+
+--
+-- TOC entry 3600 (class 2606 OID 16549)
+-- Name: Client check_fathers_name; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Client"
+    ADD CONSTRAINT check_fathers_name CHECK ((array_to_string(fathers_name, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3867 (class 0 OID 0)
+-- Dependencies: 3600
+-- Name: CONSTRAINT check_fathers_name ON "Client"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_fathers_name ON public."Client" IS 'Checking if fathers name is valid';
+
+
+--
+-- TOC entry 3609 (class 2606 OID 16563)
+-- Name: ContractNumber check_job_days; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."ContractNumber"
+    ADD CONSTRAINT check_job_days CHECK (((number_of_job_days >= 0) AND (number_of_job_days <= 31))) NOT VALID;
+
+
+--
+-- TOC entry 3868 (class 0 OID 0)
+-- Dependencies: 3609
+-- Name: CONSTRAINT check_job_days ON "ContractNumber"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_job_days ON public."ContractNumber" IS 'Checking if job days is valid';
+
+
+--
+-- TOC entry 3604 (class 2606 OID 16560)
+-- Name: Staff check_job_title; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Staff"
+    ADD CONSTRAINT check_job_title CHECK ((array_to_string(job_title, ''::text) = ANY (ARRAY['Администратор'::text, 'Уборщик'::text, 'Техник'::text, 'Охранник'::text]))) NOT VALID;
+
+
+--
+-- TOC entry 3869 (class 0 OID 0)
+-- Dependencies: 3604
+-- Name: CONSTRAINT check_job_title ON "Staff"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_job_title ON public."Staff" IS 'Checking if job is in the list';
+
+
+--
+-- TOC entry 3580 (class 2606 OID 16399)
+-- Name: Hotel check_name; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Hotel"
+    ADD CONSTRAINT check_name CHECK ((array_to_string(name, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3870 (class 0 OID 0)
+-- Dependencies: 3580
+-- Name: CONSTRAINT check_name ON "Hotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_name ON public."Hotel" IS 'Checking if name is valid';
+
+
+--
+-- TOC entry 3616 (class 2606 OID 16510)
+-- Name: TypeOfRoom check_name; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."TypeOfRoom"
+    ADD CONSTRAINT check_name CHECK ((array_to_string(name, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3586 (class 2606 OID 16515)
+-- Name: Convenience check_name; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Convenience"
+    ADD CONSTRAINT check_name CHECK ((array_to_string(name, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3871 (class 0 OID 0)
+-- Dependencies: 3586
+-- Name: CONSTRAINT check_name ON "Convenience"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_name ON public."Convenience" IS 'Checking if name is valid';
+
+
+--
+-- TOC entry 3589 (class 2606 OID 16517)
+-- Name: DiscountOnTypeOfRoom check_name; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."DiscountOnTypeOfRoom"
+    ADD CONSTRAINT check_name CHECK ((array_to_string(name, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3872 (class 0 OID 0)
+-- Dependencies: 3589
+-- Name: CONSTRAINT check_name ON "DiscountOnTypeOfRoom"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_name ON public."DiscountOnTypeOfRoom" IS 'Checking if name is valid';
+
+
+--
+-- TOC entry 3601 (class 2606 OID 16547)
+-- Name: Client check_name; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Client"
+    ADD CONSTRAINT check_name CHECK ((array_to_string(name, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3873 (class 0 OID 0)
+-- Dependencies: 3601
+-- Name: CONSTRAINT check_name ON "Client"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_name ON public."Client" IS 'Checking if name is valid';
+
+
+--
+-- TOC entry 3605 (class 2606 OID 16559)
+-- Name: Staff check_name; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Staff"
+    ADD CONSTRAINT check_name CHECK ((array_to_string(full_name, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3874 (class 0 OID 0)
+-- Dependencies: 3605
+-- Name: CONSTRAINT check_name ON "Staff"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_name ON public."Staff" IS 'Checking if name is valid';
+
+
+--
+-- TOC entry 3581 (class 2606 OID 16400)
+-- Name: Hotel check_num; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Hotel"
+    ADD CONSTRAINT check_num CHECK ((num_of_rooms > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3875 (class 0 OID 0)
+-- Dependencies: 3581
+-- Name: CONSTRAINT check_num ON "Hotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_num ON public."Hotel" IS 'Checking if num > 0';
+
+
+--
+-- TOC entry 3617 (class 2606 OID 16514)
+-- Name: TypeOfRoom check_num_of_free_rooms; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."TypeOfRoom"
+    ADD CONSTRAINT check_num_of_free_rooms CHECK ((num_of_free_rooms <= num_of_rooms)) NOT VALID;
+
+
+--
+-- TOC entry 3618 (class 2606 OID 16512)
+-- Name: TypeOfRoom check_num_of_places; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."TypeOfRoom"
+    ADD CONSTRAINT check_num_of_places CHECK ((num_of_places > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3619 (class 2606 OID 16511)
+-- Name: TypeOfRoom check_num_of_rooms; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."TypeOfRoom"
+    ADD CONSTRAINT check_num_of_rooms CHECK ((num_of_rooms > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3593 (class 2606 OID 16544)
+-- Name: BookOfHotel check_payed; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."BookOfHotel"
+    ADD CONSTRAINT check_payed CHECK (((payed >= (0)::numeric) AND (payed <= price))) NOT VALID;
+
+
+--
+-- TOC entry 3876 (class 0 OID 0)
+-- Dependencies: 3593
+-- Name: CONSTRAINT check_payed ON "BookOfHotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_payed ON public."BookOfHotel" IS 'Checking if payed is valid';
+
+
+--
+-- TOC entry 3590 (class 2606 OID 16519)
+-- Name: DiscountOnTypeOfRoom check_persent; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."DiscountOnTypeOfRoom"
+    ADD CONSTRAINT check_persent CHECK (((percent_of_discount > (0)::numeric) AND (percent_of_discount <= (100)::numeric))) NOT VALID;
+
+
+--
+-- TOC entry 3877 (class 0 OID 0)
+-- Dependencies: 3590
+-- Name: CONSTRAINT check_persent ON "DiscountOnTypeOfRoom"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_persent ON public."DiscountOnTypeOfRoom" IS 'Check if persent is valid';
+
+
+--
+-- TOC entry 3602 (class 2606 OID 16551)
+-- Name: Client check_phone; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Client"
+    ADD CONSTRAINT check_phone CHECK ((array_to_string(mobile_number, ''::text) ~ '^\+\d{1,15}$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3878 (class 0 OID 0)
+-- Dependencies: 3602
+-- Name: CONSTRAINT check_phone ON "Client"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_phone ON public."Client" IS 'Checking if phone is valid';
+
+
+--
+-- TOC entry 3582 (class 2606 OID 16509)
+-- Name: RoomInHotel check_places_number; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."RoomInHotel"
+    ADD CONSTRAINT check_places_number CHECK ((places_number > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3594 (class 2606 OID 16545)
+-- Name: BookOfHotel check_price; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."BookOfHotel"
+    ADD CONSTRAINT check_price CHECK ((price >= (0)::numeric)) NOT VALID;
+
+
+--
+-- TOC entry 3879 (class 0 OID 0)
+-- Dependencies: 3594
+-- Name: CONSTRAINT check_price ON "BookOfHotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_price ON public."BookOfHotel" IS 'Checking if price is valid';
+
+
+--
+-- TOC entry 3583 (class 2606 OID 16508)
+-- Name: RoomInHotel check_room_number; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."RoomInHotel"
+    ADD CONSTRAINT check_room_number CHECK ((room_number > 0)) NOT VALID;
+
+
+--
+-- TOC entry 3591 (class 2606 OID 16520)
+-- Name: DiscountOnTypeOfRoom check_start; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."DiscountOnTypeOfRoom"
+    ADD CONSTRAINT check_start CHECK (((date_start_of_discount >= '2025-01-01'::date) AND (date_start_of_discount <= '2025-12-31'::date))) NOT VALID;
+
+
+--
+-- TOC entry 3880 (class 0 OID 0)
+-- Dependencies: 3591
+-- Name: CONSTRAINT check_start ON "DiscountOnTypeOfRoom"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_start ON public."DiscountOnTypeOfRoom" IS 'Checking if start is valid';
+
+
+--
+-- TOC entry 3595 (class 2606 OID 16523)
+-- Name: BookOfHotel check_start; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."BookOfHotel"
+    ADD CONSTRAINT check_start CHECK (((date_start >= '2025-01-01'::date) AND (date_start <= '2025-12-31'::date))) NOT VALID;
+
+
+--
+-- TOC entry 3881 (class 0 OID 0)
+-- Dependencies: 3595
+-- Name: CONSTRAINT check_start ON "BookOfHotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_start ON public."BookOfHotel" IS 'Checking if start is valid';
+
+
+--
+-- TOC entry 3584 (class 2606 OID 16507)
+-- Name: RoomInHotel check_status; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."RoomInHotel"
+    ADD CONSTRAINT check_status CHECK ((array_to_string(status, ''::text) = ANY (ARRAY['Свободен'::text, 'Занят'::text]))) NOT VALID;
+
+
+--
+-- TOC entry 3882 (class 0 OID 0)
+-- Dependencies: 3584
+-- Name: CONSTRAINT check_status ON "RoomInHotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_status ON public."RoomInHotel" IS 'Checking if status is valid';
+
+
+--
+-- TOC entry 3596 (class 2606 OID 16522)
+-- Name: BookOfHotel check_status; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."BookOfHotel"
+    ADD CONSTRAINT check_status CHECK ((array_to_string(book_status, ''::text) = ANY (ARRAY['Забронирован'::text, 'Заселен'::text, 'Ожидает оплату'::text, 'Выселен'::text, 'Отменен'::text]))) NOT VALID;
+
+
+--
+-- TOC entry 3883 (class 0 OID 0)
+-- Dependencies: 3596
+-- Name: CONSTRAINT check_status ON "BookOfHotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_status ON public."BookOfHotel" IS 'Checking if status is in the list';
+
+
+--
+-- TOC entry 3614 (class 2606 OID 16602)
+-- Name: CleaningTime check_status; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."CleaningTime"
+    ADD CONSTRAINT check_status CHECK ((array_to_string(cleaning_status, ''::text) = ANY (ARRAY['Убран'::text, 'Не убран'::text]))) NOT VALID;
+
+
+--
+-- TOC entry 3884 (class 0 OID 0)
+-- Dependencies: 3614
+-- Name: CONSTRAINT check_status ON "CleaningTime"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_status ON public."CleaningTime" IS 'Checking if status is valid';
+
+
+--
+-- TOC entry 3603 (class 2606 OID 16548)
+-- Name: Client check_surname; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."Client"
+    ADD CONSTRAINT check_surname CHECK ((array_to_string(surname, ''::text) ~ '^[A-Яа-яЁё\s\-]+$'::text)) NOT VALID;
+
+
+--
+-- TOC entry 3885 (class 0 OID 0)
+-- Dependencies: 3603
+-- Name: CONSTRAINT check_surname ON "Client"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_surname ON public."Client" IS 'Checking if surname is valid';
+
+
+--
+-- TOC entry 3610 (class 2606 OID 16564)
+-- Name: ContractNumber check_type; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."ContractNumber"
+    ADD CONSTRAINT check_type CHECK ((array_to_string(type_of_contract, ''::text) = ANY (ARRAY['Постоянный'::text, 'Сезонный'::text]))) NOT VALID;
+
+
+--
+-- TOC entry 3886 (class 0 OID 0)
+-- Dependencies: 3610
+-- Name: CONSTRAINT check_type ON "ContractNumber"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_type ON public."ContractNumber" IS 'Checking if type is in the list';
+
+
+--
+-- TOC entry 3597 (class 2606 OID 16632)
+-- Name: BookOfHotel check_type_of_paynment; Type: CHECK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE public."BookOfHotel"
+    ADD CONSTRAINT check_type_of_paynment CHECK ((array_to_string(type_of_payment, ''::text) = ANY (ARRAY['Наличные'::text, 'Карта'::text, 'СБП'::text]))) NOT VALID;
+
+
+--
+-- TOC entry 3887 (class 0 OID 0)
+-- Dependencies: 3597
+-- Name: CONSTRAINT check_type_of_paynment ON "BookOfHotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT check_type_of_paynment ON public."BookOfHotel" IS 'Check type';
+
+
+--
+-- TOC entry 3659 (class 2606 OID 16614)
+-- Name: ContractNumber unique_contract_num; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."ContractNumber"
+    ADD CONSTRAINT unique_contract_num UNIQUE (contract_number);
+
+
+--
+-- TOC entry 3669 (class 2606 OID 16606)
+-- Name: CleaningTime unique_date+room; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CleaningTime"
+    ADD CONSTRAINT "unique_date+room" UNIQUE (id_room, date);
+
+
+--
+-- TOC entry 3671 (class 2606 OID 16604)
+-- Name: CleaningTime unique_id; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CleaningTime"
+    ADD CONSTRAINT unique_id UNIQUE (id_cleaning);
+
+
+--
+-- TOC entry 3646 (class 2606 OID 16608)
+-- Name: BookOfHotel unique_id_book; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."BookOfHotel"
+    ADD CONSTRAINT unique_id_book UNIQUE (id_book);
+
+
+--
+-- TOC entry 3665 (class 2606 OID 16610)
+-- Name: CheckIn unique_id_check_in; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CheckIn"
+    ADD CONSTRAINT unique_id_check_in UNIQUE (id_check_in);
+
+
+--
+-- TOC entry 3650 (class 2606 OID 16612)
+-- Name: Client unique_id_client; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."Client"
+    ADD CONSTRAINT unique_id_client UNIQUE (id_client);
+
+
+--
+-- TOC entry 3635 (class 2606 OID 16616)
+-- Name: Convenience unique_id_convenience; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."Convenience"
+    ADD CONSTRAINT unique_id_convenience UNIQUE (id_convenience);
+
+
+--
+-- TOC entry 3639 (class 2606 OID 16618)
+-- Name: DiscountOnTypeOfRoom unique_id_discount; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."DiscountOnTypeOfRoom"
+    ADD CONSTRAINT unique_id_discount UNIQUE (id_discount);
+
+
+--
+-- TOC entry 3623 (class 2606 OID 16620)
+-- Name: Hotel unique_id_hotel; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."Hotel"
+    ADD CONSTRAINT unique_id_hotel UNIQUE (id_hotel);
+
+
+--
+-- TOC entry 3655 (class 2606 OID 16626)
+-- Name: Staff unique_id_staff; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."Staff"
+    ADD CONSTRAINT unique_id_staff UNIQUE (id_staff);
+
+
+--
+-- TOC entry 3629 (class 2606 OID 16622)
+-- Name: RoomInHotel unique_room_id; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."RoomInHotel"
+    ADD CONSTRAINT unique_room_id UNIQUE (id_number);
+
+
+--
+-- TOC entry 3631 (class 2606 OID 16624)
+-- Name: RoomInHotel unique_room_number + hotel; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."RoomInHotel"
+    ADD CONSTRAINT "unique_room_number + hotel" UNIQUE (room_number, id_hotel);
+
+
+--
+-- TOC entry 3675 (class 2606 OID 16628)
+-- Name: TypeOfRoom unique_type_id; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."TypeOfRoom"
+    ADD CONSTRAINT unique_type_id UNIQUE (id_type);
+
+
+--
+-- TOC entry 3677 (class 2606 OID 16630)
+-- Name: TypeOfRoom unique_type_name; Type: CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."TypeOfRoom"
+    ADD CONSTRAINT unique_type_name UNIQUE (name);
+
+
+--
+-- TOC entry 3662 (class 1259 OID 16590)
+-- Name: fki_foreign_book; Type: INDEX; Schema: public; Owner: kovalevgleb
+--
+
+CREATE INDEX fki_foreign_book ON public."CheckIn" USING btree (id_book);
+
+
+--
+-- TOC entry 3642 (class 1259 OID 16530)
+-- Name: fki_foreign_client; Type: INDEX; Schema: public; Owner: kovalevgleb
+--
+
+CREATE INDEX fki_foreign_client ON public."BookOfHotel" USING btree (id_client);
+
+
+--
+-- TOC entry 3653 (class 1259 OID 16558)
+-- Name: fki_foreign_contract_num; Type: INDEX; Schema: public; Owner: kovalevgleb
+--
+
+CREATE INDEX fki_foreign_contract_num ON public."Staff" USING btree (contract_number);
+
+
+--
+-- TOC entry 3626 (class 1259 OID 16421)
+-- Name: fki_foreign_id_hotel; Type: INDEX; Schema: public; Owner: kovalevgleb
+--
+
+CREATE INDEX fki_foreign_id_hotel ON public."RoomInHotel" USING btree (id_hotel);
+
+
+--
+-- TOC entry 3627 (class 1259 OID 16434)
+-- Name: fki_foreign_id_type; Type: INDEX; Schema: public; Owner: kovalevgleb
+--
+
+CREATE INDEX fki_foreign_id_type ON public."RoomInHotel" USING btree (id_type);
+
+
+--
+-- TOC entry 3663 (class 1259 OID 16579)
+-- Name: fki_foreign_room; Type: INDEX; Schema: public; Owner: kovalevgleb
+--
+
+CREATE INDEX fki_foreign_room ON public."CheckIn" USING btree (id_room);
+
+
+--
+-- TOC entry 3643 (class 1259 OID 16536)
+-- Name: fki_foreign_staff; Type: INDEX; Schema: public; Owner: kovalevgleb
+--
+
+CREATE INDEX fki_foreign_staff ON public."BookOfHotel" USING btree (id_staff);
+
+
+--
+-- TOC entry 3644 (class 1259 OID 16542)
+-- Name: fki_foreign_type; Type: INDEX; Schema: public; Owner: kovalevgleb
+--
+
+CREATE INDEX fki_foreign_type ON public."BookOfHotel" USING btree (id_type);
+
+
+--
+-- TOC entry 3684 (class 2606 OID 16585)
+-- Name: CheckIn foreign_book; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CheckIn"
+    ADD CONSTRAINT foreign_book FOREIGN KEY (id_book) REFERENCES public."BookOfHotel"(id_book) NOT VALID;
+
+
+--
+-- TOC entry 3888 (class 0 OID 0)
+-- Dependencies: 3684
+-- Name: CONSTRAINT foreign_book ON "CheckIn"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT foreign_book ON public."CheckIn" IS 'Making book foreign';
+
+
+--
+-- TOC entry 3680 (class 2606 OID 16525)
+-- Name: BookOfHotel foreign_client; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."BookOfHotel"
+    ADD CONSTRAINT foreign_client FOREIGN KEY (id_client) REFERENCES public."Client"(id_client) NOT VALID;
+
+
+--
+-- TOC entry 3889 (class 0 OID 0)
+-- Dependencies: 3680
+-- Name: CONSTRAINT foreign_client ON "BookOfHotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT foreign_client ON public."BookOfHotel" IS 'Make client foreign';
+
+
+--
+-- TOC entry 3685 (class 2606 OID 16569)
+-- Name: CheckIn foreign_client; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CheckIn"
+    ADD CONSTRAINT foreign_client FOREIGN KEY (id_client) REFERENCES public."Client"(id_client) NOT VALID;
+
+
+--
+-- TOC entry 3890 (class 0 OID 0)
+-- Dependencies: 3685
+-- Name: CONSTRAINT foreign_client ON "CheckIn"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT foreign_client ON public."CheckIn" IS 'Making client foreign';
+
+
+--
+-- TOC entry 3683 (class 2606 OID 16553)
+-- Name: Staff foreign_contract_num; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."Staff"
+    ADD CONSTRAINT foreign_contract_num FOREIGN KEY (contract_number) REFERENCES public."ContractNumber"(contract_number) NOT VALID;
+
+
+--
+-- TOC entry 3891 (class 0 OID 0)
+-- Dependencies: 3683
+-- Name: CONSTRAINT foreign_contract_num ON "Staff"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT foreign_contract_num ON public."Staff" IS 'Making contract foreign';
+
+
+--
+-- TOC entry 3678 (class 2606 OID 16416)
+-- Name: RoomInHotel foreign_id_hotel; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."RoomInHotel"
+    ADD CONSTRAINT foreign_id_hotel FOREIGN KEY (id_hotel) REFERENCES public."Hotel"(id_hotel) NOT VALID;
+
+
+--
+-- TOC entry 3679 (class 2606 OID 16502)
+-- Name: RoomInHotel foreign_id_type; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."RoomInHotel"
+    ADD CONSTRAINT foreign_id_type FOREIGN KEY (id_type) REFERENCES public."TypeOfRoom"(id_type) NOT VALID;
+
+
+--
+-- TOC entry 3686 (class 2606 OID 16574)
+-- Name: CheckIn foreign_room; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CheckIn"
+    ADD CONSTRAINT foreign_room FOREIGN KEY (id_room) REFERENCES public."RoomInHotel"(id_number) NOT VALID;
+
+
+--
+-- TOC entry 3892 (class 0 OID 0)
+-- Dependencies: 3686
+-- Name: CONSTRAINT foreign_room ON "CheckIn"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT foreign_room ON public."CheckIn" IS 'Making room foreign';
+
+
+--
+-- TOC entry 3688 (class 2606 OID 16591)
+-- Name: CleaningTime foreign_room; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CleaningTime"
+    ADD CONSTRAINT foreign_room FOREIGN KEY (id_room) REFERENCES public."RoomInHotel"(id_number) NOT VALID;
+
+
+--
+-- TOC entry 3893 (class 0 OID 0)
+-- Dependencies: 3688
+-- Name: CONSTRAINT foreign_room ON "CleaningTime"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT foreign_room ON public."CleaningTime" IS 'Make room foreign';
+
+
+--
+-- TOC entry 3681 (class 2606 OID 16531)
+-- Name: BookOfHotel foreign_staff; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."BookOfHotel"
+    ADD CONSTRAINT foreign_staff FOREIGN KEY (id_staff) REFERENCES public."Staff"(id_staff) NOT VALID;
+
+
+--
+-- TOC entry 3894 (class 0 OID 0)
+-- Dependencies: 3681
+-- Name: CONSTRAINT foreign_staff ON "BookOfHotel"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT foreign_staff ON public."BookOfHotel" IS 'Making staff foreign';
+
+
+--
+-- TOC entry 3687 (class 2606 OID 16580)
+-- Name: CheckIn foreign_staff; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CheckIn"
+    ADD CONSTRAINT foreign_staff FOREIGN KEY (id_staff) REFERENCES public."Staff"(id_staff) NOT VALID;
+
+
+--
+-- TOC entry 3895 (class 0 OID 0)
+-- Dependencies: 3687
+-- Name: CONSTRAINT foreign_staff ON "CheckIn"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT foreign_staff ON public."CheckIn" IS 'Making staff foreign';
+
+
+--
+-- TOC entry 3689 (class 2606 OID 16596)
+-- Name: CleaningTime foreign_staff; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."CleaningTime"
+    ADD CONSTRAINT foreign_staff FOREIGN KEY (id_staff) REFERENCES public."Staff"(id_staff) NOT VALID;
+
+
+--
+-- TOC entry 3896 (class 0 OID 0)
+-- Dependencies: 3689
+-- Name: CONSTRAINT foreign_staff ON "CleaningTime"; Type: COMMENT; Schema: public; Owner: kovalevgleb
+--
+
+COMMENT ON CONSTRAINT foreign_staff ON public."CleaningTime" IS 'Make staff foreign';
+
+
+--
+-- TOC entry 3682 (class 2606 OID 16537)
+-- Name: BookOfHotel foreign_type; Type: FK CONSTRAINT; Schema: public; Owner: kovalevgleb
+--
+
+ALTER TABLE ONLY public."BookOfHotel"
+    ADD CONSTRAINT foreign_type FOREIGN KEY (id_type) REFERENCES public."TypeOfRoom"(id_type) NOT VALID;
+
+
+-- Completed on 2025-05-19 15:24:37 MSK
+
+--
+-- PostgreSQL database dump complete
+--
+
