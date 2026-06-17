@@ -1,0 +1,1321 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 12.20
+-- Dumped by pg_dump version 16.4
+
+-- Started on 2025-03-11 15:57:15
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 8 (class 2615 OID 25633)
+-- Name: mainS; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA "mainS";
+
+
+ALTER SCHEMA "mainS" OWNER TO postgres;
+
+--
+-- TOC entry 3011 (class 0 OID 0)
+-- Dependencies: 8
+-- Name: SCHEMA "mainS"; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON SCHEMA "mainS" IS 'Основная схема';
+
+
+--
+-- TOC entry 6 (class 2615 OID 2200)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+ALTER SCHEMA public OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 222 (class 1259 OID 26065)
+-- Name: author; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".author (
+    author_id integer NOT NULL,
+    first_name character varying(25) NOT NULL,
+    surname character varying(25) NOT NULL,
+    last_name character varying(25),
+    email character varying(50) NOT NULL,
+    CONSTRAINT author_email_check CHECK (((email)::text ~ '^[A-Za-z]+@.+\..+$'::text)),
+    CONSTRAINT author_first_name_check CHECK (((first_name)::text ~ '^[A-Za-zА-Яа-яёЁ\\-\\s]+$'::text)),
+    CONSTRAINT author_last_name_check CHECK ((((last_name)::text ~ '^[A-Za-zА-Яа-яёЁ\\-\\s]+$'::text) OR (last_name IS NULL))),
+    CONSTRAINT author_surname_check CHECK (((surname)::text ~ '^[A-Za-zА-Яа-яёЁ\s-]+$'::text))
+);
+
+
+ALTER TABLE "mainS".author OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 26063)
+-- Name: author_author_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".author_author_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".author_author_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3013 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: author_author_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".author_author_id_seq OWNED BY "mainS".author.author_id;
+
+
+--
+-- TOC entry 206 (class 1259 OID 25727)
+-- Name: authorship; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".authorship (
+    authorship_id integer NOT NULL,
+    author_id integer NOT NULL,
+    book_id integer NOT NULL,
+    author_order integer NOT NULL,
+    CONSTRAINT authorship_author_order_check CHECK ((author_order > 0))
+);
+
+
+ALTER TABLE "mainS".authorship OWNER TO postgres;
+
+--
+-- TOC entry 205 (class 1259 OID 25725)
+-- Name: authorship_authorship_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".authorship_authorship_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".authorship_authorship_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3014 (class 0 OID 0)
+-- Dependencies: 205
+-- Name: authorship_authorship_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".authorship_authorship_id_seq OWNED BY "mainS".authorship.authorship_id;
+
+
+--
+-- TOC entry 224 (class 1259 OID 26098)
+-- Name: book; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".book (
+    book_id integer NOT NULL,
+    isbn character varying(100) NOT NULL,
+    categoty_id integer,
+    page_count integer,
+    book_title character varying(50) NOT NULL,
+    publish_start_date date,
+    under_publish boolean NOT NULL,
+    CONSTRAINT book_book_title_check CHECK (((book_title)::text ~ '^[A-Za-zА-Яа-яёЁ0-9\s!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]+$'::text)),
+    CONSTRAINT book_page_count_check CHECK ((page_count > 0)),
+    CONSTRAINT book_publish_start_date_check CHECK ((publish_start_date > '1445-01-01'::date))
+);
+
+
+ALTER TABLE "mainS".book OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 26096)
+-- Name: book_book_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".book_book_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".book_book_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3015 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: book_book_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".book_book_id_seq OWNED BY "mainS".book.book_id;
+
+
+--
+-- TOC entry 204 (class 1259 OID 25687)
+-- Name: category; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".category (
+    category_id integer NOT NULL,
+    category_name character varying(50) NOT NULL,
+    CONSTRAINT category_category_name_check CHECK (((category_name)::text ~ '^[A-Za-zА-Яа-я−:№(),\s]+$'::text))
+);
+
+
+ALTER TABLE "mainS".category OWNER TO postgres;
+
+--
+-- TOC entry 203 (class 1259 OID 25685)
+-- Name: category_category_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".category_category_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".category_category_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3016 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: category_category_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".category_category_id_seq OWNED BY "mainS".category.category_id;
+
+
+--
+-- TOC entry 228 (class 1259 OID 26132)
+-- Name: contract; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".contract (
+    contract_id integer NOT NULL,
+    customer_id integer NOT NULL,
+    employee_id integer NOT NULL,
+    service_cost integer NOT NULL,
+    signing_date date NOT NULL,
+    service_date date,
+    work_act character varying(300),
+    work_status character varying(30) NOT NULL,
+    delivery_address character varying(200) NOT NULL,
+    CONSTRAINT contract_check CHECK ((signing_date <= service_date)),
+    CONSTRAINT contract_check1 CHECK (((service_date >= signing_date) OR (service_date IS NULL))),
+    CONSTRAINT contract_delivery_address_check CHECK (((delivery_address)::text ~ '^[A-Za-zА-Яа-я0-9\s.,:№()\-]+$'::text)),
+    CONSTRAINT contract_service_cost_check CHECK ((service_cost >= 0)),
+    CONSTRAINT contract_work_status_check CHECK (((work_status)::text = ANY ((ARRAY['в очереди'::character varying, 'выполняется'::character varying, 'завершен'::character varying, 'отменен'::character varying])::text[])))
+);
+
+
+ALTER TABLE "mainS".contract OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 26130)
+-- Name: contract_contract_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".contract_contract_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".contract_contract_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3017 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: contract_contract_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".contract_contract_id_seq OWNED BY "mainS".contract.contract_id;
+
+
+--
+-- TOC entry 226 (class 1259 OID 26116)
+-- Name: customer; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".customer (
+    customer_id integer NOT NULL,
+    first_name character varying(25) NOT NULL,
+    surname character varying(25) NOT NULL,
+    last_name character varying(25),
+    email character varying(50) NOT NULL,
+    phone character varying(11),
+    CONSTRAINT customer_email_check CHECK (((email)::text ~ '^[^@]+@[^@]+\.[^@]+$'::text)),
+    CONSTRAINT customer_first_name_check CHECK (((first_name)::text ~ '^[A-Za-zА-Яа-я\-]+$'::text)),
+    CONSTRAINT customer_last_name_check CHECK ((((last_name)::text ~ '^[A-Za-zА-Яа-я\-]+$'::text) OR (last_name IS NULL))),
+    CONSTRAINT customer_phone_check CHECK (((phone)::text ~ '^\d{11}$'::text)),
+    CONSTRAINT customer_surname_check CHECK (((surname)::text ~ '^[A-Za-zА-Яа-яёЁ\s-]+$'::text))
+);
+
+
+ALTER TABLE "mainS".customer OWNER TO postgres;
+
+--
+-- TOC entry 225 (class 1259 OID 26114)
+-- Name: customer_customer_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".customer_customer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".customer_customer_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3018 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: customer_customer_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".customer_customer_id_seq OWNED BY "mainS".customer.customer_id;
+
+
+--
+-- TOC entry 214 (class 1259 OID 25791)
+-- Name: edit; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".edit (
+    edit_id integer NOT NULL,
+    tz_id integer NOT NULL,
+    author_id integer NOT NULL,
+    author_order integer NOT NULL,
+    CONSTRAINT edit_author_order_check CHECK ((author_order > 0))
+);
+
+
+ALTER TABLE "mainS".edit OWNER TO postgres;
+
+--
+-- TOC entry 213 (class 1259 OID 25789)
+-- Name: edit_edit_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".edit_edit_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".edit_edit_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3019 (class 0 OID 0)
+-- Dependencies: 213
+-- Name: edit_edit_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".edit_edit_id_seq OWNED BY "mainS".edit.edit_id;
+
+
+--
+-- TOC entry 216 (class 1259 OID 25810)
+-- Name: edition; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".edition (
+    edition_id integer NOT NULL,
+    tz_id integer NOT NULL,
+    edition_date date NOT NULL,
+    retail_price integer NOT NULL,
+    status character varying(20) NOT NULL,
+    quantity integer NOT NULL,
+    remaining integer DEFAULT 0 NOT NULL,
+    CONSTRAINT edition_check CHECK (((remaining >= 0) AND (remaining <= quantity))),
+    CONSTRAINT edition_quantity_check CHECK ((quantity > 0)),
+    CONSTRAINT edition_retail_price_check CHECK ((retail_price > 0)),
+    CONSTRAINT edition_status_check CHECK (((status)::text = ANY ((ARRAY['подготовка'::character varying, 'в печати'::character varying, 'в продаже'::character varying, 'распродан'::character varying])::text[])))
+);
+
+
+ALTER TABLE "mainS".edition OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 25808)
+-- Name: edition_edition_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".edition_edition_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".edition_edition_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3020 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: edition_edition_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".edition_edition_id_seq OWNED BY "mainS".edition.edition_id;
+
+
+--
+-- TOC entry 210 (class 1259 OID 25757)
+-- Name: employee; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".employee (
+    employee_id integer NOT NULL,
+    post_id integer NOT NULL,
+    first_name character varying(25) NOT NULL,
+    surname character varying(25) NOT NULL,
+    last_name character varying(25),
+    email character varying(50) NOT NULL,
+    CONSTRAINT employee_email_check CHECK (((email)::text ~ '^[^@]+@[^@]+\.[^@]+$'::text)),
+    CONSTRAINT employee_first_name_check CHECK (((first_name)::text ~ '^[A-Za-zА-Яа-я\-]+$'::text)),
+    CONSTRAINT employee_last_name_check CHECK ((((last_name)::text ~ '^[A-Za-zА-Яа-я\-]+$'::text) OR (last_name IS NULL))),
+    CONSTRAINT employee_surname_check CHECK (((surname)::text ~ '^[A-Za-zА-Яа-я\-]+$'::text))
+);
+
+
+ALTER TABLE "mainS".employee OWNER TO postgres;
+
+--
+-- TOC entry 209 (class 1259 OID 25755)
+-- Name: employee_employee_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".employee_employee_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".employee_employee_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3021 (class 0 OID 0)
+-- Dependencies: 209
+-- Name: employee_employee_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".employee_employee_id_seq OWNED BY "mainS".employee.employee_id;
+
+
+--
+-- TOC entry 218 (class 1259 OID 25871)
+-- Name: invoice; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".invoice (
+    invoice_id integer NOT NULL,
+    contract_id integer NOT NULL,
+    payment_date date,
+    payment_status boolean NOT NULL,
+    invoice_date date NOT NULL,
+    invoice_amount integer NOT NULL,
+    CONSTRAINT invoice_check CHECK ((payment_date >= invoice_date)),
+    CONSTRAINT invoice_check1 CHECK ((invoice_date <= payment_date)),
+    CONSTRAINT invoice_invoice_amount_check CHECK ((invoice_amount >= 0))
+);
+
+
+ALTER TABLE "mainS".invoice OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 25869)
+-- Name: invoice_invoice_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".invoice_invoice_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".invoice_invoice_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3022 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: invoice_invoice_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".invoice_invoice_id_seq OWNED BY "mainS".invoice.invoice_id;
+
+
+--
+-- TOC entry 220 (class 1259 OID 25887)
+-- Name: order_line; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".order_line (
+    order_line_id integer NOT NULL,
+    edition_id integer NOT NULL,
+    contract_id integer NOT NULL,
+    quantity integer NOT NULL,
+    CONSTRAINT order_line_quantity_check CHECK ((quantity > 0))
+);
+
+
+ALTER TABLE "mainS".order_line OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 25885)
+-- Name: order_line_order_line_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".order_line_order_line_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".order_line_order_line_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3023 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: order_line_order_line_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".order_line_order_line_id_seq OWNED BY "mainS".order_line.order_line_id;
+
+
+--
+-- TOC entry 208 (class 1259 OID 25746)
+-- Name: post; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".post (
+    post_id integer NOT NULL,
+    post_name character varying(100) NOT NULL,
+    salary integer NOT NULL,
+    num_positions integer NOT NULL,
+    CONSTRAINT post_num_positions_check CHECK ((num_positions > 0)),
+    CONSTRAINT post_post_name_check CHECK (((post_name)::text ~ '^[A-Za-zА-Яа-я−:№(),\s]+$'::text)),
+    CONSTRAINT post_salary_check CHECK ((salary >= 0))
+);
+
+
+ALTER TABLE "mainS".post OWNER TO postgres;
+
+--
+-- TOC entry 207 (class 1259 OID 25744)
+-- Name: post_post_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".post_post_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".post_post_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3024 (class 0 OID 0)
+-- Dependencies: 207
+-- Name: post_post_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".post_post_id_seq OWNED BY "mainS".post.post_id;
+
+
+--
+-- TOC entry 212 (class 1259 OID 25776)
+-- Name: tz; Type: TABLE; Schema: mainS; Owner: postgres
+--
+
+CREATE TABLE "mainS".tz (
+    tz_id integer NOT NULL,
+    book_id integer NOT NULL,
+    has_illustrations boolean NOT NULL,
+    paper_type character varying(30) NOT NULL,
+    binding_type character varying(30) NOT NULL,
+    CONSTRAINT tz_binding_type_check CHECK (((binding_type)::text = ANY ((ARRAY['переплет термоклеевой'::character varying, 'мягкий переплет скоба'::character varying, 'мягкий переплет пружина'::character varying, 'твердый переплет'::character varying, 'твердый переплет супер-обложка'::character varying])::text[]))),
+    CONSTRAINT tz_paper_type_check CHECK (((paper_type)::text = ANY ((ARRAY['мелованная бумага'::character varying, 'офсетная бумага'::character varying, 'дизайнерская бумага'::character varying, 'газетная бумага'::character varying])::text[])))
+);
+
+
+ALTER TABLE "mainS".tz OWNER TO postgres;
+
+--
+-- TOC entry 211 (class 1259 OID 25774)
+-- Name: tz_tz_id_seq; Type: SEQUENCE; Schema: mainS; Owner: postgres
+--
+
+CREATE SEQUENCE "mainS".tz_tz_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE "mainS".tz_tz_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3025 (class 0 OID 0)
+-- Dependencies: 211
+-- Name: tz_tz_id_seq; Type: SEQUENCE OWNED BY; Schema: mainS; Owner: postgres
+--
+
+ALTER SEQUENCE "mainS".tz_tz_id_seq OWNED BY "mainS".tz.tz_id;
+
+
+--
+-- TOC entry 2771 (class 2604 OID 26068)
+-- Name: author author_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".author ALTER COLUMN author_id SET DEFAULT nextval('"mainS".author_author_id_seq'::regclass);
+
+
+--
+-- TOC entry 2762 (class 2604 OID 25730)
+-- Name: authorship authorship_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".authorship ALTER COLUMN authorship_id SET DEFAULT nextval('"mainS".authorship_authorship_id_seq'::regclass);
+
+
+--
+-- TOC entry 2772 (class 2604 OID 26101)
+-- Name: book book_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".book ALTER COLUMN book_id SET DEFAULT nextval('"mainS".book_book_id_seq'::regclass);
+
+
+--
+-- TOC entry 2761 (class 2604 OID 25690)
+-- Name: category category_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".category ALTER COLUMN category_id SET DEFAULT nextval('"mainS".category_category_id_seq'::regclass);
+
+
+--
+-- TOC entry 2774 (class 2604 OID 26135)
+-- Name: contract contract_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".contract ALTER COLUMN contract_id SET DEFAULT nextval('"mainS".contract_contract_id_seq'::regclass);
+
+
+--
+-- TOC entry 2773 (class 2604 OID 26119)
+-- Name: customer customer_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".customer ALTER COLUMN customer_id SET DEFAULT nextval('"mainS".customer_customer_id_seq'::regclass);
+
+
+--
+-- TOC entry 2766 (class 2604 OID 25794)
+-- Name: edit edit_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".edit ALTER COLUMN edit_id SET DEFAULT nextval('"mainS".edit_edit_id_seq'::regclass);
+
+
+--
+-- TOC entry 2767 (class 2604 OID 25813)
+-- Name: edition edition_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".edition ALTER COLUMN edition_id SET DEFAULT nextval('"mainS".edition_edition_id_seq'::regclass);
+
+
+--
+-- TOC entry 2764 (class 2604 OID 25760)
+-- Name: employee employee_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".employee ALTER COLUMN employee_id SET DEFAULT nextval('"mainS".employee_employee_id_seq'::regclass);
+
+
+--
+-- TOC entry 2769 (class 2604 OID 25874)
+-- Name: invoice invoice_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".invoice ALTER COLUMN invoice_id SET DEFAULT nextval('"mainS".invoice_invoice_id_seq'::regclass);
+
+
+--
+-- TOC entry 2770 (class 2604 OID 25890)
+-- Name: order_line order_line_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".order_line ALTER COLUMN order_line_id SET DEFAULT nextval('"mainS".order_line_order_line_id_seq'::regclass);
+
+
+--
+-- TOC entry 2763 (class 2604 OID 25749)
+-- Name: post post_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".post ALTER COLUMN post_id SET DEFAULT nextval('"mainS".post_post_id_seq'::regclass);
+
+
+--
+-- TOC entry 2765 (class 2604 OID 25779)
+-- Name: tz tz_id; Type: DEFAULT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".tz ALTER COLUMN tz_id SET DEFAULT nextval('"mainS".tz_tz_id_seq'::regclass);
+
+
+--
+-- TOC entry 2999 (class 0 OID 26065)
+-- Dependencies: 222
+-- Data for Name: author; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".author (author_id, first_name, surname, last_name, email) FROM stdin;
+1	Дональд	Кнут	\N	donaldknuth@mail.com
+2	Эндрю	Таненбаум	\N	andrewtanenbaum@mail.com
+3	Бьерн	Страуструп	\N	bjarnestroustrup@mail.com
+4	Мартин	Фаулер	\N	martinfowler@mail.com
+5	Роберт	Мартин	\N	robertmartin@mail.com
+6	Гвидо	ван Россум	\N	guidorossum@mail.com
+7	Кен	Томпсон	\N	kenthompson@mail.com
+8	Деннис	Ритчи	\N	dennisritchie@mail.com
+9	Линус	Торвальдс	\N	linustorvalds@mail.com
+10	Ричард	Столлман	\N	richardstallman@mail.com
+\.
+
+
+--
+-- TOC entry 2983 (class 0 OID 25727)
+-- Dependencies: 206
+-- Data for Name: authorship; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".authorship (authorship_id, author_id, book_id, author_order) FROM stdin;
+1	1	1	1
+2	2	2	1
+3	3	3	1
+4	4	4	1
+5	5	5	1
+6	6	6	1
+7	7	7	1
+8	8	8	1
+9	9	9	1
+10	10	10	1
+\.
+
+
+--
+-- TOC entry 3001 (class 0 OID 26098)
+-- Dependencies: 224
+-- Data for Name: book; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".book (book_id, isbn, categoty_id, page_count, book_title, publish_start_date, under_publish) FROM stdin;
+1	978-5-907144-23-1	1	800	Искусство программирования	1968-01-01	t
+2	978-5-4461-1155-8	1	1050	Операционные системы	2008-03-15	t
+3	978-5-6045724-6-7	2	725	Язык программирования C++	1997-05-14	t
+4	978-5-6041394-0-0	2	350	Шаблоны корпоративных приложений	2002-06-15	t
+5	978-5-4461-0960-9	3	450	Чистый код	2008-08-01	t
+6	978-0-596-15806-4	4	250	Python для всех	2016-07-11	t
+7	978-0-13-110362-7	1	300	Язык программирования C	1988-02-22	t
+8	978-0-13-142901-7	3	400	Программирование на языке C	2000-04-10	t
+9	978-0-13-110362-8	4	600	Архитектура UNIX	1983-09-01	t
+10	978-0-13-409341-3	5	550	Свобода программирования	2015-01-12	t
+\.
+
+
+--
+-- TOC entry 2981 (class 0 OID 25687)
+-- Dependencies: 204
+-- Data for Name: category; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".category (category_id, category_name) FROM stdin;
+1	Учебник
+2	Учебное пособие
+3	Монография
+4	Справочник
+5	Практическое руководство
+\.
+
+
+--
+-- TOC entry 3005 (class 0 OID 26132)
+-- Dependencies: 228
+-- Data for Name: contract; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".contract (contract_id, customer_id, employee_id, service_cost, signing_date, service_date, work_act, work_status, delivery_address) FROM stdin;
+10	1	21	100000	2023-06-01	2023-09-15	act_001.pdf	завершен	Москва, ул. Ленина, 10
+11	2	22	85000	2023-07-10	2023-10-20	act_002.pdf	выполняется	Санкт-Петербург, Невский пр., 45
+12	3	23	120000	2023-05-05	2023-08-25	act_003.pdf	в очереди	Казань, ул. Баумана, 17
+13	4	24	35000	2023-05-11	2023-08-04	act_004.pdf	выполняется	Москва, ул.Космонавтов, 15
+14	5	25	10000	2023-05-12	2023-08-20	act_005.pdf	выполняется	Киров, ул.Лермонтова, 12
+\.
+
+
+--
+-- TOC entry 3003 (class 0 OID 26116)
+-- Dependencies: 226
+-- Data for Name: customer; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".customer (customer_id, first_name, surname, last_name, email, phone) FROM stdin;
+1	ООО	ИнфоТех	\N	contact@infotech.com	79161234567
+2	АО	АйТи Солюшнс	\N	info@itsolutions.com	79261112233
+3	ЗАО	Разработчик	\N	contact@developer.ru	79374445566
+4	ООО	Издательство Код	\N	contact@codepub.com	79152223344
+5	АО	Программист	\N	info@programmer.com	79213334455
+\.
+
+
+--
+-- TOC entry 2991 (class 0 OID 25791)
+-- Dependencies: 214
+-- Data for Name: edit; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".edit (edit_id, tz_id, author_id, author_order) FROM stdin;
+1	1	1	1
+2	2	2	1
+3	3	3	1
+4	4	4	1
+5	5	5	1
+6	6	6	1
+7	7	6	1
+8	8	8	1
+9	9	9	1
+10	10	10	1
+\.
+
+
+--
+-- TOC entry 2993 (class 0 OID 25810)
+-- Dependencies: 216
+-- Data for Name: edition; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".edition (edition_id, tz_id, edition_date, retail_price, status, quantity, remaining) FROM stdin;
+2	1	2025-03-10	500	подготовка	1000	100
+3	2	2025-03-11	700	в печати	500	300
+4	3	2025-03-12	600	в продаже	300	50
+5	4	2025-03-13	800	распродан	400	0
+6	5	2025-03-14	900	подготовка	600	200
+7	6	2025-03-11	500	подготовка	1000	100
+8	7	2025-03-12	700	в печати	500	300
+9	8	2025-03-13	600	в продаже	300	50
+10	9	2025-03-14	800	распродан	400	0
+11	10	2025-03-15	900	подготовка	600	200
+\.
+
+
+--
+-- TOC entry 2987 (class 0 OID 25757)
+-- Dependencies: 210
+-- Data for Name: employee; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".employee (employee_id, post_id, first_name, surname, last_name, email) FROM stdin;
+21	1	Сергей	Морозов	Владимирович	sergey.morozov@mail.com
+22	2	Ирина	Новикова	Анатольевна	irina.novikova@mail.com
+23	3	Олег	Семенов	Григорьевич	oleg.semenov@mail.com
+24	4	Екатерина	Орлова	Дмитриевна	ekaterina.orlova@mail.com
+25	5	Роман	Макаров	Александрович	roman.makarov@mail.com
+26	1	Анастасия	Зуева	Олеговна	anastasia.zueva@mail.com
+27	2	Геннадий	Титов	Иванович	gennady.titov@mail.com
+28	3	Людмила	Киселева	Сергеевна	lyudmila.kiseleva@mail.com
+29	4	Владимир	Фролов	Васильевич	vladimir.frolov@mail.com
+30	5	Светлана	Соловьева	Петровна	svetlana.solovieva@mail.com
+\.
+
+
+--
+-- TOC entry 2995 (class 0 OID 25871)
+-- Dependencies: 218
+-- Data for Name: invoice; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".invoice (invoice_id, contract_id, payment_date, payment_status, invoice_date, invoice_amount) FROM stdin;
+1	1	2023-06-10	t	2023-06-01	50000
+2	1	2023-09-20	t	2023-09-15	50000
+3	2	2023-07-15	t	2023-07-10	40000
+4	2	2023-10-30	f	2023-10-20	45000
+5	3	2023-07-10	t	2023-07-01	70000
+6	4	2023-06-15	f	2023-06-03	90000
+7	5	2023-08-13	t	2023-08-02	20000
+\.
+
+
+--
+-- TOC entry 2997 (class 0 OID 25887)
+-- Dependencies: 220
+-- Data for Name: order_line; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".order_line (order_line_id, edition_id, contract_id, quantity) FROM stdin;
+11	6	10	50
+12	2	11	30
+13	3	12	40
+14	4	13	20
+15	5	14	35
+\.
+
+
+--
+-- TOC entry 2985 (class 0 OID 25746)
+-- Dependencies: 208
+-- Data for Name: post; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".post (post_id, post_name, salary, num_positions) FROM stdin;
+1	Редактор	70000	5
+2	Менеджер по продажам	80000	3
+3	Технический писатель	75000	4
+4	Программист	90000	2
+5	Графический дизайнер	65000	3
+\.
+
+
+--
+-- TOC entry 2989 (class 0 OID 25776)
+-- Dependencies: 212
+-- Data for Name: tz; Type: TABLE DATA; Schema: mainS; Owner: postgres
+--
+
+COPY "mainS".tz (tz_id, book_id, has_illustrations, paper_type, binding_type) FROM stdin;
+1	1	t	мелованная бумага	твердый переплет
+2	2	f	офсетная бумага	мягкий переплет скоба
+3	3	t	дизайнерская бумага	твердый переплет супер-обложка
+4	4	f	газетная бумага	переплет термоклеевой
+5	5	t	мелованная бумага	мягкий переплет пружина
+6	6	f	дизайнерская бумага	мягкий переплет пружина
+7	7	f	газетная бумага	переплет термоклеевой
+8	8	t	мелованная бумага	твердый переплет
+9	9	t	мелованная бумага	твердый переплет супер-обложка
+10	10	f	газетная бумага	переплет термоклеевой
+\.
+
+
+--
+-- TOC entry 3026 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: author_author_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".author_author_id_seq', 10, true);
+
+
+--
+-- TOC entry 3027 (class 0 OID 0)
+-- Dependencies: 205
+-- Name: authorship_authorship_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".authorship_authorship_id_seq', 10, true);
+
+
+--
+-- TOC entry 3028 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: book_book_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".book_book_id_seq', 10, true);
+
+
+--
+-- TOC entry 3029 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: category_category_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".category_category_id_seq', 5, true);
+
+
+--
+-- TOC entry 3030 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: contract_contract_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".contract_contract_id_seq', 14, true);
+
+
+--
+-- TOC entry 3031 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: customer_customer_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".customer_customer_id_seq', 5, true);
+
+
+--
+-- TOC entry 3032 (class 0 OID 0)
+-- Dependencies: 213
+-- Name: edit_edit_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".edit_edit_id_seq', 10, true);
+
+
+--
+-- TOC entry 3033 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: edition_edition_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".edition_edition_id_seq', 11, true);
+
+
+--
+-- TOC entry 3034 (class 0 OID 0)
+-- Dependencies: 209
+-- Name: employee_employee_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".employee_employee_id_seq', 30, true);
+
+
+--
+-- TOC entry 3035 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: invoice_invoice_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".invoice_invoice_id_seq', 7, true);
+
+
+--
+-- TOC entry 3036 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: order_line_order_line_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".order_line_order_line_id_seq', 15, true);
+
+
+--
+-- TOC entry 3037 (class 0 OID 0)
+-- Dependencies: 207
+-- Name: post_post_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".post_post_id_seq', 5, true);
+
+
+--
+-- TOC entry 3038 (class 0 OID 0)
+-- Dependencies: 211
+-- Name: tz_tz_id_seq; Type: SEQUENCE SET; Schema: mainS; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"mainS".tz_tz_id_seq', 10, true);
+
+
+--
+-- TOC entry 2834 (class 2606 OID 26076)
+-- Name: author author_email_key; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".author
+    ADD CONSTRAINT author_email_key UNIQUE (email);
+
+
+--
+-- TOC entry 2836 (class 2606 OID 26074)
+-- Name: author author_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".author
+    ADD CONSTRAINT author_pkey PRIMARY KEY (author_id);
+
+
+--
+-- TOC entry 2816 (class 2606 OID 25733)
+-- Name: authorship authorship_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".authorship
+    ADD CONSTRAINT authorship_pkey PRIMARY KEY (authorship_id);
+
+
+--
+-- TOC entry 2838 (class 2606 OID 26108)
+-- Name: book book_isbn_key; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".book
+    ADD CONSTRAINT book_isbn_key UNIQUE (isbn);
+
+
+--
+-- TOC entry 2840 (class 2606 OID 26106)
+-- Name: book book_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".book
+    ADD CONSTRAINT book_pkey PRIMARY KEY (book_id);
+
+
+--
+-- TOC entry 2814 (class 2606 OID 25693)
+-- Name: category category_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".category
+    ADD CONSTRAINT category_pkey PRIMARY KEY (category_id);
+
+
+--
+-- TOC entry 2846 (class 2606 OID 26145)
+-- Name: contract contract_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".contract
+    ADD CONSTRAINT contract_pkey PRIMARY KEY (contract_id);
+
+
+--
+-- TOC entry 2842 (class 2606 OID 26128)
+-- Name: customer customer_email_key; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".customer
+    ADD CONSTRAINT customer_email_key UNIQUE (email);
+
+
+--
+-- TOC entry 2844 (class 2606 OID 26126)
+-- Name: customer customer_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".customer
+    ADD CONSTRAINT customer_pkey PRIMARY KEY (customer_id);
+
+
+--
+-- TOC entry 2826 (class 2606 OID 25797)
+-- Name: edit edit_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".edit
+    ADD CONSTRAINT edit_pkey PRIMARY KEY (edit_id);
+
+
+--
+-- TOC entry 2788 (class 2606 OID 26348)
+-- Name: edition edition_edition_date_check; Type: CHECK CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE "mainS".edition
+    ADD CONSTRAINT edition_edition_date_check CHECK ((edition_date >= CURRENT_DATE)) NOT VALID;
+
+
+--
+-- TOC entry 2828 (class 2606 OID 25821)
+-- Name: edition edition_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".edition
+    ADD CONSTRAINT edition_pkey PRIMARY KEY (edition_id);
+
+
+--
+-- TOC entry 2820 (class 2606 OID 25768)
+-- Name: employee employee_email_key; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".employee
+    ADD CONSTRAINT employee_email_key UNIQUE (email);
+
+
+--
+-- TOC entry 2822 (class 2606 OID 25766)
+-- Name: employee employee_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".employee
+    ADD CONSTRAINT employee_pkey PRIMARY KEY (employee_id);
+
+
+--
+-- TOC entry 2830 (class 2606 OID 25879)
+-- Name: invoice invoice_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".invoice
+    ADD CONSTRAINT invoice_pkey PRIMARY KEY (invoice_id);
+
+
+--
+-- TOC entry 2832 (class 2606 OID 25893)
+-- Name: order_line order_line_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".order_line
+    ADD CONSTRAINT order_line_pkey PRIMARY KEY (order_line_id);
+
+
+--
+-- TOC entry 2818 (class 2606 OID 25754)
+-- Name: post post_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".post
+    ADD CONSTRAINT post_pkey PRIMARY KEY (post_id);
+
+
+--
+-- TOC entry 2824 (class 2606 OID 25783)
+-- Name: tz tz_pkey; Type: CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".tz
+    ADD CONSTRAINT tz_pkey PRIMARY KEY (tz_id);
+
+
+--
+-- TOC entry 2851 (class 2606 OID 26109)
+-- Name: book book_categoty_id_fkey; Type: FK CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".book
+    ADD CONSTRAINT book_categoty_id_fkey FOREIGN KEY (categoty_id) REFERENCES "mainS".category(category_id) ON DELETE SET NULL;
+
+
+--
+-- TOC entry 2852 (class 2606 OID 26146)
+-- Name: contract contract_customer_id_fkey; Type: FK CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".contract
+    ADD CONSTRAINT contract_customer_id_fkey FOREIGN KEY (customer_id) REFERENCES "mainS".customer(customer_id);
+
+
+--
+-- TOC entry 2853 (class 2606 OID 26151)
+-- Name: contract contract_employee_id_fkey; Type: FK CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".contract
+    ADD CONSTRAINT contract_employee_id_fkey FOREIGN KEY (employee_id) REFERENCES "mainS".employee(employee_id);
+
+
+--
+-- TOC entry 2848 (class 2606 OID 25798)
+-- Name: edit edit_tz_id_fkey; Type: FK CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".edit
+    ADD CONSTRAINT edit_tz_id_fkey FOREIGN KEY (tz_id) REFERENCES "mainS".tz(tz_id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2849 (class 2606 OID 25822)
+-- Name: edition edition_tz_id_fkey; Type: FK CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".edition
+    ADD CONSTRAINT edition_tz_id_fkey FOREIGN KEY (tz_id) REFERENCES "mainS".tz(tz_id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2847 (class 2606 OID 25769)
+-- Name: employee employee_post_id_fkey; Type: FK CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".employee
+    ADD CONSTRAINT employee_post_id_fkey FOREIGN KEY (post_id) REFERENCES "mainS".post(post_id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2850 (class 2606 OID 25894)
+-- Name: order_line order_line_edition_id_fkey; Type: FK CONSTRAINT; Schema: mainS; Owner: postgres
+--
+
+ALTER TABLE ONLY "mainS".order_line
+    ADD CONSTRAINT order_line_edition_id_fkey FOREIGN KEY (edition_id) REFERENCES "mainS".edition(edition_id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3012 (class 0 OID 0)
+-- Dependencies: 6
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE USAGE ON SCHEMA public FROM PUBLIC;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2025-03-11 15:57:15
+
+--
+-- PostgreSQL database dump complete
+--
+
