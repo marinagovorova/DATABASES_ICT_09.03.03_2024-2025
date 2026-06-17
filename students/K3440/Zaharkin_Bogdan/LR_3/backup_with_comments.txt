@@ -1,0 +1,1134 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict SFFRro5ZOPvrQF9xLGYYfVJBYqam5UXPTiykKTNCweOl4uwL8ZMD0Kars2DEgvR
+
+-- Dumped from database version 18.1
+-- Dumped by pg_dump version 18.1
+
+-- Started on 2026-01-18 16:38:00
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 5130 (class 1262 OID 16389)
+-- Name: library; Type: DATABASE; Schema: -; Owner: postgres
+-- Создание БД library
+--
+
+CREATE DATABASE library WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Russian_Russia.1251';
+
+
+ALTER DATABASE library OWNER TO postgres;
+
+\unrestrict SFFRro5ZOPvrQF9xLGYYfVJBYqam5UXPTiykKTNCweOl4uwL8ZMD0Kars2DEgvR
+\connect library
+\restrict SFFRro5ZOPvrQF9xLGYYfVJBYqam5UXPTiykKTNCweOl4uwL8ZMD0Kars2DEgvR
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 6 (class 2615 OID 16390)
+-- Name: library_schema; Type: SCHEMA; Schema: -; Owner: postgres
+-- Создание схемы library_schema
+--
+
+CREATE SCHEMA library_schema;
+
+
+ALTER SCHEMA library_schema OWNER TO postgres;
+
+--
+-- TOC entry 5131 (class 0 OID 0)
+-- Dependencies: 6
+-- Name: SCHEMA library_schema; Type: COMMENT; Schema: -; Owner: postgres
+-- Комментарий к схеме library_schema
+--
+
+COMMENT ON SCHEMA library_schema IS 'Схема для выполнения лабораторных БД';
+
+
+--
+-- TOC entry 255 (class 1255 OID 16633)
+-- Name: is_valid_act_type(integer, text); Type: FUNCTION; Schema: library_schema; Owner: postgres
+-- Вспомогательня функция для добавления ограничения в отношении категоризации
+--
+
+CREATE FUNCTION library_schema.is_valid_act_type(arg_act_id integer, arg_type text) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM "library_schema"."Act"
+        WHERE act_id = arg_act_id
+          AND type = arg_type
+    ) THEN
+        RETURN true;
+    END IF;
+
+    RETURN false;
+END;$$;
+
+
+ALTER FUNCTION library_schema.is_valid_act_type(arg_act_id integer, arg_type text) OWNER TO postgres;
+
+--
+-- TOC entry 253 (class 1255 OID 16637)
+-- Name: is_dispose(integer); Type: FUNCTION; Schema: library_schema; Owner: postgres
+-- Функция для добавления ограничения на сущность акта списания
+--
+
+CREATE FUNCTION library_schema.is_dispose(arg_act_id integer) RETURNS boolean
+    LANGUAGE sql
+    RETURN library_schema.is_valid_act_type(arg_act_id, 'dispose'::text);
+
+
+ALTER FUNCTION library_schema.is_dispose(arg_act_id integer) OWNER TO postgres;
+
+--
+-- TOC entry 252 (class 1255 OID 16636)
+-- Name: is_gratuitous(integer); Type: FUNCTION; Schema: library_schema; Owner: postgres
+-- Функция для добавления ограничения на сущность акта безвозмездной передачи
+--
+
+CREATE FUNCTION library_schema.is_gratuitous(arg_act_id integer) RETURNS boolean
+    LANGUAGE sql
+    RETURN library_schema.is_valid_act_type(arg_act_id, 'gratuitous'::text);
+
+
+ALTER FUNCTION library_schema.is_gratuitous(arg_act_id integer) OWNER TO postgres;
+
+--
+-- TOC entry 254 (class 1255 OID 16638)
+-- Name: is_replace(integer); Type: FUNCTION; Schema: library_schema; Owner: postgres
+-- Функция для добавления ограничения на сущность акта замены утерянного экземпляра
+--
+
+CREATE FUNCTION library_schema.is_replace(arg_act_id integer) RETURNS boolean
+    LANGUAGE sql
+    RETURN library_schema.is_valid_act_type(arg_act_id, 'replace'::text);
+
+
+ALTER FUNCTION library_schema.is_replace(arg_act_id integer) OWNER TO postgres;
+
+--
+-- TOC entry 251 (class 1255 OID 16634)
+-- Name: is_supply(integer); Type: FUNCTION; Schema: library_schema; Owner: postgres
+-- Функция для добавления ограничения на сущность акта поступления от поставщика
+--
+
+CREATE FUNCTION library_schema.is_supply(arg_act_id integer) RETURNS boolean
+    LANGUAGE sql
+    RETURN library_schema.is_valid_act_type(arg_act_id, 'supply'::text);
+
+
+ALTER FUNCTION library_schema.is_supply(arg_act_id integer) OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 221 (class 1259 OID 16442)
+-- Name: Act; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица общей сущности актов
+--
+
+CREATE TABLE library_schema."Act" (
+    act_id integer NOT NULL,
+    act_date date,
+    type text,
+    total_copies integer,
+    total_cost integer,
+    registered_by_employee_id integer
+);
+
+
+ALTER TABLE library_schema."Act" OWNER TO postgres;
+
+--
+-- TOC entry 235 (class 1259 OID 16518)
+-- Name: ActCopy; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица для раскрытия связи многие ко многим между актами и копиями
+--
+
+CREATE TABLE library_schema."ActCopy" (
+    act_id integer NOT NULL,
+    copy_id integer NOT NULL
+);
+
+
+ALTER TABLE library_schema."ActCopy" OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16441)
+-- Name: Act_act_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+-- Последовательность генерируемая автоматически, так как я использовал serial
+--
+
+CREATE SEQUENCE library_schema."Act_act_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema."Act_act_id_seq" OWNER TO postgres;
+
+--
+-- TOC entry 5132 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: Act_act_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema."Act_act_id_seq" OWNED BY library_schema."Act".act_id;
+
+
+--
+-- TOC entry 229 (class 1259 OID 16483)
+-- Name: Book; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица сущности книга
+--
+
+CREATE TABLE library_schema."Book" (
+    book_id integer NOT NULL,
+    title text,
+    volume integer,
+    original_language text,
+    publication_type text,
+    area text,
+    publication_city text,
+    publication_year date,
+    bbk_code text,
+    isbn text
+);
+
+
+ALTER TABLE library_schema."Book" OWNER TO postgres;
+
+--
+-- TOC entry 234 (class 1259 OID 16510)
+-- Name: BookPerson; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица для раскрытия связи многие ко многим между книгами и людьми(авторы, переводчики и т.д.)
+--
+
+CREATE TABLE library_schema."BookPerson" (
+    book_id integer NOT NULL,
+    person_id integer NOT NULL,
+    role text NOT NULL
+);
+
+
+ALTER TABLE library_schema."BookPerson" OWNER TO postgres;
+
+--
+-- TOC entry 228 (class 1259 OID 16482)
+-- Name: Book_book_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+-- Последовательность генерируемая автоматически, так как я использовал serial
+--
+
+CREATE SEQUENCE library_schema."Book_book_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema."Book_book_id_seq" OWNER TO postgres;
+
+--
+-- TOC entry 5133 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: Book_book_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema."Book_book_id_seq" OWNED BY library_schema."Book".book_id;
+
+
+--
+-- TOC entry 231 (class 1259 OID 16493)
+-- Name: Copy; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица сущности книги
+--
+
+CREATE TABLE library_schema."Copy" (
+    copy_id integer NOT NULL,
+    book_id integer,
+    inventlfory_number integer,
+    price integer,
+    storage_room integer,
+    storage_rack integer,
+    storage_shelf integer,
+    status text
+);
+
+
+ALTER TABLE library_schema."Copy" OWNER TO postgres;
+
+--
+-- TOC entry 230 (class 1259 OID 16492)
+-- Name: Copy_copy_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+-- Последовательность генерируемая автоматически, так как я использовал serial
+--
+
+CREATE SEQUENCE library_schema."Copy_copy_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema."Copy_copy_id_seq" OWNER TO postgres;
+
+--
+-- TOC entry 5134 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: Copy_copy_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema."Copy_copy_id_seq" OWNED BY library_schema."Copy".copy_id;
+
+
+--
+-- TOC entry 238 (class 1259 OID 16578)
+-- Name: DisposalAct; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица сущности-категории актов списания
+--
+
+CREATE TABLE library_schema."DisposalAct" (
+    act_id integer,
+    reason text,
+    destination text
+);
+
+
+ALTER TABLE library_schema."DisposalAct" OWNER TO postgres;
+
+--
+-- TOC entry 225 (class 1259 OID 16463)
+-- Name: Employee; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица сущности рабочий
+--
+
+CREATE TABLE library_schema."Employee" (
+    employee_id integer NOT NULL,
+    last_name text,
+    first_name text,
+    "position" text,
+    rates text,
+    hire_date date,
+    active_status text
+);
+
+
+ALTER TABLE library_schema."Employee" OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 16462)
+-- Name: Employee_employee_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+-- Последовательность генерируемая автоматически, так как я использовал serial
+--
+
+CREATE SEQUENCE library_schema."Employee_employee_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema."Employee_employee_id_seq" OWNER TO postgres;
+
+--
+-- TOC entry 5135 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: Employee_employee_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema."Employee_employee_id_seq" OWNED BY library_schema."Employee".employee_id;
+
+
+--
+-- TOC entry 237 (class 1259 OID 16573)
+-- Name: GratuitousAct; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица сущности-категории актов дарения
+--
+
+CREATE TABLE library_schema."GratuitousAct" (
+    act_id integer,
+    donor_info text
+);
+
+
+ALTER TABLE library_schema."GratuitousAct" OWNER TO postgres;
+
+--
+-- TOC entry 233 (class 1259 OID 16503)
+-- Name: Loan; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица сущности одолжения книги читателем у библиотеки
+--
+
+CREATE TABLE library_schema."Loan" (
+    loan_id integer NOT NULL,
+    reader_id integer,
+    copy_id integer,
+    issue_date date,
+    due_date date,
+    return_date date,
+    fine_amount integer,
+    issued_by_employee_id integer
+);
+
+
+ALTER TABLE library_schema."Loan" OWNER TO postgres;
+
+--
+-- TOC entry 232 (class 1259 OID 16502)
+-- Name: Loan_loan_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+-- Последовательность генерируемая автоматически, так как я использовал serial
+--
+
+CREATE SEQUENCE library_schema."Loan_loan_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema."Loan_loan_id_seq" OWNER TO postgres;
+
+--
+-- TOC entry 5136 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: Loan_loan_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema."Loan_loan_id_seq" OWNED BY library_schema."Loan".loan_id;
+
+
+--
+-- TOC entry 227 (class 1259 OID 16473)
+-- Name: Person; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица сущности люди (авторы, переводчики и т.д.), но роли находятся в таблице BookPerson, так как один и тот же человек может исполнять разные роли в разных книгах
+--
+
+CREATE TABLE library_schema."Person" (
+    person_id integer NOT NULL,
+    last_name text,
+    first_name text,
+    middle_name text,
+    pseudonym text,
+    birth_date date,
+    death_date date
+);
+
+
+ALTER TABLE library_schema."Person" OWNER TO postgres;
+
+--
+-- TOC entry 226 (class 1259 OID 16472)
+-- Name: Person_person_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+-- Последовательность генерируемая автоматически, так как я использовал serial
+--
+
+CREATE SEQUENCE library_schema."Person_person_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema."Person_person_id_seq" OWNER TO postgres;
+
+--
+-- TOC entry 5137 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: Person_person_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema."Person_person_id_seq" OWNED BY library_schema."Person".person_id;
+
+
+--
+-- TOC entry 223 (class 1259 OID 16453)
+-- Name: Reader; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица сущности читатель
+--
+
+CREATE TABLE library_schema."Reader" (
+    reader_id integer NOT NULL,
+    lats_name text,
+    first_name text,
+    middle_name text,
+    passport_data text,
+    address text,
+    phone text,
+    email text,
+    registration_date date,
+    active_status text
+);
+
+
+ALTER TABLE library_schema."Reader" OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16452)
+-- Name: Reader_reader_id_seq; Type: SEQUENCE; Schema: library_schema; Owner: postgres
+-- Последовательность генерируемая автоматически, так как я использовал serial
+--
+
+CREATE SEQUENCE library_schema."Reader_reader_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE library_schema."Reader_reader_id_seq" OWNER TO postgres;
+
+--
+-- TOC entry 5138 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: Reader_reader_id_seq; Type: SEQUENCE OWNED BY; Schema: library_schema; Owner: postgres
+--
+
+ALTER SEQUENCE library_schema."Reader_reader_id_seq" OWNED BY library_schema."Reader".reader_id;
+
+
+--
+-- TOC entry 239 (class 1259 OID 16583)
+-- Name: ReplacementAct; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица сущности-категории актов замены утерянной книги
+--
+
+CREATE TABLE library_schema."ReplacementAct" (
+    act_id integer,
+    lost_copy_id integer,
+    reader_id integer
+);
+
+
+ALTER TABLE library_schema."ReplacementAct" OWNER TO postgres;
+
+--
+-- TOC entry 236 (class 1259 OID 16568)
+-- Name: SupplierAct; Type: TABLE; Schema: library_schema; Owner: postgres
+-- Таблица сущности-категории актов поступления от поставщика
+--
+
+CREATE TABLE library_schema."SupplierAct" (
+    act_id integer,
+    supplier_name text,
+    invoice_number integer
+);
+
+
+ALTER TABLE library_schema."SupplierAct" OWNER TO postgres;
+
+-- Дальше идет блок с использованием serial, как последовательности в первичном ключе таблиц
+
+--
+-- TOC entry 4916 (class 2604 OID 16445)
+-- Name: Act act_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema."Act" ALTER COLUMN act_id SET DEFAULT nextval('library_schema."Act_act_id_seq"'::regclass);
+
+
+--
+-- TOC entry 4920 (class 2604 OID 16486)
+-- Name: Book book_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema."Book" ALTER COLUMN book_id SET DEFAULT nextval('library_schema."Book_book_id_seq"'::regclass);
+
+
+--
+-- TOC entry 4921 (class 2604 OID 16496)
+-- Name: Copy copy_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema."Copy" ALTER COLUMN copy_id SET DEFAULT nextval('library_schema."Copy_copy_id_seq"'::regclass);
+
+
+--
+-- TOC entry 4918 (class 2604 OID 16466)
+-- Name: Employee employee_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema."Employee" ALTER COLUMN employee_id SET DEFAULT nextval('library_schema."Employee_employee_id_seq"'::regclass);
+
+
+--
+-- TOC entry 4922 (class 2604 OID 16506)
+-- Name: Loan loan_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema."Loan" ALTER COLUMN loan_id SET DEFAULT nextval('library_schema."Loan_loan_id_seq"'::regclass);
+
+
+--
+-- TOC entry 4919 (class 2604 OID 16476)
+-- Name: Person person_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema."Person" ALTER COLUMN person_id SET DEFAULT nextval('library_schema."Person_person_id_seq"'::regclass);
+
+
+--
+-- TOC entry 4917 (class 2604 OID 16456)
+-- Name: Reader reader_id; Type: DEFAULT; Schema: library_schema; Owner: postgres
+--
+
+ALTER TABLE ONLY library_schema."Reader" ALTER COLUMN reader_id SET DEFAULT nextval('library_schema."Reader_reader_id_seq"'::regclass);
+
+
+--
+-- TOC entry 5106 (class 0 OID 16442)
+-- Dependencies: 221
+-- Data for Name: Act; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в Act
+--
+
+INSERT INTO library_schema."Act" VALUES (1, '2025-02-10', 'supply', 5, 6850, 2);
+INSERT INTO library_schema."Act" VALUES (2, '2025-06-15', 'gratuitous', 2, 2400, 1);
+INSERT INTO library_schema."Act" VALUES (3, '2025-11-20', 'dispose', 1, 950, 3);
+INSERT INTO library_schema."Act" VALUES (4, '2025-12-05', 'replace', 1, 1200, 2);
+INSERT INTO library_schema."Act" VALUES (5, '2026-01-10', 'supply', 3, 4200, 5);
+
+
+--
+-- TOC entry 5120 (class 0 OID 16518)
+-- Dependencies: 235
+-- Data for Name: ActCopy; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в ActCopy
+--
+
+INSERT INTO library_schema."ActCopy" VALUES (1, 1);
+INSERT INTO library_schema."ActCopy" VALUES (1, 3);
+INSERT INTO library_schema."ActCopy" VALUES (1, 4);
+INSERT INTO library_schema."ActCopy" VALUES (1, 5);
+INSERT INTO library_schema."ActCopy" VALUES (1, 7);
+INSERT INTO library_schema."ActCopy" VALUES (2, 6);
+INSERT INTO library_schema."ActCopy" VALUES (3, 6);
+INSERT INTO library_schema."ActCopy" VALUES (4, 2);
+
+
+--
+-- TOC entry 5114 (class 0 OID 16483)
+-- Dependencies: 229
+-- Data for Name: Book; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в Book
+--
+
+INSERT INTO library_schema."Book" VALUES (1, 'Преступление и наказание', 1, 'rus', 'Роман', 'Классика', 'Москва', '2019-01-01', '84.3(2Рос=Рус)6', '978-5-17-108234-5');
+INSERT INTO library_schema."Book" VALUES (2, 'Война и мир', 1, 'rus', 'Роман-эпопея', 'Классика', 'Санкт-Петербург', '2020-05-15', '84.3(2Рос=Рус)6', '978-5-389-14567-2');
+INSERT INTO library_schema."Book" VALUES (3, 'Мастер и Маргарита', 1, 'rus', 'Роман', 'Классика', 'Москва', '2021-03-10', '84.3(2Рос=Рус)6', '978-5-04-112345-6');
+INSERT INTO library_schema."Book" VALUES (4, 'Гарри Поттер и философский камень', 1, 'eng', 'Фэнтези', 'Современная проза', 'Лондон', '2022-07-20', '84.4(4Англ)', '978-5-389-16789-0');
+INSERT INTO library_schema."Book" VALUES (5, 'Ведьмак. Последнее желание', 1, 'pol', 'Фэнтези', 'Современная проза', 'Варшава', '2023-11-05', '84.4(4Пол)', '978-83-66486-12-6');
+
+
+--
+-- TOC entry 5119 (class 0 OID 16510)
+-- Dependencies: 234
+-- Data for Name: BookPerson; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в BookPerson
+--
+
+INSERT INTO library_schema."BookPerson" VALUES (1, 1, 'author');
+INSERT INTO library_schema."BookPerson" VALUES (2, 2, 'author');
+INSERT INTO library_schema."BookPerson" VALUES (3, 3, 'author');
+INSERT INTO library_schema."BookPerson" VALUES (4, 4, 'author');
+INSERT INTO library_schema."BookPerson" VALUES (5, 5, 'author');
+
+
+--
+-- TOC entry 5116 (class 0 OID 16493)
+-- Dependencies: 231
+-- Data for Name: Copy; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в Copy
+--
+
+INSERT INTO library_schema."Copy" VALUES (1, 1, 100001, 1200, 1, 3, 2, 'available');
+INSERT INTO library_schema."Copy" VALUES (2, 1, 100002, 1200, 1, 3, 2, 'on_loan');
+INSERT INTO library_schema."Copy" VALUES (3, 2, 100003, 1800, 1, 4, 1, 'available');
+INSERT INTO library_schema."Copy" VALUES (4, 3, 100004, 1500, 2, 1, 4, 'available');
+INSERT INTO library_schema."Copy" VALUES (5, 4, 100005, 950, 2, 2, 3, 'available');
+INSERT INTO library_schema."Copy" VALUES (6, 4, 100006, 950, 2, 2, 3, 'damaged');
+INSERT INTO library_schema."Copy" VALUES (7, 5, 100007, 1400, 2, 5, 1, 'available');
+
+
+--
+-- TOC entry 5123 (class 0 OID 16578)
+-- Dependencies: 238
+-- Data for Name: DisposalAct; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в DisposalAct
+--
+
+INSERT INTO library_schema."DisposalAct" VALUES (3, 'Физический износ, не подлежит восстановлению', 'утилизация');
+
+
+--
+-- TOC entry 5110 (class 0 OID 16463)
+-- Dependencies: 225
+-- Data for Name: Employee; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в Employee
+--
+
+INSERT INTO library_schema."Employee" VALUES (1, 'Иванова', 'Анна', 'Библиотекарь', '1', '2022-03-15', 'active');
+INSERT INTO library_schema."Employee" VALUES (2, 'Петров', 'Сергей', 'Заведующий отделом', '1.5', '2019-11-01', 'active');
+INSERT INTO library_schema."Employee" VALUES (3, 'Сидорова', 'Мария', 'Библиотекарь', '0.75', '2024-06-10', 'active');
+INSERT INTO library_schema."Employee" VALUES (4, 'Кузнецов', 'Дмитрий', 'Методист', '1', '2020-09-05', 'active');
+INSERT INTO library_schema."Employee" VALUES (5, 'Смирнова', 'Екатерина', 'Библиотекарь-каталогизатор', '1', '2023-01-20', 'active');
+
+
+--
+-- TOC entry 5122 (class 0 OID 16573)
+-- Dependencies: 237
+-- Data for Name: GratuitousAct; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в GratuitousAct
+--
+
+INSERT INTO library_schema."GratuitousAct" VALUES (2, 'Читатель Новиков М.Ю., в дар библиотеке');
+
+
+--
+-- TOC entry 5118 (class 0 OID 16503)
+-- Dependencies: 233
+-- Data for Name: Loan; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в Loan
+--
+
+INSERT INTO library_schema."Loan" VALUES (1, 1, 1, '2026-01-05', '2026-01-19', NULL, 0, 2);
+INSERT INTO library_schema."Loan" VALUES (2, 2, 5, '2025-12-20', '2026-01-03', '2026-01-02', 0, 1);
+INSERT INTO library_schema."Loan" VALUES (3, 3, 7, '2025-12-25', '2026-01-08', '2026-01-13', 50, 3);
+INSERT INTO library_schema."Loan" VALUES (4, 4, 4, '2026-01-03', '2026-01-17', '2026-01-15', 0, 5);
+INSERT INTO library_schema."Loan" VALUES (5, 5, 3, '2026-01-10', '2026-01-24', NULL, 0, 2);
+INSERT INTO library_schema."Loan" VALUES (6, 1, 6, '2025-10-15', '2025-10-29', '2025-10-28', 0, 1);
+INSERT INTO library_schema."Loan" VALUES (7, 2, 2, '2026-01-12', '2026-01-26', NULL, 0, 3);
+
+
+--
+-- TOC entry 5112 (class 0 OID 16473)
+-- Dependencies: 227
+-- Data for Name: Person; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в Person
+--
+
+INSERT INTO library_schema."Person" VALUES (1, 'Достоевский', 'Фёдор', 'Михайлович', NULL, '1821-11-11', '1881-02-09');
+INSERT INTO library_schema."Person" VALUES (2, 'Толстой', 'Лев', 'Николаевич', NULL, '1828-09-09', '1910-11-20');
+INSERT INTO library_schema."Person" VALUES (3, 'Булгаков', 'Михаил', 'Афанасьевич', NULL, '1891-05-15', '1940-03-10');
+INSERT INTO library_schema."Person" VALUES (4, 'Роулинг', 'Джоан', NULL, 'J.K. Rowling', '1965-07-31', NULL);
+INSERT INTO library_schema."Person" VALUES (5, 'Сапковский', 'Анджей', NULL, NULL, '1948-06-21', NULL);
+
+
+--
+-- TOC entry 5108 (class 0 OID 16453)
+-- Dependencies: 223
+-- Data for Name: Reader; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в Reader
+--
+
+INSERT INTO library_schema."Reader" VALUES (1, 'Соколов', 'Алексей', 'Викторович', '4518 123456', 'ул. Ленина 15-23, Амстердам', '+31612345678', 'alex.sok@gmail.com', '2023-05-12', 'active');
+INSERT INTO library_schema."Reader" VALUES (2, 'Морозова', 'Ольга', 'Сергеевна', '4609 987654', 'Keizersgracht 112', '+31698765432', 'olga.moroz@gmail.com', '2024-01-08', 'active');
+INSERT INTO library_schema."Reader" VALUES (3, 'Васильев', 'Павел', 'Андреевич', '4512 334455', 'Prinsengracht 45', '+31655443322', NULL, '2022-11-30', 'active');
+INSERT INTO library_schema."Reader" VALUES (4, 'Козлова', 'Евгения', 'Дмитриевна', '4701 556677', 'Herengracht 89', '+31677889900', 'evgenia.kozlova@ya.ru', '2025-02-14', 'active');
+INSERT INTO library_schema."Reader" VALUES (5, 'Новиков', 'Михаил', 'Юрьевич', '4515 889900', 'Jordaan, Bloemgracht 33', '+31611223344', 'm.novikov@gmail.com', '2023-09-03', 'active');
+
+
+--
+-- TOC entry 5124 (class 0 OID 16583)
+-- Dependencies: 239
+-- Data for Name: ReplacementAct; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в ReplacementAct
+--
+
+INSERT INTO library_schema."ReplacementAct" VALUES (4, 2, 1);
+
+
+--
+-- TOC entry 5121 (class 0 OID 16568)
+-- Dependencies: 236
+-- Data for Name: SupplierAct; Type: TABLE DATA; Schema: library_schema; Owner: postgres
+-- Вставка данных в SupplierAct
+--
+
+INSERT INTO library_schema."SupplierAct" VALUES (1, 'ООО Книжный Мир', 12547);
+INSERT INTO library_schema."SupplierAct" VALUES (5, 'Буквоед-Опт', 34891);
+
+-- Дальше идет установка для всех последовательностей начального состояния (значение 1)
+
+--
+-- TOC entry 5139 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: Act_act_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema."Act_act_id_seq"', 1, false);
+
+
+--
+-- TOC entry 5140 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: Book_book_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema."Book_book_id_seq"', 1, false);
+
+
+--
+-- TOC entry 5141 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: Copy_copy_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema."Copy_copy_id_seq"', 1, false);
+
+
+--
+-- TOC entry 5142 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: Employee_employee_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema."Employee_employee_id_seq"', 1, false);
+
+
+--
+-- TOC entry 5143 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: Loan_loan_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema."Loan_loan_id_seq"', 1, false);
+
+
+--
+-- TOC entry 5144 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: Person_person_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema."Person_person_id_seq"', 1, false);
+
+
+--
+-- TOC entry 5145 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: Reader_reader_id_seq; Type: SEQUENCE SET; Schema: library_schema; Owner: postgres
+--
+
+SELECT pg_catalog.setval('library_schema."Reader_reader_id_seq"', 1, false);
+
+--
+-- TOC entry 4928 (class 2606 OID 16450)
+-- Name: Act Act_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения на первичные ключи
+--
+
+ALTER TABLE ONLY library_schema."Act"
+    ADD CONSTRAINT "Act_pkey" PRIMARY KEY (act_id);
+
+
+--
+-- TOC entry 4938 (class 2606 OID 16491)
+-- Name: Book Book_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения на первичные ключи
+--
+
+ALTER TABLE ONLY library_schema."Book"
+    ADD CONSTRAINT "Book_pkey" PRIMARY KEY (book_id);
+
+
+--
+-- TOC entry 4940 (class 2606 OID 16501)
+-- Name: Copy Copy_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения на первичные ключи
+--
+
+ALTER TABLE ONLY library_schema."Copy"
+    ADD CONSTRAINT "Copy_pkey" PRIMARY KEY (copy_id);
+
+
+--
+-- TOC entry 4925 (class 2606 OID 16641)
+-- Name: DisposalAct DisposalAct_act_id_check; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения для сущности-категории
+--
+
+ALTER TABLE library_schema."DisposalAct"
+    ADD CONSTRAINT "DisposalAct_act_id_check" CHECK (library_schema.is_dispose(act_id)) NOT VALID;
+
+
+--
+-- TOC entry 4934 (class 2606 OID 16471)
+-- Name: Employee Employee_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения на первичные ключи
+--
+
+ALTER TABLE ONLY library_schema."Employee"
+    ADD CONSTRAINT "Employee_pkey" PRIMARY KEY (employee_id);
+
+
+--
+-- TOC entry 4924 (class 2606 OID 16640)
+-- Name: GratuitousAct GratuitousAct_act_id_check; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения для сущности-категории
+--
+
+ALTER TABLE library_schema."GratuitousAct"
+    ADD CONSTRAINT "GratuitousAct_act_id_check" CHECK (library_schema.is_gratuitous(act_id)) NOT VALID;
+
+
+--
+-- TOC entry 4942 (class 2606 OID 16509)
+-- Name: Loan Loan_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения на первичные ключи
+--
+
+ALTER TABLE ONLY library_schema."Loan"
+    ADD CONSTRAINT "Loan_pkey" PRIMARY KEY (loan_id);
+
+
+--
+-- TOC entry 4936 (class 2606 OID 16481)
+-- Name: Person Person_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения на первичные ключи
+--
+
+ALTER TABLE ONLY library_schema."Person"
+    ADD CONSTRAINT "Person_pkey" PRIMARY KEY (person_id);
+
+
+--
+-- TOC entry 4930 (class 2606 OID 16643)
+-- Name: Reader Reader_passport_data_key; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения на уникальность читателя по паспортным данным
+--
+
+ALTER TABLE ONLY library_schema."Reader"
+    ADD CONSTRAINT "Reader_passport_data_key" UNIQUE (passport_data);
+
+
+--
+-- TOC entry 4932 (class 2606 OID 16461)
+-- Name: Reader Reader_pkey; Type: CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения на первичные ключи
+--
+
+ALTER TABLE ONLY library_schema."Reader"
+    ADD CONSTRAINT "Reader_pkey" PRIMARY KEY (reader_id);
+
+
+--
+-- TOC entry 4926 (class 2606 OID 16639)
+-- Name: ReplacementAct ReplacementAct_act_id_check; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения для сущности-категории
+--
+
+ALTER TABLE library_schema."ReplacementAct"
+    ADD CONSTRAINT "ReplacementAct_act_id_check" CHECK (library_schema.is_replace(act_id)) NOT VALID;
+
+
+--
+-- TOC entry 4923 (class 2606 OID 16635)
+-- Name: SupplierAct SupplierAct_act_id_check; Type: CHECK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка ограничения для сущности-категории
+--
+
+ALTER TABLE library_schema."SupplierAct"
+    ADD CONSTRAINT "SupplierAct_act_id_check" CHECK (library_schema.is_supply(act_id)) NOT VALID;
+
+
+--
+-- TOC entry 4950 (class 2606 OID 16533)
+-- Name: ActCopy ActCopy_act_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."ActCopy"
+    ADD CONSTRAINT "ActCopy_act_id_fkey" FOREIGN KEY (act_id) REFERENCES library_schema."Act"(act_id) NOT VALID;
+
+
+--
+-- TOC entry 4951 (class 2606 OID 16538)
+-- Name: ActCopy ActCopy_copy_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."ActCopy"
+    ADD CONSTRAINT "ActCopy_copy_id_fkey" FOREIGN KEY (copy_id) REFERENCES library_schema."Copy"(copy_id) NOT VALID;
+
+
+--
+-- TOC entry 4943 (class 2606 OID 16563)
+-- Name: Act Act_registered_by_employee_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."Act"
+    ADD CONSTRAINT "Act_registered_by_employee_id_fkey" FOREIGN KEY (registered_by_employee_id) REFERENCES library_schema."Employee"(employee_id) NOT VALID;
+
+
+--
+-- TOC entry 4948 (class 2606 OID 16523)
+-- Name: BookPerson BookPerson_book_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."BookPerson"
+    ADD CONSTRAINT "BookPerson_book_id_fkey" FOREIGN KEY (book_id) REFERENCES library_schema."Book"(book_id) NOT VALID;
+
+
+--
+-- TOC entry 4949 (class 2606 OID 16528)
+-- Name: BookPerson BookPerson_person_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."BookPerson"
+    ADD CONSTRAINT "BookPerson_person_id_fkey" FOREIGN KEY (person_id) REFERENCES library_schema."Person"(person_id) NOT VALID;
+
+
+--
+-- TOC entry 4944 (class 2606 OID 16543)
+-- Name: Copy Copy_book_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."Copy"
+    ADD CONSTRAINT "Copy_book_id_fkey" FOREIGN KEY (book_id) REFERENCES library_schema."Book"(book_id) NOT VALID;
+
+
+--
+-- TOC entry 4954 (class 2606 OID 16611)
+-- Name: DisposalAct DisposalAct_act_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."DisposalAct"
+    ADD CONSTRAINT "DisposalAct_act_id_fkey" FOREIGN KEY (act_id) REFERENCES library_schema."Act"(act_id) NOT VALID;
+
+
+--
+-- TOC entry 4953 (class 2606 OID 16606)
+-- Name: GratuitousAct GratuitousAct_act_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."GratuitousAct"
+    ADD CONSTRAINT "GratuitousAct_act_id_fkey" FOREIGN KEY (act_id) REFERENCES library_schema."Act"(act_id) NOT VALID;
+
+
+--
+-- TOC entry 4945 (class 2606 OID 16553)
+-- Name: Loan Loan_copy_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."Loan"
+    ADD CONSTRAINT "Loan_copy_id_fkey" FOREIGN KEY (copy_id) REFERENCES library_schema."Copy"(copy_id) NOT VALID;
+
+
+--
+-- TOC entry 4946 (class 2606 OID 16558)
+-- Name: Loan Loan_issued_by_employee_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."Loan"
+    ADD CONSTRAINT "Loan_issued_by_employee_id_fkey" FOREIGN KEY (issued_by_employee_id) REFERENCES library_schema."Employee"(employee_id) NOT VALID;
+
+
+--
+-- TOC entry 4947 (class 2606 OID 16548)
+-- Name: Loan Loan_reader_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."Loan"
+    ADD CONSTRAINT "Loan_reader_id_fkey" FOREIGN KEY (reader_id) REFERENCES library_schema."Reader"(reader_id) NOT VALID;
+
+
+--
+-- TOC entry 4955 (class 2606 OID 16596)
+-- Name: ReplacementAct ReplacementAct_act_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."ReplacementAct"
+    ADD CONSTRAINT "ReplacementAct_act_id_fkey" FOREIGN KEY (act_id) REFERENCES library_schema."Act"(act_id) NOT VALID;
+
+
+--
+-- TOC entry 4956 (class 2606 OID 16586)
+-- Name: ReplacementAct ReplacementAct_lost_copy_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."ReplacementAct"
+    ADD CONSTRAINT "ReplacementAct_lost_copy_id_fkey" FOREIGN KEY (lost_copy_id) REFERENCES library_schema."Copy"(copy_id) NOT VALID;
+
+
+--
+-- TOC entry 4957 (class 2606 OID 16591)
+-- Name: ReplacementAct ReplacementAct_reader_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."ReplacementAct"
+    ADD CONSTRAINT "ReplacementAct_reader_id_fkey" FOREIGN KEY (reader_id) REFERENCES library_schema."Reader"(reader_id) NOT VALID;
+
+
+--
+-- TOC entry 4952 (class 2606 OID 16601)
+-- Name: SupplierAct SupplierAct_act_id_fkey; Type: FK CONSTRAINT; Schema: library_schema; Owner: postgres
+-- Установка внешнего ключа
+--
+
+ALTER TABLE ONLY library_schema."SupplierAct"
+    ADD CONSTRAINT "SupplierAct_act_id_fkey" FOREIGN KEY (act_id) REFERENCES library_schema."Act"(act_id);
+
+
+-- Completed on 2026-01-18 16:38:00
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict SFFRro5ZOPvrQF9xLGYYfVJBYqam5UXPTiykKTNCweOl4uwL8ZMD0Kars2DEgvR
+

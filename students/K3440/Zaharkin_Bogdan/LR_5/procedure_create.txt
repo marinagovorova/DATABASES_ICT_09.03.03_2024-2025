@@ -1,0 +1,122 @@
+CREATE OR REPLACE PROCEDURE library_schema.get_book_copies_count(
+    arg_book_id INT,
+    OUT book_count INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    SELECT COUNT(*)
+    INTO book_count
+    FROM library_schema."Copy"
+    WHERE book_id = arg_book_id;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE library_schema.add_new_book(
+    arg_title text,
+    arg_volume integer,
+    arg_original_language text,
+    arg_publication_type text,
+    arg_area text,
+    arg_publication_city text,
+    arg_publication_year date,
+    arg_bbk_code text,
+    arg_isbn text,
+    OUT new_book_id integer
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO library_schema."Book" (
+        title, volume, original_language, publication_type,
+        area, publication_city, publication_year, bbk_code, isbn
+    )
+    VALUES (
+        arg_title, arg_volume, arg_original_language, arg_publication_type,
+        arg_area, arg_publication_city, arg_publication_year, arg_bbk_code, arg_isbn
+    )
+    RETURNING book_id INTO new_book_id;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE library_schema.add_new_reader(
+    arg_last_name text,
+    arg_first_name text,
+    arg_middle_name text,
+    arg_passport_data text,
+    arg_address text,
+    arg_phone text,
+    arg_email text,
+    arg_registration_date date,
+    arg_active_status text,
+    arg_education_level text,
+    OUT new_reader_id integer
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    existing integer;
+BEGIN
+    SELECT reader_id
+    INTO existing
+    FROM library_schema."Reader"
+    WHERE passport_data = arg_passport_data
+    LIMIT 1;
+
+    IF existing IS NOT NULL THEN
+        new_reader_id := NULL;
+        RETURN;
+    END IF;
+
+    INSERT INTO library_schema."Reader" (
+        lats_name, first_name, middle_name,
+        passport_data, address, phone, email,
+        registration_date, active_status, education_level
+    )
+    VALUES (
+        arg_last_name, arg_first_name, arg_middle_name,
+        arg_passport_data, arg_address, arg_phone, arg_email,
+        arg_registration_date, arg_active_status, arg_education_level
+    )
+    RETURNING reader_id INTO new_reader_id;
+END;
+$$;
+
+
+DO $$
+DECLARE
+    book_count INT;
+    new_book_id INT;
+    new_reader_id INT;
+BEGIN
+    CALL library_schema.get_book_copies_count(1, book_count);
+    RAISE NOTICE 'Counts copy: %', book_count;
+
+    CALL library_schema.add_new_book(
+        'Чистый код', 123, 'rus', 'Учебное пособие', 'Программирование',
+        'Питер', '2025-03-01', '32.973', '978-5-4461-XXXX-X',
+        new_book_id
+    );
+    RAISE NOTICE 'New book id: %', new_book_id;
+
+    CALL library_schema.add_new_reader(
+        'Смирнов',
+        'Максим',
+        'Андреевич',
+        '4519 112234',
+        'Amsterdam, Herengracht 123',
+        '+31655544333',
+        'max.smirnov@gmail.com',
+        CURRENT_DATE,
+        'active',
+        'высшее',
+        new_reader_id
+    );
+    IF new_reader_id IS NULL THEN
+        RAISE NOTICE 'Duplicate reader';
+    ELSE
+        RAISE NOTICE 'New reader id: %', new_book_id;
+    END IF;
+END;
+$$;
+

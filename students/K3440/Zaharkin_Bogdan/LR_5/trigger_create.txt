@@ -1,0 +1,119 @@
+CREATE OR REPLACE FUNCTION library_schema.set_copy_on_hand()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE library_schema."Copy"
+    SET status = 'on_hand'
+    WHERE copy_id = NEW.copy_id;
+    
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER loan_issue_set_status_trigger
+AFTER INSERT ON library_schema."Loan"
+FOR EACH ROW
+WHEN (NEW.return_date IS NULL)
+EXECUTE FUNCTION library_schema.set_copy_on_hand();
+
+-----------------------
+
+CREATE OR REPLACE FUNCTION library_schema.set_copy_available()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE library_schema."Copy"
+    SET status = 'available'
+    WHERE copy_id = NEW.copy_id;
+    
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER loan_return_set_status_trigger
+AFTER UPDATE OF return_date ON library_schema."Loan"
+FOR EACH ROW
+WHEN (OLD.return_date IS NULL AND NEW.return_date IS NOT NULL)
+EXECUTE FUNCTION library_schema.set_copy_available();
+
+-----------------------
+
+CREATE OR REPLACE FUNCTION library_schema.prevent_delete_active_loan()
+RETURNS TRIGGER AS $$
+BEGIN
+    RAISE EXCEPTION 'You cannot delete a book loan record that has not yet been returned (loan_id: %)', OLD.loan_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER prevent_delete_active_loan_trigger
+BEFORE DELETE ON library_schema."Loan"
+FOR EACH ROW
+WHEN (OLD.return_date IS NULL AND OLD.issue_date < CURRENT_DATE - INTERVAL '2 years')
+EXECUTE FUNCTION library_schema.prevent_delete_active_loan();
+
+-----------------------
+
+CREATE OR REPLACE FUNCTION library_schema.set_default_registration_date()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.registration_date := CURRENT_DATE;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER set_reader_registration_date_trigger
+BEFORE INSERT ON library_schema."Reader"
+FOR EACH ROW
+WHEN (NEW.registration_date IS NULL)
+EXECUTE FUNCTION library_schema.set_default_registration_date();
+
+-----------------------
+
+CREATE OR REPLACE FUNCTION library_schema.prevent_change_passport()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.passport_data IS DISTINCT FROM NEW.passport_data THEN
+        RAISE EXCEPTION 'Edit passport data forbidden (reader_id: %)', OLD.reader_id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER prevent_change_passport_trigger
+BEFORE UPDATE OF passport_data ON library_schema."Reader"
+FOR EACH ROW
+EXECUTE FUNCTION library_schema.prevent_change_passport();
+
+-----------------------
+
+CREATE OR REPLACE FUNCTION library_schema.update_act_total_copies()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE library_schema."Act"
+    SET total_copies = total_copies + 1
+    WHERE act_id = NEW.act_id;
+    
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER update_act_total_copies_after_insert_trigger
+AFTER INSERT ON library_schema."ActCopy"
+FOR EACH ROW
+EXECUTE FUNCTION library_schema.update_act_total_copies();
+
+-----------------------
+
+CREATE OR REPLACE FUNCTION library_schema.mark_lost_copy()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE library_schema."Copy"
+    SET status = 'lost'
+    WHERE copy_id = NEW.lost_copy_id;
+    
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER after_replace_act_insert_trigger
+AFTER INSERT ON library_schema."ReplacementAct"
+FOR EACH ROW
+EXECUTE FUNCTION library_schema.mark_lost_copy();
